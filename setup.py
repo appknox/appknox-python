@@ -52,7 +52,7 @@ setup(
     ],
 
     keywords='appknox xysec rest api wrapper',
-    packages=find_packages(exclude=['appknox*']),
+    packages=find_packages(),
     install_requires=['requests'],
     extras_require={
         'dev': [''],
