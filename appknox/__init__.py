@@ -73,9 +73,9 @@ class AppknoxClient(object):
         self.api_base = "%s://%s/api" % (protocol, host)
         self.login()
 
-    def _make_request(self, req, endpoint, data):
+    def _request(self, req, endpoint, data):
         """
-        Make Arequest
+        Make a request
         """
         url = "%s/%s" % (self.api_base, endpoint)
         response = req(
@@ -91,4 +91,19 @@ class AppknoxClient(object):
         Submit a play store URL
         """
         data = {"storeURL": store_url}
-        return self._make_request(requests.post, 'store_url', data)
+        return self._request(requests.post, 'store_url', data)
+
+    def upload_file(self, _file):
+        """
+        `_file` is a file-type object
+        """
+        data = {'content_type': 'application/octet-stream'}
+        json = self._request(requests.get, 'signed_url', data)
+        url = json['base_url']
+        logger.info('Please wait while uploading file..: %s', url)
+        requests.put(url, data=_file.read())
+        data = {
+            "file_key": json['file_key'],
+            "file_key_signed": json['file_key_signed'],
+        }
+        return self._request(requests.post, 'uploaded_file', data)
