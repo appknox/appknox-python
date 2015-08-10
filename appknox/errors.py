@@ -43,3 +43,10 @@ class InvalidCredentialsError(AppknoxError):
         super(InvalidCredentialsError, self).__init__(
             "Your username / password pair is invalid."
             " Please check username & password")
+
+
+class ResponseError(AppknoxError):
+
+    def __init__(self, message):
+        super(ResponseError, self).__init__(
+            "Server Error Occured: %s" % message)

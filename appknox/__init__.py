@@ -19,8 +19,16 @@ __status__ = "development"
 Python wrapper for Appknox's REST API
 """
 
+import logging
+
 import requests
-from appknox.errors import MissingCredentialsError, InvalidCredentialsError
+
+from appknox.errors import MissingCredentialsError, InvalidCredentialsError, \
+    ResponseError
+
+FORMAT = '%(asctime)-15s %(message)s'
+logging.basicConfig(format=FORMAT)
+logger = logging.getLogger("appknox")
 
 
 class AppknoxClient(object):
@@ -37,6 +45,7 @@ class AppknoxClient(object):
             'username': self.username,
             'password': self.password,
         }
+        logger.debug('Logging In: %s', login_url)
         response = requests.post(login_url, data=data)
         json = response.json()
         if not json['success']:
@@ -62,5 +71,24 @@ class AppknoxClient(object):
         if secure:
             protocol += 's'
         self.api_base = "%s://%s/api" % (protocol, instance_domain)
-        if auto_login:
-            self.login()
+        self.login()
+
+    def _make_request(self, req, endpoint, data):
+        """
+        Make Arequest
+        """
+        url = "%s/%s" % (self.api_base, endpoint)
+        response = req(
+            url, data=data, auth=(self.user_id, self.token))
+        json = response.json()
+        if response.status_code > 299 or response.status_code < 200:
+            raise ResponseError(json.get("message"))
+        logger.debug('Making a request: %s', url)
+        return json
+
+    def submit_url(self, store_url):
+        """
+        Submit a play store URL
+        """
+        data = {"storeURL": store_url}
+        return self._make_request(requests.post, 'store_url', data)

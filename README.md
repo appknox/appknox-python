@@ -27,3 +27,4 @@ Python wrapper for Appknox's REST API
 - [ ] Hooks
     - [ ] Create
     - [ ] Edit
+    - [ ] Delete
