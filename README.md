@@ -5,10 +5,10 @@ Python wrapper for Appknox's REST API
 ## Todo
 
 - [x] Authentication
-- [ ] Authorization
+- [x] Authorization
 - [ ] Versioning
-- [ ] Submit URL
-- [ ] Upload File
+- [x] Submit URL
+- [x] Upload File
 - [ ] Projects
     - [ ] List
     - [ ] Get
