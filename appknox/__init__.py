@@ -55,7 +55,7 @@ class AppknoxClient(object):
 
     def __init__(
             self, username=None, password=None, api_key=None,
-            instance_domain="beta.appknox.com", secure=True, auto_login=True):
+            host="beta.appknox.com", secure=True, auto_login=True):
         super(AppknoxClient, self).__init__()
         if username and password:
             self.basic_auth = True
@@ -70,7 +70,7 @@ class AppknoxClient(object):
         protocol = 'http'
         if secure:
             protocol += 's'
-        self.api_base = "%s://%s/api" % (protocol, instance_domain)
+        self.api_base = "%s://%s/api" % (protocol, host)
         self.login()
 
     def _make_request(self, req, endpoint, data):
