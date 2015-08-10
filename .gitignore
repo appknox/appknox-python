@@ -55,5 +55,4 @@ docs/_build/
 
 # PyBuilder
 target/
-/sample.py
-/sample.apk
+sample.py
