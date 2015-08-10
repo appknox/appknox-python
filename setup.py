@@ -30,7 +30,7 @@ with open(path.join(here, 'DESCRIPTION.rst'), encoding='utf-8') as f:
 
 setup(
     name='appknox',
-    version='0.0.1',
+    version='0.0.3',
     description="Python wrapper for Appknox's REST API",
     long_description=long_description,
     url='https://github.com/appknox/appknox-python',
@@ -53,7 +53,15 @@ setup(
 
     keywords='appknox xysec rest api wrapper',
     packages=find_packages(),
-    install_requires=['requests'],
+    py_modules=['appknox'],
+    entry_points='''
+        [console_scripts]
+        appknox=appknox.cli:cli
+    ''',
+    install_requires=[
+        'requests',
+        'click',
+    ],
     extras_require={
         'dev': [''],
         'test': [''],
