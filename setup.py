@@ -24,13 +24,19 @@ from codecs import open
 from os import path
 
 here = path.abspath(path.dirname(__file__))
+f = path.join(here, 'README.md')
 
-with open(path.join(here, 'README.md'), encoding='utf-8') as f:
-    long_description = f.read()
+try:
+    from pypandoc import convert
+    long_description = lambda f: convert(f, 'rst')
+except ImportError:
+    print(
+        "pypandoc module not found, could not convert Markdown to RST")
+    long_description = lambda f: open(f, 'r').read()
 
 setup(
     name='appknox',
-    version='0.0.4',
+    version='0.0.5',
     description="Python wrapper for Appknox's REST API",
     long_description=long_description,
     url='https://github.com/appknox/appknox-python',
