@@ -28,15 +28,15 @@ f = path.join(here, 'README.md')
 
 try:
     from pypandoc import convert
-    long_description = lambda f: convert(f, 'rst')
+    long_description = convert(f, 'rst')
 except ImportError:
     print(
         "pypandoc module not found, could not convert Markdown to RST")
-    long_description = lambda f: open(f, 'r').read()
+    long_description = open(f, 'r').read()
 
 setup(
     name='appknox',
-    version='0.0.5',
+    version='0.0.6',
     description="Python wrapper for Appknox's REST API",
     long_description=long_description,
     url='https://github.com/appknox/appknox-python',
