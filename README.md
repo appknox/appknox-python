@@ -1,6 +1,8 @@
 # appknox-python
 Python wrapper for Appknox's REST API
 
+## Installation
+`[sudo] pip install appknox`
 
 ## Todo
 
