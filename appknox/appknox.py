@@ -18,7 +18,7 @@ import logging
 import requests
 
 from errors import MissingCredentialsError, InvalidCredentialsError, \
-    ResponseError
+    ResponseError, InvalidDataError
 
 FORMAT = '%(asctime)-15s %(message)s'
 logging.basicConfig(format=FORMAT)
@@ -142,3 +142,14 @@ class AppknoxClient(object):
         """
         url = 'files/' + str(file_id) + '/analyses'
         return self._request(requests.get, url)
+
+    def report(self, file_id, format_type):
+        """
+        get report in specified format
+        """
+        if format_type not in ['pdf', 'xml', 'csv', 'json']:
+            raise InvalidDataError("Invalid format type")
+
+        url = 'report/' + str(file_id)
+        data = {'format': format_type}
+        return self._request(requests.get, url, data)

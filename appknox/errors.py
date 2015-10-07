@@ -50,3 +50,10 @@ class ResponseError(AppknoxError):
     def __init__(self, message):
         super(ResponseError, self).__init__(
             "Server Error Occured: %s" % message)
+
+
+class InvalidDataError(AppknoxError):
+
+    def __init__(self, message):
+        super(InvalidDataError, self).__init__(
+            " %s" % message)
