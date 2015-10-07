@@ -103,4 +103,14 @@ class AppknoxClient(object):
         return self._request(requests.post, 'uploaded_file', data)
 
     def project_list(self):
+        """
+        return list of projects
+        """
         return self._request(requests.get, 'projects')
+
+    def project_get(self, project_id):
+        """
+        get project details with project id
+        """
+        url = 'projects/' + str(project_id)
+        return self._request(requests.get, url)
