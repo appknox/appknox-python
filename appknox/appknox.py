@@ -135,3 +135,10 @@ class AppknoxClient(object):
         """
         url = 'files/' + str(file_id)
         return self._request(requests.get, url)
+
+    def analyses_list(self, file_id):
+        """
+        get analyses details with file id
+        """
+        url = 'files/' + str(file_id) + '/analyses'
+        return self._request(requests.get, url)
