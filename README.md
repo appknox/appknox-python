@@ -52,21 +52,21 @@ appknox --help
 - [ ] Versioning
 - [x] Submit URL
 - [x] Upload File
-- [ ] Projects
-    - [ ] List
-    - [ ] Get
+- [x] Projects
+    - [x] List
+    - [x] Get
+    - [x] Delete
+- [x] Files
+    - [x] List
+    - [x] Get
     - [ ] Delete
-- [ ] Files
-    - [ ] List
-    - [ ] Get
-    - [ ] Delete
-- [ ] Analyses
-    - [ ] List
-- [ ] Reports
-    - [ ] PDF
-    - [ ] JSON
-    - [ ] XML
-    - [ ] CSV
+- [x] Analyses
+    - [x] List
+- [x] Reports
+    - [x] PDF
+    - [x] JSON
+    - [x] XML
+    - [x] CSV
 - [ ] Hooks
     - [ ] Create
     - [ ] Edit
