@@ -17,7 +17,7 @@ import logging
 
 import requests
 
-from appknox.errors import MissingCredentialsError, InvalidCredentialsError, \
+from errors import MissingCredentialsError, InvalidCredentialsError, \
     ResponseError
 
 FORMAT = '%(asctime)-15s %(message)s'
@@ -67,7 +67,7 @@ class AppknoxClient(object):
         self.api_base = "%s://%s/api" % (protocol, host)
         self.login()
 
-    def _request(self, req, endpoint, data):
+    def _request(self, req, endpoint, data={}):
         """
         Make a request
         """
@@ -101,3 +101,6 @@ class AppknoxClient(object):
             "file_key_signed": json['file_key_signed'],
         }
         return self._request(requests.post, 'uploaded_file', data)
+
+    def project_list(self):
+        return self._request(requests.get, 'projects')

@@ -13,4 +13,6 @@ Date created: 2015-08-07
 __author__ = "dhilipsiva"
 __status__ = "development"
 
-from appknox.appknox import AppknoxClient
+from appknox import AppknoxClient
+from errors import AppknoxError, MissingCredentialsError, \
+    InvalidCredentialsError, ResponseError
