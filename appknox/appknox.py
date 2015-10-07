@@ -114,3 +114,10 @@ class AppknoxClient(object):
         """
         url = 'projects/' + str(project_id)
         return self._request(requests.get, url)
+
+    def project_delete(self, project_id):
+        """
+        delete project with project id
+        """
+        url = 'projects/delete/' + str(project_id)
+        return self._request(requests.get, url)
