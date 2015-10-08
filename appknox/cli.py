@@ -35,7 +35,7 @@ import logging
 from click import option, echo, group, make_pass_decorator, argument, File
 
 from appknox import AppknoxClient
-
+from pprint import pprint
 logger = logging.getLogger("appknox")
 logger.setLevel(10)
 
@@ -51,14 +51,17 @@ pass_config = make_pass_decorator(Config, ensure=True)
 @option('--username', envvar='APPKNOX_USERNAME', help="Username")
 @option('--password', envvar='APPKNOX_PASSWORD', help="Password")
 @option('--level', default=10, help="Log Level")
+@option('--host', default='beta.appknox.com', help="Set Host")
+@option('--secure/--no-secure', default=True)
 @pass_config
-def cli(config, username, password, level):
+def cli(config, username, password, level, host, secure):
     """
     Command line tool For Appknox's REST API
     """
     echo(APPKNOX)
     logger.setLevel(level)
-    config.client = AppknoxClient(username=username, password=password)
+    config.client = AppknoxClient(
+        username=username, password=password, host=host, secure=secure)
 
 
 @cli.command()
@@ -89,3 +92,78 @@ def upload(config, file):
     Validate if credentials are properly configured!
     """
     config.client.upload_file(file)
+
+
+@cli.command()
+@pass_config
+def project_list(config):
+    """
+    Get a list of your projects
+    """
+    echo("Get list of your projects")
+    pprint(config.client.project_list())
+
+
+@cli.command()
+@argument('project_id')
+@pass_config
+def project_get(config, project_id):
+    """
+    Get a particular project with id
+    """
+    echo("Get a particular project with id")
+    pprint(config.client.project_get(project_id))
+
+
+"""
+@cli.command()
+@argument('project_id')
+@pass_config
+def project_delete(config, project_id):
+    echo("Delete a particular project with id")
+    pprint(config.client.project_delete(project_id))
+"""
+
+
+@cli.command()
+@argument('project_id')
+@pass_config
+def file_list(config, project_id):
+    """
+    Get list of files for a project with id
+    """
+    echo("Get list of files for a project with id")
+    pprint(config.client.file_list(project_id))
+
+
+@cli.command()
+@argument('file_id')
+@pass_config
+def file_get(config, file_id):
+    """
+    Get a file with id
+    """
+    echo("Get a file with id")
+    pprint(config.client.file_get(file_id))
+
+
+@cli.command()
+@argument('file_id')
+@pass_config
+def analyses_list(config, file_id):
+    """
+    Get analyses for a file with id
+    """
+    echo("Get analyses for a file with id")
+    pprint(config.client.analyses_list(file_id))
+
+"""
+@cli.command()
+@argument('file_id')
+@option('--format_type', default='json', help='Valid formats are \
+        "pdf", "csv", "xml", "json"')
+@pass_config
+def report(config, file_id, format_type):
+    echo("Get file report by specifying format and file id")
+    pprint(config.client.report(file_id, format_type))
+"""
