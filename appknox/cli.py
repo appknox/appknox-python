@@ -158,12 +158,12 @@ def analyses_list(config, file_id):
 
 @cli.command()
 @argument('file_id')
+@option('--format_type', default='json', help='Valid formats are \
+        "pdf", "csv", "xml", "json"')
 @pass_config
-def report(config, file_id):
+def report(config, file_id, format_type):
     """
-    Get file report in specified format. Valid formats are 'pdf', 'xml', 'csv'\
-    and 'json'
+    Get file report in specified format.'
     """
     echo("Get file report by specifying format and file id")
-    echo("Valid formats are 'pdf', 'xml', 'csv and 'json'")
     config.client.report(file_id, format_type)
