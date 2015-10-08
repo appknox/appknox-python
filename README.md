@@ -55,18 +55,18 @@ appknox --help
 - [x] Projects
     - [x] List
     - [x] Get
-    - [x] Delete
+    - [ ] Delete
 - [x] Files
     - [x] List
     - [x] Get
     - [ ] Delete
 - [x] Analyses
     - [x] List
-- [x] Reports
-    - [x] PDF
-    - [x] JSON
-    - [x] XML
-    - [x] CSV
+- [ ] Reports
+    - [ ] PDF
+    - [ ] JSON
+    - [ ] XML
+    - [ ] CSV
 - [ ] Hooks
     - [ ] Create
     - [ ] Edit
