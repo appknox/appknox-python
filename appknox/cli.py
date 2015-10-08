@@ -89,3 +89,24 @@ def upload(config, file):
     Validate if credentials are properly configured!
     """
     config.client.upload_file(file)
+
+
+@cli.command()
+@pass_config
+def project_list(config):
+    """
+    Get a list of your projects
+    """
+    echo("Get list of your projects")
+    config.client.project_list()
+
+
+@cli.command()
+@argument('project_id')
+@pass_config
+def project_get(config, project_id):
+    """
+    Get a particular project with id
+    """
+    echo("Get a particular project with id")
+    config.client.project_get(project_id)
