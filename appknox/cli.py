@@ -51,14 +51,17 @@ pass_config = make_pass_decorator(Config, ensure=True)
 @option('--username', envvar='APPKNOX_USERNAME', help="Username")
 @option('--password', envvar='APPKNOX_PASSWORD', help="Password")
 @option('--level', default=10, help="Log Level")
+@option('--host', default='beta.appknox.com', help="Set Host")
+@option('--secure/--no-secure', default=True)
 @pass_config
-def cli(config, username, password, level):
+def cli(config, username, password, level, host, secure):
     """
     Command line tool For Appknox's REST API
     """
     echo(APPKNOX)
     logger.setLevel(level)
-    config.client = AppknoxClient(username=username, password=password)
+    config.client = AppknoxClient(
+        username=username, password=password, host=host, secure=secure)
 
 
 @cli.command()
@@ -112,15 +115,14 @@ def project_get(config, project_id):
     pprint(config.client.project_get(project_id))
 
 
+"""
 @cli.command()
 @argument('project_id')
 @pass_config
 def project_delete(config, project_id):
-    """
-    Delete a particular project with id
-    """
     echo("Delete a particular project with id")
     pprint(config.client.project_delete(project_id))
+"""
 
 
 @cli.command()
@@ -155,15 +157,13 @@ def analyses_list(config, file_id):
     echo("Get analyses for a file with id")
     pprint(config.client.analyses_list(file_id))
 
-
+"""
 @cli.command()
 @argument('file_id')
 @option('--format_type', default='json', help='Valid formats are \
         "pdf", "csv", "xml", "json"')
 @pass_config
 def report(config, file_id, format_type):
-    """
-    Get file report in specified format.'
-    """
     echo("Get file report by specifying format and file id")
     pprint(config.client.report(file_id, format_type))
+"""

@@ -74,6 +74,7 @@ class AppknoxClient(object):
         url = "%s/%s" % (self.api_base, endpoint)
         response = req(
             url, data=data, auth=(self.user_id, self.token))
+        print response.content
         json = response.json()
         if response.status_code > 299 or response.status_code < 200:
             raise ResponseError(json.get("message"))
