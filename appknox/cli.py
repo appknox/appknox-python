@@ -35,7 +35,7 @@ import logging
 from click import option, echo, group, make_pass_decorator, argument, File
 
 from appknox import AppknoxClient
-
+from pprint import pprint
 logger = logging.getLogger("appknox")
 logger.setLevel(10)
 
@@ -98,7 +98,7 @@ def project_list(config):
     Get a list of your projects
     """
     echo("Get list of your projects")
-    config.client.project_list()
+    pprint(config.client.project_list())
 
 
 @cli.command()
@@ -109,7 +109,7 @@ def project_get(config, project_id):
     Get a particular project with id
     """
     echo("Get a particular project with id")
-    config.client.project_get(project_id)
+    pprint(config.client.project_get(project_id))
 
 
 @cli.command()
@@ -120,7 +120,7 @@ def project_delete(config, project_id):
     Delete a particular project with id
     """
     echo("Delete a particular project with id")
-    config.client.project_delete(project_id)
+    pprint(config.client.project_delete(project_id))
 
 
 @cli.command()
@@ -131,7 +131,7 @@ def file_list(config, project_id):
     Get list of files for a project with id
     """
     echo("Get list of files for a project with id")
-    config.client.file_list(project_id)
+    pprint(config.client.file_list(project_id))
 
 
 @cli.command()
@@ -142,7 +142,7 @@ def file_get(config, file_id):
     Get a file with id
     """
     echo("Get a file with id")
-    config.client.file_get(file_id)
+    pprint(config.client.file_get(file_id))
 
 
 @cli.command()
@@ -153,7 +153,7 @@ def analyses_list(config, file_id):
     Get analyses for a file with id
     """
     echo("Get analyses for a file with id")
-    config.client.analyses_list(file_id)
+    pprint(config.client.analyses_list(file_id))
 
 
 @cli.command()
@@ -166,4 +166,4 @@ def report(config, file_id, format_type):
     Get file report in specified format.'
     """
     echo("Get file report by specifying format and file id")
-    config.client.report(file_id, format_type)
+    pprint(config.client.report(file_id, format_type))
