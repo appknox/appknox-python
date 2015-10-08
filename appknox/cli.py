@@ -110,3 +110,60 @@ def project_get(config, project_id):
     """
     echo("Get a particular project with id")
     config.client.project_get(project_id)
+
+
+@cli.command()
+@argument('project_id')
+@pass_config
+def project_delete(config, project_id):
+    """
+    Delete a particular project with id
+    """
+    echo("Delete a particular project with id")
+    config.client.project_delete(project_id)
+
+
+@cli.command()
+@argument('project_id')
+@pass_config
+def file_list(config, project_id):
+    """
+    Get list of files for a project with id
+    """
+    echo("Get list of files for a project with id")
+    config.client.file_list(project_id)
+
+
+@cli.command()
+@argument('file_id')
+@pass_config
+def file_get(config, file_id):
+    """
+    Get a file with id
+    """
+    echo("Get a file with id")
+    config.client.file_get(file_id)
+
+
+@cli.command()
+@argument('file_id')
+@pass_config
+def analyses_list(config, file_id):
+    """
+    Get analyses for a file with id
+    """
+    echo("Get analyses for a file with id")
+    config.client.analyses_list(file_id)
+
+
+@cli.command()
+@argument('file_id')
+@pass_config
+def report(config, file_id):
+    """
+    Get file report in specified format. Valid formats are 'pdf', 'xml', 'csv'\
+    and 'json'
+    """
+    echo("Get file report by specifying format and file id")
+    echo("Valid formats are 'pdf', 'xml', 'csv and 'json'")
+    config.client.report(file_id, format_type)
