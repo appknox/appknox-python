@@ -1,5 +1,5 @@
 # appknox-python
-Python wrapper for Appknox's REST API
+CLI tool & Python wrapper for Appknox's REST API
 
 ## Installation
 ```
@@ -62,11 +62,11 @@ appknox --help
     - [ ] Delete
 - [x] Analyses
     - [x] List
-- [ ] Reports
-    - [ ] PDF
-    - [ ] JSON
-    - [ ] XML
-    - [ ] CSV
+- [x] Reports
+    - [x] PDF
+    - [x] JSON
+    - [x] XML
+    - [x] CSV
 - [ ] Hooks
     - [ ] Create
     - [ ] Edit
