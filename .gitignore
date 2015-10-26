@@ -56,3 +56,6 @@ docs/_build/
 # PyBuilder
 target/
 /tmp.apk
+
+# Generated Files
+*.pdf
