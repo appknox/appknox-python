@@ -170,7 +170,6 @@ def report(config, file_id, format_type):
     echo("Get file report by specifying format and file id")
     response = config.client.report(file_id, format_type)
     if not format_type == 'pdf':
-        pprint(response)
-    else:
-        with open(file_id+'-report.pdf', 'w') as f:
-            f.write(response)
+        return pprint(response)
+    with open(file_id+'-report.pdf', 'w') as f:
+        f.write(response)
