@@ -157,13 +157,19 @@ def analyses_list(config, file_id):
     echo("Get analyses for a file with id")
     pprint(config.client.analyses_list(file_id))
 
-"""
+
 @cli.command()
 @argument('file_id')
 @option('--format_type', default='json', help='Valid formats are \
         "pdf", "csv", "xml", "json"')
 @pass_config
 def report(config, file_id, format_type):
+    """
+    Get report with format_type and file_id
+    """
     echo("Get file report by specifying format and file id")
-    pprint(config.client.report(file_id, format_type))
-"""
+    response = config.client.report(file_id, format_type)
+    if not format_type == 'pdf':
+        return pprint(response)
+    with open(file_id+'-report.pdf', 'w') as f:
+        f.write(response)

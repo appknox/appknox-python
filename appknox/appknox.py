@@ -67,14 +67,17 @@ class AppknoxClient(object):
         self.api_base = "%s://%s/api" % (protocol, host)
         self.login()
 
-    def _request(self, req, endpoint, data={}):
+    def _request(self, req, endpoint, data={}, is_json=True):
         """
         Make a request
         """
         url = "%s/%s" % (self.api_base, endpoint)
         response = req(
-            url, data=data, auth=(self.user_id, self.token))
-        print response.content
+            url, params=data, auth=(self.user_id, self.token))
+        if not is_json:
+            if response.status_code > 299 or response.status_code < 200:
+                raise ResponseError(response.content)
+            return response.content
         json = response.json()
         if response.status_code > 299 or response.status_code < 200:
             raise ResponseError(json.get("message"))
@@ -153,4 +156,4 @@ class AppknoxClient(object):
 
         url = 'report/' + str(file_id)
         data = {'format': format_type}
-        return self._request(requests.get, url, data)
+        return self._request(requests.get, url, data, is_json=False)
