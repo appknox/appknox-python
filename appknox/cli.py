@@ -164,5 +164,13 @@ def analyses_list(config, file_id):
         "pdf", "csv", "xml", "json"')
 @pass_config
 def report(config, file_id, format_type):
+    """
+    Get report with format_type and file_id
+    """
     echo("Get file report by specifying format and file id")
-    pprint(config.client.report(file_id, format_type))
+    response = config.client.report(file_id, format_type)
+    if not format_type == 'pdf':
+        pprint(response)
+    else:
+        with open(file_id+'-report.pdf', 'w') as f:
+            f.write(response)
