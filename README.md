@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/appknox/appknox-python.svg)](https://travis-ci.org/appknox/appknox-python)
+[![Stories in Ready](https://badge.waffle.io/appknox/appknox-python.png?label=ready&title=Ready)](https://waffle.io/appknox/appknox-python)
 # appknox-python
 CLI tool & Python wrapper for Appknox's REST API
 
