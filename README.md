@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/appknox/appknox-python.svg)](https://travis-ci.org/appknox/appknox-python)
 # appknox-python
 CLI tool & Python wrapper for Appknox's REST API
 

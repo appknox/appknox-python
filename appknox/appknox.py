@@ -35,12 +35,12 @@ class AppknoxClient(object):
         Login and Get token
         """
         login_url = "%s/token/new.json" % self.api_base
-        data = {
-            'username': self.username,
-            'password': self.password,
+        _data = {
+            'username': self._username,
+            'password': self._password,
         }
         logger.debug('Logging In: %s', login_url)
-        response = requests.post(login_url, data=data)
+        response = requests.post(login_url, data=_data)
         json = response.json()
         if not json['success']:
             raise InvalidCredentialsError
@@ -53,8 +53,8 @@ class AppknoxClient(object):
         super(AppknoxClient, self).__init__()
         if username and password:
             self.basic_auth = True
-            self.username = username
-            self.password = password
+            self._username = username
+            self._password = password
         # API auth comes later
         # elif api_key:
         #     self.basic_auth = False
@@ -65,6 +65,7 @@ class AppknoxClient(object):
         if secure:
             protocol += 's'
         self.api_base = "%s://%s/api" % (protocol, host)
+        self.__dict__ = {}  # override to prevent peeking
         self.login()
 
     def _request(self, req, endpoint, data={}, is_json=True):

@@ -1,4 +1,3 @@
--e git+git@github.com:appknox/appknox-python.git@d9d81a9377556a9260766ed87c7bb70e3d5303ce#egg=appknox-master
 click==4.1
 pkginfo==1.2.1
 pypandoc==1.0.1
