@@ -59,11 +59,11 @@ appknox --help
 - [x] Projects
     - [x] List
     - [x] Get
-    - [ ] Delete
+    - [ ] ~~Delete~~ (depricated/removed)
 - [x] Files
     - [x] List
     - [x] Get
-    - [ ] Delete
+    - [ ] ~~Delete~~ (depricated/removed)
 - [x] Analyses
     - [x] List
 - [x] Reports
