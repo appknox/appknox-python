@@ -68,7 +68,7 @@ def cli(config, username, password, level, host, secure):
 @pass_config
 def validate(config):
     """
-    Validate if credentials are properly configured!
+    Validate if credentials are correct!
     """
     echo("Your credentials are valid!")
 
@@ -78,7 +78,7 @@ def validate(config):
 @pass_config
 def submit_url(config, url):
     """
-    Validate if credentials are properly configured!
+    Submit store urls!
     """
     echo("Submitting Store URL")
     config.client.submit_url(url)
@@ -89,7 +89,7 @@ def submit_url(config, url):
 @pass_config
 def upload(config, file):
     """
-    Validate if credentials are properly configured!
+    Upload a file!
     """
     config.client.upload_file(file)
 
