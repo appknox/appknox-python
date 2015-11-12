@@ -120,13 +120,6 @@ class AppknoxClient(object):
         url = 'projects/' + str(project_id)
         return self._request(requests.get, url)
 
-    def project_delete(self, project_id):
-        """
-        delete project with project id
-        """
-        url = 'projects/delete/' + str(project_id)
-        return self._request(requests.get, url)
-
     def file_list(self, project_id):
         """
         return list of files for a project
