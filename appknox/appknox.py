@@ -50,7 +50,6 @@ class AppknoxClient(object):
     def __init__(
             self, username=None, password=None, api_key=None,
             host="beta.appknox.com", secure=True, auto_login=True):
-        super(AppknoxClient, self).__init__()
         if username and password:
             self.basic_auth = True
             self._username = username
