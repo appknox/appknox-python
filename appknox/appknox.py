@@ -65,7 +65,6 @@ class AppknoxClient(object):
         if secure:
             protocol += 's'
         self.api_base = "%s://%s/api" % (protocol, host)
-        self.__dict__ = {}  # override to prevent peeking
         self.login()
 
     def _request(self, req, endpoint, data={}, is_json=True):
