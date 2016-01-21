@@ -29,12 +29,12 @@ try:
     from pypandoc import convert
     f = path.join(here, 'README.md')
     long_description = convert(f, 'rst')
+except IOError:
+    print("Cannot read Readme.md file")
 except ImportError:
     print(
         "pypandoc module not found, could not convert Markdown to RST")
     long_description = open(f, 'r').read()
-except IOError:
-    print("Cannot read Readme.md file")
 
 setup(
     name='appknox',
