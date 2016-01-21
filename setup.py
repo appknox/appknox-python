@@ -24,15 +24,17 @@ from codecs import open
 from os import path
 
 here = path.abspath(path.dirname(__file__))
-f = path.join(here, 'README.md')
 
 try:
     from pypandoc import convert
+    f = path.join(here, 'README.md')
     long_description = convert(f, 'rst')
 except ImportError:
     print(
         "pypandoc module not found, could not convert Markdown to RST")
     long_description = open(f, 'r').read()
+except IOError:
+    print("Cannot read Readme.md file")
 
 setup(
     name='appknox',
