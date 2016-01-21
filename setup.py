@@ -26,8 +26,8 @@ from os import path
 here = path.abspath(path.dirname(__file__))
 
 try:
-    from pypandoc import convert
     f = path.join(here, 'README.md')
+    from pypandoc import convert
     long_description = convert(f, 'rst')
 except IOError:
     print("Cannot read Readme.md file")
