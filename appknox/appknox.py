@@ -71,8 +71,7 @@ class AppknoxClient(object):
         Make a request
         """
         url = "%s/%s" % (self.api_base, endpoint)
-        response = req(
-            url, params=data, auth=(self.user_id, self.token))
+        response = req(url, params=data, auth=(self.user_id, self.token))
         if not is_json:
             if response.status_code > 299 or response.status_code < 200:
                 raise ResponseError(response.content)
@@ -98,12 +97,15 @@ class AppknoxClient(object):
         json = self._request(requests.get, 'signed_url', data)
         url = json['base_url']
         logger.info('Please wait while uploading file..: %s', url)
-        requests.put(url, data=_file.read())
+        requests.put(url, data=_file.read(), headers=json['headers'])
         data = {
             "file_key": json['file_key'],
             "file_key_signed": json['file_key_signed'],
         }
-        return self._request(requests.post, 'uploaded_file', data)
+        url = "%s/uploaded_file" % self.api_base
+        response = requests.post(
+            url, data=data, auth=(self.user_id, self.token))
+        return response.json()
 
     def project_list(self):
         """
