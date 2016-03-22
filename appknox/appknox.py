@@ -70,15 +70,16 @@ class AppknoxClient(object):
         Make a request
         """
         url = "%s/%s" % (self.api_base, endpoint)
-        response = req(url, params=data, auth=(self.user_id, self.token))
+        logger.debug('Making a request: %s', url)
+        response = req(url, data=data, auth=(self.user_id, self.token))
+        if response.status_code > 299 or response.status_code < 200:
+            f = open("error.html", "w")
+            f.write(response.content.decode())
+            f.close()
+            raise ResponseError(response.content)
         if not is_json:
-            if response.status_code > 299 or response.status_code < 200:
-                raise ResponseError(response.content)
             return response.content
         json = response.json()
-        if response.status_code > 299 or response.status_code < 200:
-            raise ResponseError(json.get("message"))
-        logger.debug('Making a request: %s', url)
         return json
 
     def submit_url(self, store_url):
@@ -94,9 +95,10 @@ class AppknoxClient(object):
         """
         data = {'content_type': 'application/octet-stream'}
         json = self._request(requests.get, 'signed_url', data)
-        url = json['base_url']
+        url = json['url']
         logger.info('Please wait while uploading file..: %s', url)
-        requests.put(url, data=_file.read(), headers=json['headers'])
+        response = requests.put(url, data=_file.read())
+        print(response.content, response.status_code)
         data = {
             "file_key": json['file_key'],
             "file_key_signed": json['file_key_signed'],
