@@ -73,9 +73,9 @@ class AppknoxClient(object):
         logger.debug('Making a request: %s', url)
         response = req(url, data=data, auth=(self.user_id, self.token))
         if response.status_code > 299 or response.status_code < 200:
-            f = open("error.html", "w")
-            f.write(response.content.decode())
-            f.close()
+            # f = open("error.html", "w")
+            # f.write(response.content.decode())
+            # f.close()
             raise ResponseError(response.content)
         if not is_json:
             return response.content
@@ -98,7 +98,7 @@ class AppknoxClient(object):
         url = json['url']
         logger.info('Please wait while uploading file..: %s', url)
         response = requests.put(url, data=_file.read())
-        print(response.content, response.status_code)
+        # print(response.content, response.status_code)
         data = {
             "file_key": json['file_key'],
             "file_key_signed": json['file_key_signed'],
