@@ -27,7 +27,7 @@ from appknox import AppknoxClient
 
 appknox_client = AppknoxClient(username='dhilipsiva', password='password')
 logger.debug('Token: %s', appknox_client.token)
-print appknox_client.submit_url("market://com.flipkart.android")
+print(appknox_client.submit_url("market://com.flipkart.android"))
 # Upload File
 # _file = open("sample.apk")
-# print appknox_client.upload_file(_file)
+# print(appknox_client.upload_file(_file))

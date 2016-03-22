@@ -1,23 +1,22 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# vim: fenc=utf-8
+# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
+#
 #
 
 """
 File name: appknox.py
-Version: 0.1
-Author: rmad17 <sourav@appknox.com>
-Date created: 2015-10-06
-"""
-__author__ = "rmad17"
-__status__ = "development"
-
-"""
-Python wrapper for Appknox's REST API
+Author: dhilipsiva <dhilipsiva@gmail.com>
+Date created: 2016-03-22
 """
 
 import logging
 
 import requests
 
-from errors import MissingCredentialsError, InvalidCredentialsError, \
+from appknox.errors import MissingCredentialsError, InvalidCredentialsError, \
     ResponseError, InvalidReportTypeError
 
 FORMAT = '%(asctime)-15s %(message)s'
