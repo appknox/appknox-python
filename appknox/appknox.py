@@ -148,7 +148,5 @@ class AppknoxClient(object):
         """
         if format_type not in ['pdf', 'xml', 'csv', 'json']:
             raise InvalidReportTypeError("Invalid format type")
-
-        url = 'report/' + str(file_id)
-        data = {'format': format_type}
-        return self._request(requests.get, url, data, is_json=False)
+        url = 'report/' + str(file_id) + '?format=' + format_type
+        return self._request(requests.get, url, is_json=False)
