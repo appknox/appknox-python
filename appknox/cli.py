@@ -172,4 +172,4 @@ def report(config, file_id, format_type):
     if not format_type == 'pdf':
         return pprint(response)
     with open(file_id + '-report.pdf', 'w') as f:
-        f.write(response)
+        f.write(response.decode())
