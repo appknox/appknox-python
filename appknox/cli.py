@@ -85,7 +85,7 @@ def submit_url(config, url):
 
 
 @cli.command()
-@argument('file', type=File('r'))
+@argument('file', type=File('rb'))
 @pass_config
 def upload(config, file):
     """

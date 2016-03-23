@@ -34,12 +34,12 @@ class AppknoxClient(object):
         Login and Get token
         """
         login_url = "%s/token/new.json" % self.api_base
-        _data = {
+        data = {
             'username': self._username,
             'password': self._password,
         }
         logger.debug('Logging In: %s', login_url)
-        response = requests.post(login_url, data=_data)
+        response = requests.post(login_url, data=data)
         json = response.json()
         if not json['success']:
             raise InvalidCredentialsError
