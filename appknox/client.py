@@ -150,3 +150,8 @@ class AppknoxClient(object):
             raise InvalidReportTypeError("Invalid format type")
         url = 'report/' + str(file_id) + '?format=' + format_type
         return self._request(requests.get, url, is_json=False)
+
+
+    def payment(self, token):
+        data = {'token', token}
+        return self._request(requests.post, 'stripe_payment', data)

@@ -170,3 +170,15 @@ def report(config, file_id, format_type):
     echo("Get file report by specifying format and file id")
     response = config.client.report(file_id, format_type)
     return pprint(response.decode())
+
+
+@cli.command()
+@argument('token')
+@pass_config
+def payment(config, token):
+    """
+    Make payment
+    """
+    echo("Make a payment for user")
+    response = config.client.payment(token)
+    return pprint(response.decode())
