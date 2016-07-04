@@ -173,12 +173,12 @@ def report(config, file_id, format_type):
 
 
 @cli.command()
-@argument('token')
+@argument('card')
 @pass_config
-def payment(config, token):
+def payment(config, card):
     """
     Make payment
     """
     echo("Make a payment for user")
-    response = config.client.payment(token)
+    response = config.client.payment(card)
     return pprint(response.decode())
