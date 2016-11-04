@@ -12,12 +12,19 @@ Version: 0.1
 Author: dhilipsiva <dhilipsiva@gmail.com>
 Date created: 2015-08-10
 """
+import logging
+
+from click import option, echo, group, make_pass_decorator, argument, File
+
+from appknox import AppknoxClient
+from pprint import pprint
+logger = logging.getLogger("appknox")
+logger.setLevel(10)
+
+
 __author__ = "dhilipsiva"
 __status__ = "development"
 
-"""
-CLI program
-"""
 
 APPKNOX = """
 .______  ._______ ._______ .____/\ .______  ._______   ____   ____
@@ -28,16 +35,6 @@ APPKNOX = """
     |___|                  |___\  /    |___|
                                 \/
 """
-
-
-import logging
-
-from click import option, echo, group, make_pass_decorator, argument, File
-
-from appknox import AppknoxClient
-from pprint import pprint
-logger = logging.getLogger("appknox")
-logger.setLevel(10)
 
 
 class Config(object):
@@ -145,6 +142,39 @@ def file_get(config, file_id):
     """
     echo("Get a file with id")
     pprint(config.client.file_get(file_id))
+
+
+@cli.command()
+@argument('file_id')
+@pass_config
+def dynamic_start(config, file_id):
+    """
+    Start dynamic scan on the file
+    """
+    echo("Starting dynamic scan for file {}".format(file_id))
+    pprint(config.client.dynamic_start(file_id))
+
+
+@cli.command()
+@argument('file_id')
+@pass_config
+def dynamic_stop(config, file_id):
+    """
+    Stop dynamic scan on the file
+    """
+    echo("Stopping dynamic scan for file {}".format(file_id))
+    pprint(config.client.dynamic_stop(file_id))
+
+
+@cli.command()
+@argument('file_id')
+@pass_config
+def dynamic_restart(config, file_id):
+    """
+    Restart dynamic scan on the file
+    """
+    echo("Restarting dynamic scan for file {}".format(file_id))
+    pprint(config.client.dynamic_restart(file_id))
 
 
 @cli.command()

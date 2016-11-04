@@ -135,6 +135,18 @@ class AppknoxClient(object):
         url = 'files/' + str(file_id)
         return self._request(requests.get, url)
 
+    def dynamic_start(self, file_id):
+        url = 'dynamic/{}'.format(str(file_id))
+        return self._request(requests.get, url)
+
+    def dynamic_stop(self, file_id):
+        url = 'dynamic_shutdown/{}'.format(str(file_id))
+        return self._request(requests.get, url)
+
+    def dynamic_restart(self, file_id):
+        self.dynamic_stop(file_id)
+        return self.dynamic_start(file_id)
+
     def analyses_list(self, file_id):
         """
         get analyses details with file id
