@@ -154,13 +154,17 @@ class AppknoxClient(object):
         url = 'files/' + str(file_id) + '/analyses'
         return self._request(requests.get, url)
 
-    def report(self, file_id, format_type):
+    def report(self, file_id, format_type, language):
         """
         get report in specified format
         """
         if format_type not in ['pdf', 'xml', 'csv', 'json']:
             raise InvalidReportTypeError("Invalid format type")
-        url = 'report/' + str(file_id) + '?format=' + format_type
+        if language not in ['en', 'ja']:
+            raise InvalidReportTypeError("Unsupported language")
+
+        url = 'report/{}?format={}&&language={}'.format(
+            str(file_id), format_type, language)
         return self._request(requests.get, url, is_json=False)
 
     def payment(self, card):
