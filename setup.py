@@ -7,16 +7,11 @@
 #
 
 """
+Python wrapper for Appknox's REST API
 File name: setup.py
 Version: 0.1
 Author: dhilipsiva <dhilipsiva@gmail.com>
 Date created: 2015-08-07
-"""
-__author__ = "dhilipsiva"
-__status__ = "development"
-
-"""
-Python wrapper for Appknox's REST API
 """
 
 from setuptools import setup, find_packages
@@ -38,7 +33,7 @@ except ImportError:
 
 setup(
     name='appknox',
-    version='0.3.1',
+    version='1.0.0',
     description="Python wrapper for Appknox's REST API",
     long_description=long_description,
     url='https://github.com/appknox/appknox-python',
