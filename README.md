@@ -24,11 +24,11 @@ to check if it is properly configured, just do `appknox validate`
 
 ***Method 2***
 
-You can aslo pass it as an option.
+You can also pass it as an option.
 
 `appknox --username YourUseranme --password YourPassword validate`
 
-Method-1 is recommended because its more clean. From this point forward, the documentation will give examples assuming you have used Method-1. You just have to pass `--username` and `--password` for `appknox` if you opt for method-2.
+Method-1 is recommended because it's more clean. From this point forward, the documentation will give examples assuming you have used Method-1. You just have to pass `--username` and `--password` for `appknox` if you opt for method-2.
 
 ### Submit a store URL
 
