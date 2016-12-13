@@ -1,4 +1,5 @@
-#! /usr/bin/env python
+# flake8: noqa
+
 # -*- coding: utf-8 -*-
 #
 # vim: fenc=utf-8
@@ -13,5 +14,7 @@ Date created: 2015-08-07
 __author__ = "dhilipsiva"
 __status__ = "development"
 
-from appknox.client import AppknoxClient  # NOQA
-from appknox.errors import AppknoxError, MissingCredentialsError, InvalidCredentialsError, ResponseError  # NOQA
+from appknox.client import AppknoxClient
+from appknox.errors import AppknoxError, MissingCredentialsError, \
+    InvalidCredentialsError, ResponseError
+import appknox.cli
