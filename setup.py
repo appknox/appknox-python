@@ -15,11 +15,12 @@ Date created: 2015-08-07
 """
 
 from setuptools import setup, find_packages
-from codecs import open
+# from codecs import open
 from os import path
 
 here = path.abspath(path.dirname(__file__))
 
+"""
 try:
     f = path.join(here, 'README.md')
     from pypandoc import convert
@@ -30,12 +31,13 @@ except ImportError:
     print(
         "pypandoc module not found, could not convert Markdown to RST")
     long_description = open(f, 'r').read()
+"""
 
 setup(
     name='appknox',
-    version='1.0.1',
+    version='1.0.2',
     description="Python wrapper for Appknox's REST API",
-    long_description=long_description,
+    long_description="Python wrapper for Appknox's REST API",
     url='https://github.com/appknox/appknox-python',
     author='dhilipsiva',
     author_email='dhilipsiva@gmail.com',
