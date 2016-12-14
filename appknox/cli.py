@@ -182,10 +182,8 @@ def analyses_list(config, file_id):
 
 @cli.command()
 @argument('file_id')
-@option('--format_type', default='json', help='Valid formats are \
-        "pdf", "csv", "xml", "json"')
-@option('--language', default='en',
-        help='Supported languages are "en", "ja"')
+@option('--format_type', default='json', help='Valid formats are json/pdf')
+@option('--language', default='en', help='Supported languages are en/ja')
 @pass_config
 def report(config, file_id, format_type, language):
     """
@@ -193,7 +191,7 @@ def report(config, file_id, format_type, language):
     """
     echo("Get file report by specifying format and file id")
     response = config.client.report(file_id, format_type, language)
-    return pprint(response.decode())
+    return pprint(response)
 
 
 @cli.command()

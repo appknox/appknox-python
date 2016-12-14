@@ -68,7 +68,7 @@ class AppknoxClient(object):
         self.api_base = "%s://%s/api" % (protocol, host)
         self.login()
 
-    def _request(self, req, endpoint, data={}, is_json=True):
+    def _request(self, req, endpoint, data={}):
         """
         Make a request
         """
@@ -80,10 +80,10 @@ class AppknoxClient(object):
             # f.write(response.content.decode())
             # f.close()
             raise ResponseError(response.content)
-        if not is_json:
-            return response.content
-        json = response.json()
-        return json
+        try:
+            return response.json()
+        except ValueError:
+            return response.content.decode()
 
     def current_user(self):
         """
@@ -173,18 +173,17 @@ class AppknoxClient(object):
         url = 'files/' + str(file_id) + '/analyses'
         return self._request(requests.get, url)
 
-    def report(self, file_id, format_type, language):
+    def report(self, file_id, format_type='json', language='en'):
         """
         get report in specified format
         """
-        if format_type not in ['pdf', 'xml', 'csv', 'json']:
+        if format_type not in ['json', 'pdf']:
             raise InvalidReportTypeError("Invalid format type")
         if language not in ['en', 'ja']:
             raise InvalidReportTypeError("Unsupported language")
-
         url = 'report/{}?format={}&&language={}'.format(
             str(file_id), format_type, language)
-        return self._request(requests.get, url, is_json=False)
+        return self._request(requests.get, url)
 
     def payment(self, card):
         data = {'card', card}
