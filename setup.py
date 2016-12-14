@@ -35,7 +35,7 @@ except ImportError:
 
 setup(
     name='appknox',
-    version='1.0.2',
+    version='1.1.0',
     description="Python wrapper for Appknox's REST API",
     long_description="Python wrapper for Appknox's REST API",
     url='https://github.com/appknox/appknox-python',
