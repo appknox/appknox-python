@@ -85,6 +85,13 @@ class AppknoxClient(object):
         json = response.json()
         return json
 
+    def current_user(self):
+        """
+        docstring for current_user
+        """
+        url = 'users/' + str(self.user)
+        return self._request(requests.get, url)
+
     def submit_url(self, store_url):
         """
         Submit a play store URL
@@ -122,7 +129,12 @@ class AppknoxClient(object):
         """
         return list of projects
         """
-        return self._request(requests.get, 'projects')
+        projects = []
+        user = self.current_user()
+        project_dicts = user['data']['relationships']['projects']['data']
+        for project_dict in project_dicts:
+            projects.append(self.project_get(project_dict['id']))
+        return projects
 
     def file_get(self, file_id):
         """
@@ -135,8 +147,12 @@ class AppknoxClient(object):
         """
         return list of files for a project
         """
-        url = 'projects/' + str(project_id) + '/files'
-        return self._request(requests.get, url)
+        files = []
+        project = self.project_get(project_id)
+        file_dicts = project['data']['relationships']['files']['data']
+        for file_dict in file_dicts:
+            files.append(self.file_get(file_dict['id']))
+        return files
 
     def dynamic_start(self, file_id):
         url = 'dynamic/{}'.format(str(file_id))

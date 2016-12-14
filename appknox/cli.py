@@ -68,6 +68,7 @@ def validate(config):
     """
     Validate if credentials are correct!
     """
+    pprint(config.client.current_user())
     echo("Your credentials are valid!")
 
 
