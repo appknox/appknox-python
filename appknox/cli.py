@@ -93,16 +93,6 @@ def upload(config, file):
 
 
 @cli.command()
-@pass_config
-def project_list(config):
-    """
-    Get a list of your projects
-    """
-    echo("Get list of your projects")
-    pprint(config.client.project_list())
-
-
-@cli.command()
 @argument('project_id')
 @pass_config
 def project_get(config, project_id):
@@ -113,25 +103,14 @@ def project_get(config, project_id):
     pprint(config.client.project_get(project_id))
 
 
-"""
 @cli.command()
-@argument('project_id')
 @pass_config
-def project_delete(config, project_id):
-    echo("Delete a particular project with id")
-    pprint(config.client.project_delete(project_id))
-"""
-
-
-@cli.command()
-@argument('project_id')
-@pass_config
-def file_list(config, project_id):
+def project_list(config):
     """
-    Get list of files for a project with id
+    Get a list of your projects
     """
-    echo("Get list of files for a project with id")
-    pprint(config.client.file_list(project_id))
+    echo("Get list of your projects")
+    pprint(config.client.project_list())
 
 
 @cli.command()
@@ -143,6 +122,17 @@ def file_get(config, file_id):
     """
     echo("Get a file with id")
     pprint(config.client.file_get(file_id))
+
+
+@cli.command()
+@argument('project_id')
+@pass_config
+def file_list(config, project_id):
+    """
+    Get list of files for a project with id
+    """
+    echo("Get list of files for a project with id")
+    pprint(config.client.file_list(project_id))
 
 
 @cli.command()

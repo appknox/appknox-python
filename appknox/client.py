@@ -111,12 +111,6 @@ class AppknoxClient(object):
             url, data=data, auth=(self.user, self.token))
         return response.json()
 
-    def project_list(self):
-        """
-        return list of projects
-        """
-        return self._request(requests.get, 'projects')
-
     def project_get(self, project_id):
         """
         get project details with project id
@@ -124,18 +118,24 @@ class AppknoxClient(object):
         url = 'projects/' + str(project_id)
         return self._request(requests.get, url)
 
-    def file_list(self, project_id):
+    def project_list(self):
         """
-        return list of files for a project
+        return list of projects
         """
-        url = 'projects/' + str(project_id) + '/files'
-        return self._request(requests.get, url)
+        return self._request(requests.get, 'projects')
 
     def file_get(self, file_id):
         """
         get file details with file id
         """
         url = 'files/' + str(file_id)
+        return self._request(requests.get, url)
+
+    def file_list(self, project_id):
+        """
+        return list of files for a project
+        """
+        url = 'projects/' + str(project_id) + '/files'
         return self._request(requests.get, url)
 
     def dynamic_start(self, file_id):
