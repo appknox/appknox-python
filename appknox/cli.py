@@ -16,7 +16,7 @@ import logging
 
 from click import option, echo, group, make_pass_decorator, argument, File
 
-from appknox import AppknoxClient
+from appknox import AppknoxClient, DEFAULT_APPKNOX_URL
 from pprint import pprint
 logger = logging.getLogger("appknox")
 logger.setLevel(10)
@@ -41,6 +41,7 @@ class Config(object):
     def __init__(self):
         self.client = None
 
+
 pass_config = make_pass_decorator(Config, ensure=True)
 
 
@@ -48,7 +49,7 @@ pass_config = make_pass_decorator(Config, ensure=True)
 @option('--username', envvar='APPKNOX_USERNAME', help="Username")
 @option('--password', envvar='APPKNOX_PASSWORD', help="Password")
 @option('--level', default=10, help="Log Level")
-@option('--host', default='beta.appknox.com', help="Set Host")
+@option('--host', default=DEFAULT_APPKNOX_URL, help="Set Host")
 @option('--secure/--no-secure', default=True)
 @pass_config
 def cli(config, username, password, level, host, secure):

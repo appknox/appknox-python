@@ -23,6 +23,8 @@ FORMAT = '%(asctime)-15s %(message)s'
 logging.basicConfig(format=FORMAT)
 logger = logging.getLogger("appknox")
 
+DEFAULT_APPKNOX_URL = "api.appknox.com"
+
 
 class AppknoxClient(object):
     """
@@ -48,7 +50,7 @@ class AppknoxClient(object):
 
     def __init__(
             self, username=None, password=None, api_key=None,
-            host="api.appknox.com", secure=True, auto_login=True):
+            host=DEFAULT_APPKNOX_URL, secure=True, auto_login=True):
         if username and password:
             self.basic_auth = True
             self._username = username
