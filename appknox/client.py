@@ -46,7 +46,8 @@ class AppknoxClient(object):
         if not json['success']:
             raise InvalidCredentialsError
         self.token = json['token']
-        self.user_id = json['user']
+        self.user = str(json['user'])
+        print(json)
 
     def __init__(
             self, username=None, password=None, api_key=None,
@@ -73,7 +74,7 @@ class AppknoxClient(object):
         """
         url = "%s/%s" % (self.api_base, endpoint)
         logger.debug('Making a request: %s', url)
-        response = req(url, data=data, auth=(self.user_id, self.token))
+        response = req(url, data=data, auth=(self.user, self.token))
         if response.status_code > 299 or response.status_code < 200:
             # f = open("error.html", "w")
             # f.write(response.content.decode())
@@ -107,7 +108,7 @@ class AppknoxClient(object):
         }
         url = "%s/uploaded_file" % self.api_base
         response = requests.post(
-            url, data=data, auth=(self.user_id, self.token))
+            url, data=data, auth=(self.user, self.token))
         return response.json()
 
     def project_list(self):
