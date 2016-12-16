@@ -188,3 +188,7 @@ class AppknoxClient(object):
     def payment(self, card):
         data = {'card', card}
         return self._request(requests.post, 'stripe_payment', data)
+
+    def vulnerability(self, vulnerability_id, language='en'):
+        url = 'vulnerabilities/' + str(vulnerability_id)
+        return self._request(requests.get, url)

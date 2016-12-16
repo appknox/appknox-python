@@ -204,3 +204,16 @@ def payment(config, card):
     echo("Make a payment for user")
     response = config.client.payment(card)
     return pprint(response.decode())
+
+
+@cli.command()
+@argument('vulnerability_id')
+@option('--language', default='en', help='Supported languages are en/ja')
+@pass_config
+def vulnerability(config, vulnerability_id, language):
+    """
+    Get report with format_type and file_id
+    """
+    echo("Get file report by specifying format and file id")
+    response = config.client.vulnerability(vulnerability_id, language)
+    return pprint(response)
