@@ -13,6 +13,7 @@ Date created: 2016-03-22
 """
 
 import logging
+import sys
 
 import requests
 
@@ -41,7 +42,11 @@ class AppknoxClient(object):
             'password': self._password,
         }
         logger.debug('Logging In: %s', login_url)
-        response = requests.post(login_url, data=data)
+        try:
+            response = requests.post(login_url, data=data)
+        except requests.exceptions.ConnectionError:
+            print('Unable to connect to server. Please try after sometime.')
+            sys.exit(0)
         json = response.json()
         if not json['success']:
             raise InvalidCredentialsError
