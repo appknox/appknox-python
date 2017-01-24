@@ -130,16 +130,12 @@ class AppknoxClient(object):
         url = 'projects/' + str(project_id)
         return self._request(requests.get, url)
 
-    def project_list(self):
+    def project_list(self, limit, offset):
         """
         return list of projects
         """
-        projects = []
-        user = self.current_user()
-        project_dicts = user['data']['relationships']['projects']['data']
-        for project_dict in project_dicts:
-            projects.append(self.project_get(project_dict['id']))
-        return projects
+        url = 'projects?limit=%s&offset=%s' % (limit, offset)
+        return self._request(requests.get, url)
 
     def file_get(self, file_id):
         """

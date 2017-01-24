@@ -105,13 +105,15 @@ def project_get(config, project_id):
 
 
 @cli.command()
+@option('--limit', default=10, help="Limit of projects to retrieve")
+@option('--offset', default=0, help="Project offset")
 @pass_config
-def project_list(config):
+def project_list(config, limit, offset):
     """
     Get a list of your projects
     """
     echo("Get list of your projects")
-    pprint(config.client.project_list())
+    pprint(config.client.project_list(limit, offset))
 
 
 @cli.command()
