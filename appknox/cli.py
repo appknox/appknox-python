@@ -128,14 +128,16 @@ def file_get(config, file_id):
 
 
 @cli.command()
+@option('--limit', default=10, help="Limit of files to retrieve")
+@option('--offset', default=0, help="File offset")
 @argument('project_id')
 @pass_config
-def file_list(config, project_id):
+def file_list(config, project_id, limit, offset):
     """
     Get list of files for a project with id
     """
     echo("Get list of files for a project with id")
-    pprint(config.client.file_list(project_id))
+    pprint(config.client.file_list(project_id, limit, offset))
 
 
 @cli.command()
