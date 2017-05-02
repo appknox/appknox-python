@@ -144,16 +144,13 @@ class AppknoxClient(object):
         url = 'files/' + str(file_id)
         return self._request(requests.get, url)
 
-    def file_list(self, project_id):
+    def file_list(self, project_id, limit, offset):
         """
         return list of files for a project
         """
-        files = []
-        project = self.project_get(project_id)
-        file_dicts = project['data']['relationships']['files']['data']
-        for file_dict in file_dicts:
-            files.append(self.file_get(file_dict['id']))
-        return files
+        url = 'files?projectId=%s&limit=%s&offset=%s' % (
+            project_id, limit, offset)
+        return self._request(requests.get, url)
 
     def dynamic_start(self, file_id):
         url = 'dynamic/{}'.format(str(file_id))
