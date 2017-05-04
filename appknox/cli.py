@@ -108,10 +108,10 @@ def project_get(config, project_id):
 
 
 @cli.command()
-@option('--limit', default=DEFAULT_LIMIT,
-        help="Limit of projects to retrieve")
-@option('--offset', default=DEFAULT_OFFSET,
-        help="Project offset")
+@option(
+    '--limit', default=DEFAULT_LIMIT, help="Limit of projects to retrieve")
+@option(
+    '--offset', default=DEFAULT_OFFSET, help="Project offset")
 @pass_config
 def project_list(config, limit, offset):
     """
@@ -133,10 +133,10 @@ def file_get(config, file_id):
 
 
 @cli.command()
-@option('--limit', default=DEFAULT_LIMIT,
-        help="Limit of files to retrieve")
-@option('--offset', default=DEFAULT_OFFSET,
-        help="File offset")
+@option(
+    '--limit', default=DEFAULT_LIMIT, help="Limit of files to retrieve")
+@option(
+    '--offset', default=DEFAULT_OFFSET, help="File offset")
 @argument('project_id')
 @pass_config
 def file_list(config, project_id, limit, offset):
@@ -193,10 +193,12 @@ def analyses_list(config, file_id):
 
 @cli.command()
 @argument('file_id')
-@option('--format_type', default=DEFAULT_REPORT_FORMAT,
-        help='Valid formats are json/pdf')
-@option('--language', default=DEFAULT_REPORT_LANGUAGE,
-        help='Supported languages are en/ja')
+@option(
+    '--format_type', default=DEFAULT_REPORT_FORMAT,
+    help='Valid formats are json/pdf')
+@option(
+    '--language', default=DEFAULT_REPORT_LANGUAGE,
+    help='Supported languages are en/ja')
 @pass_config
 def report(config, file_id, format_type, language):
     """
@@ -221,8 +223,9 @@ def payment(config, card):
 
 @cli.command()
 @argument('vulnerability_id')
-@option('--language', default=DEFAULT_VULNERABILITY_LANGUAGE,
-        help='Supported languages are en/ja')
+@option(
+    '--language', default=DEFAULT_VULNERABILITY_LANGUAGE,
+    help='Supported languages are en/ja')
 @pass_config
 def vulnerability(config, vulnerability_id, language):
     """

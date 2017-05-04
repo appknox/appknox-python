@@ -132,8 +132,8 @@ class AppknoxClient(object):
         url = 'projects/' + str(project_id)
         return self._request(requests.get, url)
 
-    def project_list(self, limit=DEFAULT_LIMIT,
-                     offset=DEFAULT_OFFSET):
+    def project_list(
+            self, limit=DEFAULT_LIMIT, offset=DEFAULT_OFFSET):
         """
         return list of projects
         """
@@ -147,8 +147,8 @@ class AppknoxClient(object):
         url = 'files/' + str(file_id)
         return self._request(requests.get, url)
 
-    def file_list(self, project_id, limit=DEFAULT_LIMIT,
-                  offset=DEFAULT_OFFSET):
+    def file_list(
+            self, project_id, limit=DEFAULT_LIMIT, offset=DEFAULT_OFFSET):
         """
         return list of files for a project
         """
@@ -175,8 +175,9 @@ class AppknoxClient(object):
         url = 'files/' + str(file_id)
         return self._request(requests.get, url)
 
-    def report(self, file_id, format_type=DEFAULT_REPORT_FORMAT,
-               language=DEFAULT_REPORT_LANGUAGE):
+    def report(
+            self, file_id, format_type=DEFAULT_REPORT_FORMAT,
+            language=DEFAULT_REPORT_LANGUAGE):
         """
         get report in specified format
         """
@@ -192,7 +193,7 @@ class AppknoxClient(object):
         data = {'card', card}
         return self._request(requests.post, 'stripe_payment', data)
 
-    def vulnerability(self, vulnerability_id,
-                      language=DEFAULT_VULNERABILITY_LANGUAGE):
+    def vulnerability(
+            self, vulnerability_id, language=DEFAULT_VULNERABILITY_LANGUAGE):
         url = 'vulnerabilities/' + str(vulnerability_id)
         return self._request(requests.get, url)
