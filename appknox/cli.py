@@ -17,9 +17,9 @@ import logging
 from click import option, echo, group, make_pass_decorator, argument, File
 
 from appknox import AppknoxClient, DEFAULT_VULNERABILITY_LANGUAGE, \
-    DEFAULT_APPKNOX_URL, DEFAULT_PROJECT_LIMIT, DEFAULT_REPORT_LANGUAGE, \
-    DEFAULT_PROJECT_OFFSET, DEFAULT_FILE_LIMIT, DEFAULT_FILE_OFFSET, \
-    DEFAULT_REPORT_FORMAT, DEFAULT_LOG_LEVEL, DEFAULT_SECURE_CONNECTION
+    DEFAULT_APPKNOX_URL, DEFAULT_LIMIT, DEFAULT_REPORT_LANGUAGE, \
+    DEFAULT_OFFSET, DEFAULT_REPORT_FORMAT, DEFAULT_LOG_LEVEL, \
+    DEFAULT_SECURE_CONNECTION
 from pprint import pprint
 logger = logging.getLogger("appknox")
 logger.setLevel(10)
@@ -108,9 +108,9 @@ def project_get(config, project_id):
 
 
 @cli.command()
-@option('--limit', default=DEFAULT_PROJECT_LIMIT,
+@option('--limit', default=DEFAULT_LIMIT,
         help="Limit of projects to retrieve")
-@option('--offset', default=DEFAULT_PROJECT_OFFSET,
+@option('--offset', default=DEFAULT_OFFSET,
         help="Project offset")
 @pass_config
 def project_list(config, limit, offset):
@@ -133,9 +133,9 @@ def file_get(config, file_id):
 
 
 @cli.command()
-@option('--limit', default=DEFAULT_FILE_LIMIT,
+@option('--limit', default=DEFAULT_LIMIT,
         help="Limit of files to retrieve")
-@option('--offset', default=DEFAULT_FILE_OFFSET,
+@option('--offset', default=DEFAULT_OFFSET,
         help="File offset")
 @argument('project_id')
 @pass_config

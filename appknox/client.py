@@ -20,9 +20,8 @@ import requests
 from appknox.errors import MissingCredentialsError, InvalidCredentialsError, \
     ResponseError, InvalidReportTypeError
 from appknox.constants import DEFAULT_VULNERABILITY_LANGUAGE, \
-    DEFAULT_APPKNOX_URL, DEFAULT_PROJECT_LIMIT, DEFAULT_REPORT_LANGUAGE, \
-    DEFAULT_PROJECT_OFFSET, DEFAULT_FILE_LIMIT, DEFAULT_FILE_OFFSET, \
-    DEFAULT_REPORT_FORMAT, DEFAULT_SECURE_CONNECTION
+    DEFAULT_APPKNOX_URL, DEFAULT_REPORT_LANGUAGE, DEFAULT_OFFSET, \
+    DEFAULT_LIMIT, DEFAULT_REPORT_FORMAT, DEFAULT_SECURE_CONNECTION
 
 FORMAT = '%(asctime)-15s %(message)s'
 logging.basicConfig(format=FORMAT)
@@ -133,8 +132,8 @@ class AppknoxClient(object):
         url = 'projects/' + str(project_id)
         return self._request(requests.get, url)
 
-    def project_list(self, limit=DEFAULT_PROJECT_LIMIT,
-                     offset=DEFAULT_PROJECT_OFFSET):
+    def project_list(self, limit=DEFAULT_LIMIT,
+                     offset=DEFAULT_OFFSET):
         """
         return list of projects
         """
@@ -148,8 +147,8 @@ class AppknoxClient(object):
         url = 'files/' + str(file_id)
         return self._request(requests.get, url)
 
-    def file_list(self, project_id, limit=DEFAULT_FILE_LIMIT,
-                  offset=DEFAULT_FILE_OFFSET):
+    def file_list(self, project_id, limit=DEFAULT_LIMIT,
+                  offset=DEFAULT_OFFSET):
         """
         return list of files for a project
         """
