@@ -16,7 +16,10 @@ import logging
 
 from click import option, echo, group, make_pass_decorator, argument, File
 
-from appknox import AppknoxClient, DEFAULT_APPKNOX_URL
+from appknox import AppknoxClient, DEFAULT_VULNERABILITY_LANGUAGE, \
+    DEFAULT_APPKNOX_URL, DEFAULT_PROJECT_LIMIT, DEFAULT_REPORT_LANGUAGE, \
+    DEFAULT_PROJECT_OFFSET, DEFAULT_FILE_LIMIT, DEFAULT_FILE_OFFSET, \
+    DEFAULT_REPORT_FORMAT, DEFAULT_LOG_LEVEL, DEFAULT_SECURE_CONNECTION
 from pprint import pprint
 logger = logging.getLogger("appknox")
 logger.setLevel(10)
@@ -48,9 +51,9 @@ pass_config = make_pass_decorator(Config, ensure=True)
 @group()
 @option('--username', envvar='APPKNOX_USERNAME', help="Username")
 @option('--password', envvar='APPKNOX_PASSWORD', help="Password")
-@option('--level', default=10, help="Log Level")
+@option('--level', default=DEFAULT_LOG_LEVEL, help="Log Level")
 @option('--host', default=DEFAULT_APPKNOX_URL, help="Set Host")
-@option('--secure/--no-secure', default=True)
+@option('--secure/--no-secure', default=DEFAULT_SECURE_CONNECTION)
 @pass_config
 def cli(config, username, password, level, host, secure):
     """
@@ -105,8 +108,10 @@ def project_get(config, project_id):
 
 
 @cli.command()
-@option('--limit', default=10, help="Limit of projects to retrieve")
-@option('--offset', default=0, help="Project offset")
+@option('--limit', default=DEFAULT_PROJECT_LIMIT,
+        help="Limit of projects to retrieve")
+@option('--offset', default=DEFAULT_PROJECT_OFFSET,
+        help="Project offset")
 @pass_config
 def project_list(config, limit, offset):
     """
@@ -128,8 +133,10 @@ def file_get(config, file_id):
 
 
 @cli.command()
-@option('--limit', default=10, help="Limit of files to retrieve")
-@option('--offset', default=0, help="File offset")
+@option('--limit', default=DEFAULT_FILE_LIMIT,
+        help="Limit of files to retrieve")
+@option('--offset', default=DEFAULT_FILE_OFFSET,
+        help="File offset")
 @argument('project_id')
 @pass_config
 def file_list(config, project_id, limit, offset):
@@ -186,8 +193,10 @@ def analyses_list(config, file_id):
 
 @cli.command()
 @argument('file_id')
-@option('--format_type', default='json', help='Valid formats are json/pdf')
-@option('--language', default='en', help='Supported languages are en/ja')
+@option('--format_type', default=DEFAULT_REPORT_FORMAT,
+        help='Valid formats are json/pdf')
+@option('--language', default=DEFAULT_REPORT_LANGUAGE,
+        help='Supported languages are en/ja')
 @pass_config
 def report(config, file_id, format_type, language):
     """
@@ -212,7 +221,8 @@ def payment(config, card):
 
 @cli.command()
 @argument('vulnerability_id')
-@option('--language', default='en', help='Supported languages are en/ja')
+@option('--language', default=DEFAULT_VULNERABILITY_LANGUAGE,
+        help='Supported languages are en/ja')
 @pass_config
 def vulnerability(config, vulnerability_id, language):
     """
