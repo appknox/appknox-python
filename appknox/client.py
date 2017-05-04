@@ -19,12 +19,14 @@ import requests
 
 from appknox.errors import MissingCredentialsError, InvalidCredentialsError, \
     ResponseError, InvalidReportTypeError
+from appknox.constants import DEFAULT_VULNERABILITY_LANGUAGE, \
+    DEFAULT_APPKNOX_URL, DEFAULT_PROJECT_LIMIT, DEFAULT_REPORT_LANGUAGE, \
+    DEFAULT_PROJECT_OFFSET, DEFAULT_FILE_LIMIT, DEFAULT_FILE_OFFSET, \
+    DEFAULT_REPORT_FORMAT, DEFAULT_SECURE_CONNECTION
 
 FORMAT = '%(asctime)-15s %(message)s'
 logging.basicConfig(format=FORMAT)
 logger = logging.getLogger("appknox")
-
-DEFAULT_APPKNOX_URL = "api.appknox.com"
 
 
 class AppknoxClient(object):
@@ -56,7 +58,8 @@ class AppknoxClient(object):
 
     def __init__(
             self, username=None, password=None, api_key=None,
-            host=DEFAULT_APPKNOX_URL, secure=True, auto_login=True):
+            host=DEFAULT_APPKNOX_URL, secure=DEFAULT_SECURE_CONNECTION,
+            auto_login=True):
         if username and password:
             self.basic_auth = True
             self._username = username
@@ -130,7 +133,8 @@ class AppknoxClient(object):
         url = 'projects/' + str(project_id)
         return self._request(requests.get, url)
 
-    def project_list(self, limit, offset):
+    def project_list(self, limit=DEFAULT_PROJECT_LIMIT,
+                     offset=DEFAULT_PROJECT_OFFSET):
         """
         return list of projects
         """
@@ -144,7 +148,8 @@ class AppknoxClient(object):
         url = 'files/' + str(file_id)
         return self._request(requests.get, url)
 
-    def file_list(self, project_id, limit, offset):
+    def file_list(self, project_id, limit=DEFAULT_FILE_LIMIT,
+                  offset=DEFAULT_FILE_OFFSET):
         """
         return list of files for a project
         """
@@ -171,7 +176,8 @@ class AppknoxClient(object):
         url = 'files/' + str(file_id)
         return self._request(requests.get, url)
 
-    def report(self, file_id, format_type='json', language='en'):
+    def report(self, file_id, format_type=DEFAULT_REPORT_FORMAT,
+               language=DEFAULT_REPORT_LANGUAGE):
         """
         get report in specified format
         """
@@ -187,6 +193,7 @@ class AppknoxClient(object):
         data = {'card', card}
         return self._request(requests.post, 'stripe_payment', data)
 
-    def vulnerability(self, vulnerability_id, language='en'):
+    def vulnerability(self, vulnerability_id,
+                      language=DEFAULT_VULNERABILITY_LANGUAGE):
         url = 'vulnerabilities/' + str(vulnerability_id)
         return self._request(requests.get, url)
