@@ -168,7 +168,7 @@ class AppknoxClient(object):
         """
         get analyses details with file id
         """
-        url = 'files/' + str(file_id) + '/analyses'
+        url = 'files/' + str(file_id)
         return self._request(requests.get, url)
 
     def report(self, file_id, format_type='json', language='en'):
