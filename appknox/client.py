@@ -1,30 +1,18 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-# vim: fenc=utf-8
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
-#
-#
-
-"""
-File name: appknox.py
-Author: dhilipsiva <dhilipsiva@gmail.com>
-Date created: 2016-03-22
-"""
-
 import logging
 import sys
+from urllib.parse import urlencode
 
 import requests
 
 from appknox.errors import MissingCredentialsError, InvalidCredentialsError, \
     ResponseError, InvalidReportTypeError
+from appknox.constants import DEFAULT_VULNERABILITY_LANGUAGE, \
+    DEFAULT_APPKNOX_URL, DEFAULT_REPORT_LANGUAGE, DEFAULT_OFFSET, \
+    DEFAULT_LIMIT, DEFAULT_REPORT_FORMAT, DEFAULT_SECURE_CONNECTION
 
 FORMAT = '%(asctime)-15s %(message)s'
 logging.basicConfig(format=FORMAT)
 logger = logging.getLogger("appknox")
-
-DEFAULT_APPKNOX_URL = "api.appknox.com"
 
 
 class AppknoxClient(object):
@@ -56,7 +44,8 @@ class AppknoxClient(object):
 
     def __init__(
             self, username=None, password=None, api_key=None,
-            host=DEFAULT_APPKNOX_URL, secure=True, auto_login=True):
+            host=DEFAULT_APPKNOX_URL, secure=DEFAULT_SECURE_CONNECTION,
+            auto_login=True):
         if username and password:
             self.basic_auth = True
             self._username = username
@@ -130,11 +119,13 @@ class AppknoxClient(object):
         url = 'projects/' + str(project_id)
         return self._request(requests.get, url)
 
-    def project_list(self, limit, offset):
+    def project_list(
+            self, limit=DEFAULT_LIMIT, offset=DEFAULT_OFFSET):
         """
         return list of projects
         """
-        url = 'projects?limit=%s&offset=%s' % (limit, offset)
+        params = {'limit': limit, 'offset': offset}
+        url = 'projects?%s' % (urlencode(params))
         return self._request(requests.get, url)
 
     def file_get(self, file_id):
@@ -144,16 +135,14 @@ class AppknoxClient(object):
         url = 'files/' + str(file_id)
         return self._request(requests.get, url)
 
-    def file_list(self, project_id):
+    def file_list(
+            self, project_id, limit=DEFAULT_LIMIT, offset=DEFAULT_OFFSET):
         """
         return list of files for a project
         """
-        files = []
-        project = self.project_get(project_id)
-        file_dicts = project['data']['relationships']['files']['data']
-        for file_dict in file_dicts:
-            files.append(self.file_get(file_dict['id']))
-        return files
+        params = {'projectId': project_id, 'offset': offset, 'limit': limit}
+        url = 'files?%s' % (urlencode(params))
+        return self._request(requests.get, url)
 
     def dynamic_start(self, file_id):
         url = 'dynamic/{}'.format(str(file_id))
@@ -171,10 +160,12 @@ class AppknoxClient(object):
         """
         get analyses details with file id
         """
-        url = 'files/' + str(file_id) + '/analyses'
+        url = 'files/' + str(file_id)
         return self._request(requests.get, url)
 
-    def report(self, file_id, format_type='json', language='en'):
+    def report(
+            self, file_id, format_type=DEFAULT_REPORT_FORMAT,
+            language=DEFAULT_REPORT_LANGUAGE):
         """
         get report in specified format
         """
@@ -182,14 +173,16 @@ class AppknoxClient(object):
             raise InvalidReportTypeError("Invalid format type")
         if language not in ['en', 'ja']:
             raise InvalidReportTypeError("Unsupported language")
-        url = 'report/{}?format={}&&language={}'.format(
-            str(file_id), format_type, language)
+
+        params = {'format': format_type, 'language': language}
+        url = 'report/%s?%s' % (str(file_id), urlencode(params))
         return self._request(requests.get, url)
 
     def payment(self, card):
         data = {'card', card}
         return self._request(requests.post, 'stripe_payment', data)
 
-    def vulnerability(self, vulnerability_id, language='en'):
+    def vulnerability(
+            self, vulnerability_id, language=DEFAULT_VULNERABILITY_LANGUAGE):
         url = 'vulnerabilities/' + str(vulnerability_id)
         return self._request(requests.get, url)
