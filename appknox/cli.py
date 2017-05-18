@@ -1,17 +1,3 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-# vim: fenc=utf-8
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
-#
-#
-
-"""
-File name: cli.py
-Version: 0.1
-Author: dhilipsiva <dhilipsiva@gmail.com>
-Date created: 2015-08-10
-"""
 import logging
 
 from click import option, echo, group, make_pass_decorator, argument, File
