@@ -1,19 +1,6 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-# vim: fenc=utf-8
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
-#
-#
-
-"""
-File name: appknox.py
-Author: dhilipsiva <dhilipsiva@gmail.com>
-Date created: 2016-03-22
-"""
-
 import logging
 import sys
+from urllib.parse import urlencode
 
 import requests
 
@@ -137,7 +124,8 @@ class AppknoxClient(object):
         """
         return list of projects
         """
-        url = 'projects?limit=%s&offset=%s' % (limit, offset)
+        params = {'limit': limit, 'offset': offset}
+        url = 'projects?%s' % (urlencode(params))
         return self._request(requests.get, url)
 
     def file_get(self, file_id):
@@ -152,8 +140,8 @@ class AppknoxClient(object):
         """
         return list of files for a project
         """
-        url = 'files?projectId=%s&limit=%s&offset=%s' % (
-            project_id, limit, offset)
+        params = {'projectId': project_id, 'offset': offset, 'limit': limit}
+        url = 'files?%s' % (urlencode(params))
         return self._request(requests.get, url)
 
     def dynamic_start(self, file_id):
@@ -185,8 +173,9 @@ class AppknoxClient(object):
             raise InvalidReportTypeError("Invalid format type")
         if language not in ['en', 'ja']:
             raise InvalidReportTypeError("Unsupported language")
-        url = 'report/{}?format={}&&language={}'.format(
-            str(file_id), format_type, language)
+
+        params = {'format': format_type, 'language': language}
+        url = 'report/%s?%s' % (str(file_id), urlencode(params))
         return self._request(requests.get, url)
 
     def payment(self, card):
