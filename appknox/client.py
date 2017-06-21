@@ -8,7 +8,7 @@ from appknox.errors import MissingCredentialsError, InvalidCredentialsError, \
     ResponseError, InvalidReportTypeError
 from appknox.constants import DEFAULT_VULNERABILITY_LANGUAGE, \
     DEFAULT_APPKNOX_URL, DEFAULT_REPORT_LANGUAGE, DEFAULT_OFFSET, \
-    DEFAULT_LIMIT, DEFAULT_REPORT_FORMAT, DEFAULT_SECURE_CONNECTION
+    DEFAULT_LIMIT, DEFAULT_REPORT_FORMAT
 
 FORMAT = '%(asctime)-15s %(message)s'
 logging.basicConfig(format=FORMAT)
@@ -29,23 +29,21 @@ class AppknoxClient(object):
             'username': self._username,
             'password': self._password,
         }
-        logger.debug('Logging In: %s', login_url)
+        logger.debug('Logging in: %s', login_url)
         try:
             response = requests.post(login_url, data=data)
         except requests.exceptions.ConnectionError:
-            print('Unable to connect to server. Please try after sometime.')
+            logger.error('Unable to connect to server')
             sys.exit(0)
         json = response.json()
         if not json['success']:
             raise InvalidCredentialsError
         self.token = json['token']
         self.user = str(json['user'])
-        print(json)
 
     def __init__(
             self, username=None, password=None, api_key=None,
-            host=DEFAULT_APPKNOX_URL, secure=DEFAULT_SECURE_CONNECTION,
-            auto_login=True):
+            host=DEFAULT_APPKNOX_URL, auto_login=True):
         if username and password:
             self.basic_auth = True
             self._username = username
@@ -56,10 +54,7 @@ class AppknoxClient(object):
         #     self.api_key = api_key
         else:
             raise MissingCredentialsError
-        protocol = 'http'
-        if secure:
-            protocol += 's'
-        self.api_base = "%s://%s/api" % (protocol, host)
+        self.api_base = '{}/api'.format(host)
         self.login()
 
     def _request(self, req, endpoint, data={}):
@@ -102,7 +97,6 @@ class AppknoxClient(object):
         url = json['url']
         logger.info('Please wait while uploading file..: %s', url)
         response = requests.put(url, data=_file.read())
-        # print(response.content, response.status_code)
         data = {
             "file_key": json['file_key'],
             "file_key_signed": json['file_key_signed'],

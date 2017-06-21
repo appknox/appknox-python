@@ -4,8 +4,7 @@ from click import option, echo, group, make_pass_decorator, argument, File
 
 from appknox import AppknoxClient, DEFAULT_VULNERABILITY_LANGUAGE, \
     DEFAULT_APPKNOX_URL, DEFAULT_LIMIT, DEFAULT_REPORT_LANGUAGE, \
-    DEFAULT_OFFSET, DEFAULT_REPORT_FORMAT, DEFAULT_LOG_LEVEL, \
-    DEFAULT_SECURE_CONNECTION
+    DEFAULT_OFFSET, DEFAULT_REPORT_FORMAT, DEFAULT_LOG_LEVEL
 from pprint import pprint
 logger = logging.getLogger("appknox")
 logger.setLevel(10)
@@ -37,28 +36,27 @@ pass_config = make_pass_decorator(Config, ensure=True)
 @group()
 @option('--username', envvar='APPKNOX_USERNAME', help="Username")
 @option('--password', envvar='APPKNOX_PASSWORD', help="Password")
-@option('--level', default=DEFAULT_LOG_LEVEL, help="Log Level")
-@option('--host', default=DEFAULT_APPKNOX_URL, help="Set Host")
-@option('--secure/--no-secure', default=DEFAULT_SECURE_CONNECTION)
+@option('--level', default=DEFAULT_LOG_LEVEL, help="Log level")
+@option('--host', default=DEFAULT_APPKNOX_URL, help="API host")
 @pass_config
-def cli(config, username, password, level, host, secure):
+def cli(config, username, password, level, host):
     """
-    Command line tool For Appknox's REST API
+    Command line wrapper for the Appknox API
     """
     echo(APPKNOX)
     logger.setLevel(level)
     config.client = AppknoxClient(
-        username=username, password=password, host=host, secure=secure)
+        username=username, password=password, host=host)
 
 
 @cli.command()
 @pass_config
 def validate(config):
     """
-    Validate if credentials are correct!
+    Validate if credentials are correct
     """
     pprint(config.client.current_user())
-    echo("Your credentials are valid!")
+    echo("Credentials are valid")
 
 
 @cli.command()
@@ -66,9 +64,9 @@ def validate(config):
 @pass_config
 def submit_url(config, url):
     """
-    Submit store urls!
+    Submit app by store URL
     """
-    echo("Submitting Store URL")
+    echo("Submitting store URL")
     config.client.submit_url(url)
 
 
@@ -77,7 +75,7 @@ def submit_url(config, url):
 @pass_config
 def upload(config, file):
     """
-    Upload a file!
+    Submit app by uploading file
     """
     config.client.upload_file(file)
 
@@ -87,9 +85,9 @@ def upload(config, file):
 @pass_config
 def project_get(config, project_id):
     """
-    Get a particular project with id
+    Get project by ID
     """
-    echo("Get a particular project with id")
+    echo("Get project by ID")
     pprint(config.client.project_get(project_id))
 
 
@@ -101,9 +99,9 @@ def project_get(config, project_id):
 @pass_config
 def project_list(config, limit, offset):
     """
-    Get a list of your projects
+    Get list of projects
     """
-    echo("Get list of your projects")
+    echo("Get list of projects")
     pprint(config.client.project_list(limit, offset))
 
 
@@ -112,9 +110,9 @@ def project_list(config, limit, offset):
 @pass_config
 def file_get(config, file_id):
     """
-    Get a file with id
+    Get file by ID
     """
-    echo("Get a file with id")
+    echo("Get file by ID")
     pprint(config.client.file_get(file_id))
 
 
@@ -127,9 +125,9 @@ def file_get(config, file_id):
 @pass_config
 def file_list(config, project_id, limit, offset):
     """
-    Get list of files for a project with id
+    Get list of files for a project with ID
     """
-    echo("Get list of files for a project with id")
+    echo("Get list of files for a project with ID")
     pprint(config.client.file_list(project_id, limit, offset))
 
 
@@ -138,7 +136,7 @@ def file_list(config, project_id, limit, offset):
 @pass_config
 def dynamic_start(config, file_id):
     """
-    Start dynamic scan on the file
+    Start dynamic scan for file
     """
     echo("Starting dynamic scan for file {}".format(file_id))
     pprint(config.client.dynamic_start(file_id))
@@ -149,7 +147,7 @@ def dynamic_start(config, file_id):
 @pass_config
 def dynamic_stop(config, file_id):
     """
-    Stop dynamic scan on the file
+    Stop dynamic scan for file
     """
     echo("Stopping dynamic scan for file {}".format(file_id))
     pprint(config.client.dynamic_stop(file_id))
@@ -160,7 +158,7 @@ def dynamic_stop(config, file_id):
 @pass_config
 def dynamic_restart(config, file_id):
     """
-    Restart dynamic scan on the file
+    Restart dynamic scan for file
     """
     echo("Restarting dynamic scan for file {}".format(file_id))
     pprint(config.client.dynamic_restart(file_id))
@@ -171,9 +169,9 @@ def dynamic_restart(config, file_id):
 @pass_config
 def analyses_list(config, file_id):
     """
-    Get analyses for a file with id
+    Get analyses by file ID
     """
-    echo("Get analyses for a file with id")
+    echo("Get analyses by file ID")
     pprint(config.client.analyses_list(file_id))
 
 
@@ -190,7 +188,7 @@ def report(config, file_id, format_type, language):
     """
     Get report with format_type and file_id
     """
-    echo("Get file report by specifying format and file id")
+    echo("Get file report by specifying format and file ID")
     response = config.client.report(file_id, format_type, language)
     return pprint(response)
 
@@ -217,6 +215,6 @@ def vulnerability(config, vulnerability_id, language):
     """
     Get report with format_type and file_id
     """
-    echo("Get file report by specifying format and file id")
+    echo("Get file report by specifying format and file ID")
     response = config.client.vulnerability(vulnerability_id, language)
     return pprint(response)
