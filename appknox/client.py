@@ -22,9 +22,9 @@ class AppknoxClient(object):
 
     def login(self):
         """
-        Login and Get token
+        Login and get token
         """
-        login_url = "%s/token/new.json" % self.api_base
+        login_url = "%s/login" % self.api_base
         data = {
             'username': self._username,
             'password': self._password,
@@ -35,11 +35,15 @@ class AppknoxClient(object):
         except requests.exceptions.ConnectionError:
             logger.error('Unable to connect to server')
             sys.exit(0)
+        if response.status_code == 401:
+            otp = int(input('MFA enabled. Enter OTP: '))
+            data['otp'] = otp
+            response = requests.post(login_url, data=data)
         json = response.json()
-        if not json['success']:
+        if not response.status_code == 200:
             raise InvalidCredentialsError
         self.token = json['token']
-        self.user = str(json['user'])
+        self.user = str(json['user_id'])
 
     def __init__(
             self, username=None, password=None, api_key=None,

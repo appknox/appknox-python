@@ -1,3 +1,4 @@
+import base64
 import logging
 
 from click import option, echo, group, make_pass_decorator, argument, File
@@ -6,6 +7,7 @@ from appknox import AppknoxClient, DEFAULT_VULNERABILITY_LANGUAGE, \
     DEFAULT_APPKNOX_URL, DEFAULT_LIMIT, DEFAULT_REPORT_LANGUAGE, \
     DEFAULT_OFFSET, DEFAULT_REPORT_FORMAT, DEFAULT_LOG_LEVEL
 from pprint import pprint
+
 logger = logging.getLogger("appknox")
 logger.setLevel(10)
 
@@ -56,6 +58,10 @@ def validate(config):
     Validate if credentials are correct
     """
     pprint(config.client.current_user())
+    pprint(dict(user_id=config.client.user,
+                token=config.client.token,
+                base64_token=base64.b64encode('{}:{}'.format(
+                    config.client.user, config.client.token).encode('ascii'))))
     echo("Credentials are valid")
 
 
