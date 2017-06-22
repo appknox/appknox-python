@@ -24,6 +24,20 @@ class InvalidCredentialsError(AppknoxError):
             'Username or/and password is invalid')
 
 
+class NotLoggedInError(AppknoxError):
+
+    def __init__(self):
+        super(NotLoggedInError, self).__init__(
+            'Not logged in')
+
+
+class OTPRequiredError(AppknoxError):
+
+    def __init__(self):
+        super(OTPRequiredError, self).__init__(
+            'One-time password is required')
+
+
 class ResponseError(AppknoxError):
 
     def __init__(self, message):

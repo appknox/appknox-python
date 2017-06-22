@@ -1,7 +1,6 @@
 # (c) 2015-2017, XYSec Labs
 
-DEFAULT_APPKNOX_URL = "https://api.appknox.com"
-DEFAULT_LOG_LEVEL = 10
+DEFAULT_API_HOST = 'https://api.appknox.com'
 
 DEFAULT_LIMIT = 10
 DEFAULT_OFFSET = 0
