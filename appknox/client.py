@@ -1,61 +1,46 @@
-import configparser
 import logging
-import os
 import requests
-import sys
 
 from urllib.parse import urlencode, urljoin
 
-from appknox.exceptions import MissingCredentialsError, InvalidCredentialsError, \
-    ResponseError, InvalidReportTypeError, NotLoggedInError, OTPRequiredError, \
-    NotLoggedInError
+from appknox.exceptions import OTPRequiredError, MissingCredentialsError, \
+    InvalidCredentialsError, ResponseError, InvalidReportTypeError
 from appknox.defaults import DEFAULT_VULNERABILITY_LANGUAGE, \
     DEFAULT_API_HOST, DEFAULT_REPORT_LANGUAGE, DEFAULT_OFFSET, \
-    DEFAULT_LIMIT, DEFAULT_REPORT_FORMAT, DEFAULT_SESSION_PATH
+    DEFAULT_LIMIT, DEFAULT_REPORT_FORMAT
 
 
 class AppknoxClient(object):
-    def __init__(self, username=None, password=None, host=DEFAULT_API_HOST,
-                 persist=False, log_level=logging.INFO):
+    def __init__(self, username=None, password=None, user_id=None, token=None,
+                 host=DEFAULT_API_HOST, log_level=logging.INFO):
         """
         :param username: Username
         :type username: str
         :param password: Password
         :type password: str
+        :param user_id:
+        :type user_id: int
+        :param token:
+        :type token: str
         :param host: API host
         :type host: str
-        :param persist: Load locally saved session credentials
-        :type persist: bool
         """
-        self.host = host
         logging.basicConfig(level=log_level)
 
-        if persist:
-            if username or password:
-                logging.warn('Ignoring username/password and loading local '
-                            'session')
-            config = configparser.ConfigParser()
-            if config.read(os.path.expanduser('~/.config/appknox.ini')):
-                self.user_id = config['DEFAULT']['user_id']
-                self.username = config['DEFAULT']['username']
-                self.token = config['DEFAULT']['token']
-                self.host = config['DEFAULT']['host']
-                return
-            else:
-                raise NotLoggedInError
-        else:
-            if not username or not password:
-                raise MissingCredentialsError
-            self.username = username
-            self.password = password
+        self.host = host
+        self.username = username
+        self.password = password
+        self.user_id = user_id
+        self.token = token
 
-    def login(self, otp=None, persist=False):
+    def login(self, otp=None):
         """
         :param otp: One-time password, if account has MFA enabled
         :type otp: int
-        :param persist: Save session credentials locally
-        :type persist: bool
         """
+
+        if not self.username or not self.password:
+            raise MissingCredentialsError
 
         login_url = '{}/api/login'.format(self.host)
         data = {
@@ -70,27 +55,13 @@ class AppknoxClient(object):
         response = requests.post(login_url, data=data)
 
         if response.status_code == 401:
-            raise OTPRequiredException
+            raise OTPRequiredError
         elif response.status_code == 403:
             raise InvalidCredentialsError
 
         json = response.json()
         self.token = json['token']
         self.user_id = str(json['user_id'])
-
-        if persist:
-            config = configparser.ConfigParser()
-            config['DEFAULT']['username'] = self.username
-            config['DEFAULT']['user_id'] = self.user_id
-            config['DEFAULT']['token'] = self.token
-            config['DEFAULT']['host'] = self.host
-            # TODO if session already exists, warn that it is overwritten
-            if os.path.isfile(DEFAULT_SESSION_PATH):
-                logging.warn('Overwriting existing local session')
-            with open(os.path.expanduser(DEFAULT_SESSION_PATH), 'w') as f:
-                config.write(f)
-                logging.debug('Session credentials written to {}'.format(
-                    DEFAULT_SESSION_PATH))
 
     def _request(self, method, endpoint, data=dict()):
         url = urljoin(urljoin(self.host, '/api/'), endpoint)

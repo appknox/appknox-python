@@ -1,5 +1,6 @@
 # (c) 2015-217, XYSec Labs
 
+
 class AppknoxError(Exception):
 
     def __init__(self, error_detail):
@@ -22,13 +23,6 @@ class InvalidCredentialsError(AppknoxError):
     def __init__(self):
         super(InvalidCredentialsError, self).__init__(
             'Username or/and password is invalid')
-
-
-class NotLoggedInError(AppknoxError):
-
-    def __init__(self):
-        super(NotLoggedInError, self).__init__(
-            'Not logged in')
 
 
 class OTPRequiredError(AppknoxError):

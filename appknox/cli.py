@@ -1,12 +1,19 @@
 # (c) 2017, XYSec Labs
 
-import base64
 import click
+import configparser
 import logging
+import os
+import requests
+import sys
 import yaml
 
+from click import echo
+from tabulate import tabulate
+
 from appknox.client import AppknoxClient
-from appknox.defaults import DEFAULT_API_HOST
+from appknox.defaults import DEFAULT_API_HOST, DEFAULT_SESSION_PATH
+from appknox.exceptions import AppknoxError
 
 
 @click.group()
@@ -23,6 +30,19 @@ def cli(ctx, verbose):
     else:
         ctx.obj['LOG_LEVEL'] = logging.WARNING
 
+    logging.basicConfig(level=ctx.obj['LOG_LEVEL'])
+
+    config = configparser.ConfigParser()
+    if config.read(os.path.expanduser(DEFAULT_SESSION_PATH)):
+        user_id = config['DEFAULT']['user_id']
+        username = config['DEFAULT']['username']
+        token = config['DEFAULT']['token']
+        host = config['DEFAULT']['host']
+
+        ctx.obj['CLIENT'] = AppknoxClient(
+            username=username, user_id=user_id, token=token, host=host,
+            log_level=ctx.obj['LOG_LEVEL'])
+
 
 @cli.command()
 @click.option('-u', '--username', prompt=True)
@@ -33,10 +53,38 @@ def login(ctx, username, password, host):
     """
     Log in to Appknox
     """
-    client = AppknoxClient(
-        username, password, host, log_level=ctx.obj['LOG_LEVEL'])
-    client.login(persist=True)
-    click.echo('Logged in to {}'.format(host))
+    ctx.obj['CLIENT'] = client = AppknoxClient(
+        username=username, password=password, host=host,
+        log_level=ctx.obj['LOG_LEVEL'])
+    try:
+        client.login()
+    except requests.exceptions.InvalidSchema as e:
+        echo(e)
+        echo('Perhaps you missed http/https?')
+        sys.exit(1)
+    except requests.exceptions.ConnectionError as e:
+        echo(e)
+        echo('Perhaps your network is down?')
+        sys.exit(1)
+    except AppknoxError as e:
+        echo(e)
+        sys.exit(1)
+
+    config = configparser.ConfigParser()
+    config['DEFAULT']['username'] = username
+    config['DEFAULT']['user_id'] = client.user_id
+    config['DEFAULT']['token'] = client.token
+    config['DEFAULT']['host'] = host
+
+    if os.path.isfile(os.path.expanduser(DEFAULT_SESSION_PATH)):
+        logging.warn('Overwriting existing local session')
+
+    with open(os.path.expanduser(DEFAULT_SESSION_PATH), 'w') as f:
+        config.write(f)
+        logging.debug('Session credentials written to {}'.format(
+            DEFAULT_SESSION_PATH))
+
+    echo('Logged in to {}'.format(host))
 
 
 @cli.command()
@@ -45,13 +93,26 @@ def whoami(ctx):
     """
     Show session info
     """
-    client = AppknoxClient(persist=True, log_level=ctx.obj['LOG_LEVEL'])
+    client = ctx.obj['CLIENT']
     data = client.current_user()
     data['session'] = {'username': client.username,
                        'user_id': client.user_id,
                        'host': client.host,
                        'token': client.token}
-    click.echo(yaml.dump(data))
+    echo(yaml.dump(data))
+
+
+@cli.command()
+@click.pass_context
+def logout(ctx):
+    """
+    Delete local session credentials
+    """
+    try:
+        os.remove(os.path.expanduser(DEFAULT_SESSION_PATH))
+    except FileNotFoundError:
+        echo('Not logged in')
+        sys.exit(1)
 
 
 @cli.command()
@@ -60,9 +121,9 @@ def project_list(ctx):
     """
     List projects
     """
-    client = AppknoxClient(persist=True, log_level=ctx.obj['LOG_LEVEL'])
+    client = ctx.obj['CLIENT']
     data = client.project_list()
-    click.echo(yaml.dump(data))
+    echo(yaml.dump(data))
 
 
 @cli.command()
@@ -81,7 +142,7 @@ def project_get(project_id):
     """
     Show project
     """
-    client = AppknoxClient(persist=True, log_level=ctx.obj['LOG_LEVEL'])
+    pass
 
 
 @cli.command()
@@ -90,7 +151,7 @@ def file_list(project_id):
     """
     List files for project
     """
-    client = AppknoxClient(persist=True, log_level=ctx.obj['LOG_LEVEL'])
+    pass
 
 
 @cli.command()
@@ -99,7 +160,6 @@ def file_get(file_id):
     """
     Show file
     """
-    client = AppknoxClient(persist=True)
     pass
 
 
@@ -109,7 +169,6 @@ def analyses_list(file_id):
     """
     List analyses for file
     """
-    client = AppknoxClient(persist=True)
     pass
 
 
@@ -119,7 +178,6 @@ def dynamic_start(file_id):
     """
     Start dynamic scan for file
     """
-    client = AppknoxClient(persist=True)
     pass
 
 
@@ -129,7 +187,6 @@ def dynamic_stop(file_id):
     """
     Stop dynamic scan for file
     """
-    client = AppknoxClient(persist=True)
     pass
 
 

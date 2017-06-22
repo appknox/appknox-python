@@ -1,7 +1,6 @@
 # (c) 2017, XYSec Labs
 
 from os import path
-from pip.req import parse_requirements
 from setuptools import setup, find_packages
 
 here = path.abspath(path.dirname(__file__))
