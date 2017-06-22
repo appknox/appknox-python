@@ -13,7 +13,8 @@ from tabulate import tabulate
 
 from appknox.client import AppknoxClient
 from appknox.defaults import DEFAULT_API_HOST, DEFAULT_SESSION_PATH
-from appknox.exceptions import AppknoxError
+from appknox.exceptions import AppknoxError, OneTimePasswordError, \
+    CredentialError
 
 
 @click.group()
@@ -51,7 +52,7 @@ def cli(ctx, verbose):
 @click.pass_context
 def login(ctx, username, password, host):
     """
-    Log in to Appknox
+    Log in and save session credentials
     """
     ctx.obj['CLIENT'] = client = AppknoxClient(
         username=username, password=password, host=host,
@@ -60,12 +61,19 @@ def login(ctx, username, password, host):
         client.login()
     except requests.exceptions.InvalidSchema as e:
         echo(e)
-        echo('Perhaps you missed http/https?')
+        echo('Perhaps you missed http/https in host?')
         sys.exit(1)
     except requests.exceptions.ConnectionError as e:
         echo(e)
         echo('Perhaps your network is down?')
         sys.exit(1)
+    except OneTimePasswordError as e:
+        otp = click.prompt('OTP', type=int)
+        try:
+            client.login(otp=otp)
+        except CredentialError as e:
+            echo(e)
+            sys.exit(1)
     except AppknoxError as e:
         echo(e)
         sys.exit(1)
@@ -94,7 +102,7 @@ def whoami(ctx):
     Show session info
     """
     client = ctx.obj['CLIENT']
-    data = client.current_user()
+    data = client.get_user(client.user_id)
     data['session'] = {'username': client.username,
                        'user_id': client.user_id,
                        'host': client.host,
@@ -106,7 +114,7 @@ def whoami(ctx):
 @click.pass_context
 def logout(ctx):
     """
-    Delete local session credentials
+    Delete session credentials
     """
     try:
         os.remove(os.path.expanduser(DEFAULT_SESSION_PATH))
@@ -122,7 +130,7 @@ def project_list(ctx):
     List projects
     """
     client = ctx.obj['CLIENT']
-    data = client.project_list()
+    data = client.list_projects()
     echo(yaml.dump(data))
 
 
