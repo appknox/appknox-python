@@ -1,4 +1,5 @@
 import configparser
+import logging
 import os
 import requests
 import sys
@@ -10,12 +11,12 @@ from appknox.exceptions import MissingCredentialsError, InvalidCredentialsError,
     NotLoggedInError
 from appknox.defaults import DEFAULT_VULNERABILITY_LANGUAGE, \
     DEFAULT_API_HOST, DEFAULT_REPORT_LANGUAGE, DEFAULT_OFFSET, \
-    DEFAULT_LIMIT, DEFAULT_REPORT_FORMAT
+    DEFAULT_LIMIT, DEFAULT_REPORT_FORMAT, DEFAULT_SESSION_PATH
 
 
 class AppknoxClient(object):
     def __init__(self, username=None, password=None, host=DEFAULT_API_HOST,
-                 persist=False):
+                 persist=False, log_level=logging.INFO):
         """
         :param username: Username
         :type username: str
@@ -27,11 +28,12 @@ class AppknoxClient(object):
         :type persist: bool
         """
         self.host = host
+        logging.basicConfig(level=log_level)
 
         if persist:
             if username or password:
-                # TODO warn that they are ignored
-                pass
+                logging.warn('Ignoring username/password and loading local '
+                            'session')
             config = configparser.ConfigParser()
             if config.read(os.path.expanduser('~/.config/appknox.ini')):
                 self.user_id = config['DEFAULT']['user_id']
@@ -64,6 +66,7 @@ class AppknoxClient(object):
         if otp:
             data['otp'] = otp
 
+        logging.debug('Request {}: {}'.format(login_url, data))
         response = requests.post(login_url, data=data)
 
         if response.status_code == 401:
@@ -82,11 +85,16 @@ class AppknoxClient(object):
             config['DEFAULT']['token'] = self.token
             config['DEFAULT']['host'] = self.host
             # TODO if session already exists, warn that it is overwritten
-            with open(os.path.expanduser('~/.config/appknox.ini'), 'w') as f:
+            if os.path.isfile(DEFAULT_SESSION_PATH):
+                logging.warn('Overwriting existing local session')
+            with open(os.path.expanduser(DEFAULT_SESSION_PATH), 'w') as f:
                 config.write(f)
+                logging.debug('Session credentials written to {}'.format(
+                    DEFAULT_SESSION_PATH))
 
     def _request(self, method, endpoint, data=dict()):
-        url = urljoin(self.host, '/api/', endpoint)
+        url = urljoin(urljoin(self.host, '/api/'), endpoint)
+        logging.debug('Request {}: {}'.format(url, data))
         response = method(url, data=data, auth=(self.user_id, self.token))
 
         if response.status_code < 200 or response.status_code > 299:
@@ -95,11 +103,11 @@ class AppknoxClient(object):
         try:
             return response.json()
         except ValueError:
+            logging.debug('Response has no valid JSON')
             return response.content.decode()
 
     def current_user(self):
         url = 'users/' + str(self.user_id)
-
         return self._request(requests.get, url)
 
     def upload_file(self, _file):

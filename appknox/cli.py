@@ -3,73 +3,75 @@
 import base64
 import click
 import logging
-
-from tabulate import tabulate
+import yaml
 
 from appknox.client import AppknoxClient
 from appknox.defaults import DEFAULT_API_HOST
 
-logger = logging.getLogger('appknox')
-
 
 @click.group()
 @click.option('-v', '--verbose', count=True, help='Specify log verbosity.')
-def cli(verbose):
+@click.pass_context
+def cli(ctx, verbose):
     """
     Command line wrapper for the Appknox API
     """
     if verbose == 1:
-        logger.setLevel(20)
-    elif verbose >= 2:
-        logger.setLevel(10)
+        ctx.obj['LOG_LEVEL'] = logging.INFO
+    elif verbose > 1:
+        ctx.obj['LOG_LEVEL'] = logging.DEBUG
     else:
-        logger.setLevel(30)
+        ctx.obj['LOG_LEVEL'] = logging.WARNING
 
 
 @cli.command()
 @click.option('-u', '--username', prompt=True)
 @click.option('-p', '--password', prompt=True, hide_input=True)
 @click.option('-h', '--host', default=DEFAULT_API_HOST)
-def login(username, password, host):
+@click.pass_context
+def login(ctx, username, password, host):
     """
     Log in to Appknox
     """
-    client = AppknoxClient(username, password, host)
+    client = AppknoxClient(
+        username, password, host, log_level=ctx.obj['LOG_LEVEL'])
     client.login(persist=True)
     click.echo('Logged in to {}'.format(host))
 
 
 @cli.command()
-def whoami():
+@click.pass_context
+def whoami(ctx):
     """
     Show session info
     """
-    client = AppknoxClient(persist=True)
-    click.echo(tabulate([
-        ['username', client.username],
-        ['user_id', client.user_id],
-        ['host', client.host],
-        ['token', client.token]
-    ]))
+    client = AppknoxClient(persist=True, log_level=ctx.obj['LOG_LEVEL'])
+    data = client.current_user()
+    data['session'] = {'username': client.username,
+                       'user_id': client.user_id,
+                       'host': client.host,
+                       'token': client.token}
+    click.echo(yaml.dump(data))
+
+
+@cli.command()
+@click.pass_context
+def project_list(ctx):
+    """
+    List projects
+    """
+    client = AppknoxClient(persist=True, log_level=ctx.obj['LOG_LEVEL'])
+    data = client.project_list()
+    click.echo(yaml.dump(data))
 
 
 @cli.command()
 @click.argument('package')
-def upload():
+@click.pass_context
+def upload(ctx):
     """
     Upload package
     """
-    client = AppknoxClient(persist=True)
-    pass
-
-
-@cli.command()
-def project_list():
-    """
-    List projects
-    """
-    client = AppknoxClient(persist=True)
-    client.project_list()
     pass
 
 
@@ -79,8 +81,7 @@ def project_get(project_id):
     """
     Show project
     """
-    client = AppknoxClient(persist=True)
-    pass
+    client = AppknoxClient(persist=True, log_level=ctx.obj['LOG_LEVEL'])
 
 
 @cli.command()
@@ -89,8 +90,7 @@ def file_list(project_id):
     """
     List files for project
     """
-    client = AppknoxClient(persist=True)
-    pass
+    client = AppknoxClient(persist=True, log_level=ctx.obj['LOG_LEVEL'])
 
 
 @cli.command()
@@ -131,3 +131,7 @@ def dynamic_stop(file_id):
     """
     client = AppknoxClient(persist=True)
     pass
+
+
+def main():
+    cli(obj=dict())

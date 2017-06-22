@@ -1,6 +1,7 @@
 # (c) 2015-2017, XYSec Labs
 
 DEFAULT_API_HOST = 'https://api.appknox.com'
+DEFAULT_SESSION_PATH = '~/.config/appknox.ini'
 
 DEFAULT_LIMIT = 10
 DEFAULT_OFFSET = 0

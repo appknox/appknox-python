@@ -32,7 +32,7 @@ setup(
     py_modules=['appknox'],
     entry_points='''
         [console_scripts]
-        appknox=appknox.cli:cli
+        appknox=appknox.cli:main
     ''',
     install_requires=install_requires,
     extras_require={
