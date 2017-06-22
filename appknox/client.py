@@ -8,7 +8,7 @@ from urllib.parse import urlencode, urljoin
 from appknox.exceptions import MissingCredentialsError, InvalidCredentialsError, \
     ResponseError, InvalidReportTypeError, NotLoggedInError, OTPRequiredError, \
     NotLoggedInError
-from appknox.constants import DEFAULT_VULNERABILITY_LANGUAGE, \
+from appknox.defaults import DEFAULT_VULNERABILITY_LANGUAGE, \
     DEFAULT_API_HOST, DEFAULT_REPORT_LANGUAGE, DEFAULT_OFFSET, \
     DEFAULT_LIMIT, DEFAULT_REPORT_FORMAT
 

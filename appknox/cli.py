@@ -7,7 +7,7 @@ import logging
 from tabulate import tabulate
 
 from appknox.client import AppknoxClient
-from appknox.constants import DEFAULT_API_HOST
+from appknox.defaults import DEFAULT_API_HOST
 
 logger = logging.getLogger('appknox')
 
