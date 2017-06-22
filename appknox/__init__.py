@@ -1,6 +1,3 @@
-__author__ = "dhilipsiva"
-__status__ = "development"
-
 from appknox.client import AppknoxClient
 from appknox.constants import DEFAULT_APPKNOX_URL, DEFAULT_LIMIT, \
     DEFAULT_OFFSET, DEFAULT_REPORT_FORMAT, DEFAULT_REPORT_LANGUAGE, \

@@ -1,4 +1,4 @@
-# Constants for appknox-python
+# (c) 2015-2017, XYSec Labs
 
 DEFAULT_APPKNOX_URL = "https://api.appknox.com"
 DEFAULT_LOG_LEVEL = 10

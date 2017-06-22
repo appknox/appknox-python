@@ -1,3 +1,5 @@
+# (c) 2017, XYSec Labs
+
 import base64
 import logging
 
@@ -10,21 +12,6 @@ from pprint import pprint
 
 logger = logging.getLogger("appknox")
 logger.setLevel(10)
-
-
-__author__ = "dhilipsiva"
-__status__ = "development"
-
-
-APPKNOX = """
-.______  ._______ ._______ .____/\ .______  ._______   ____   ____
-:      \ : ____  |: ____  |:   /  \:      \ : .___  \  \   \_/   /
-|   .   ||    :  ||    :  ||.  ___/|       || :   |  |  \___ ___/
-|   :   ||   |___||   |___||     \ |   |   ||     :  |  /   _   \\
-|___|   ||___|    |___|    |      \|___|   | \______/  /___/ \___\\
-    |___|                  |___\  /    |___|
-                                \/
-"""
 
 
 class Config(object):
@@ -45,7 +32,6 @@ def cli(config, username, password, level, host):
     """
     Command line wrapper for the Appknox API
     """
-    echo(APPKNOX)
     logger.setLevel(level)
     config.client = AppknoxClient(
         username=username, password=password, host=host)
