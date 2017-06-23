@@ -7,14 +7,29 @@ import os
 import requests
 import slumber
 import sys
+import tabulate
 
 from click import echo
-from tabulate import tabulate
 
 from appknox.client import AppknoxClient
 from appknox.defaults import DEFAULT_API_HOST, DEFAULT_SESSION_PATH
 from appknox.exceptions import AppknoxError, OneTimePasswordError, \
     CredentialError
+from appknox.mapper import Analysis, File, Project, User
+
+
+def table(model, instances):
+    columns = model._fields
+    rows = list()
+
+    if type(instances) is not list:
+        instances = [instances]
+
+    for instance in instances:
+        row = [instance.__getattribute__(_) for _ in columns]
+        rows.append(row)
+
+    return tabulate.tabulate(rows, headers=columns)
 
 
 @click.group()
@@ -43,6 +58,10 @@ def cli(ctx, verbose):
         ctx.obj['CLIENT'] = AppknoxClient(
             username=username, user_id=user_id, token=token, host=host,
             log_level=ctx.obj['LOG_LEVEL'])
+    else:
+        if ctx.invoked_subcommand not in ['login', 'logout']:
+            echo('Not logged in')
+            sys.exit(1)
 
 
 @cli.command()
@@ -103,7 +122,7 @@ def whoami(ctx):
     """
     client = ctx.obj['CLIENT']
     data = client.get_user(client.user_id)
-    echo(data)
+    echo(table(User, data))
 
 
 @cli.command()
@@ -126,7 +145,7 @@ def project_list(ctx):
     List projects
     """
     client = ctx.obj['CLIENT']
-    echo(client.list_projects())
+    echo(table(Project, client.list_projects()))
 
 
 @cli.command()
@@ -134,10 +153,10 @@ def project_list(ctx):
 @click.pass_context
 def project_get(ctx, project_id):
     """
-    Show project
+    Show details for a project
     """
     client = ctx.obj['CLIENT']
-    echo(client.get_project(project_id))
+    echo(table(Project, client.get_project(project_id)))
 
 
 @cli.command()
@@ -148,7 +167,7 @@ def file_list(ctx, project_id):
     List files for project
     """
     client = ctx.obj['CLIENT']
-    echo(client.list_files(project_id))
+    echo(table(File, client.list_files(project_id)))
 
 
 @cli.command()
@@ -156,7 +175,7 @@ def file_list(ctx, project_id):
 @click.pass_context
 def file_get(ctx, file_id):
     """
-    Show file
+    Show details for a file
     """
     client = ctx.obj['CLIENT']
     try:
@@ -164,7 +183,7 @@ def file_get(ctx, file_id):
     except slumber.exceptions.HttpNotFoundError as e:
         echo(e)
         sys.exit(1)
-    echo(data)
+    echo(table(File, data))
 
 
 @cli.command()
@@ -172,7 +191,7 @@ def file_get(ctx, file_id):
 @click.pass_context
 def upload(ctx, path):
     """
-    Upload package
+    Upload and scan package
     """
     client = ctx.obj['CLIENT']
     try:
@@ -191,7 +210,7 @@ def analyses_list(ctx, file_id):
     List analyses for file
     """
     client = ctx.obj['CLIENT']
-    echo(client.list_analyses(file_id))
+    echo(table(Analysis, client.list_analyses(file_id)))
 
 
 @cli.command()
