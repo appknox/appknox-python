@@ -1,5 +1,6 @@
 import logging
 import requests
+import slumber
 
 from urllib.parse import urlencode, urljoin
 
@@ -32,6 +33,10 @@ class AppknoxClient(object):
         self.password = password
         self.user_id = user_id
         self.token = token
+        self.endpoint = urljoin(self.host, 'api/')
+
+        self.api = slumber.API(self.endpoint, auth=(self.user_id, self.token),
+                               append_slash=False)
 
     def login(self, otp=None):
         """
@@ -42,7 +47,6 @@ class AppknoxClient(object):
         if not self.username or not self.password:
             raise CredentialError('Both username and password are required')
 
-        login_url = '{}/api/login'.format(self.host)
         data = {
             'username': self.username,
             'password': self.password,
@@ -51,8 +55,7 @@ class AppknoxClient(object):
         if otp:
             data['otp'] = str(otp)
 
-        logging.debug('Request {}: {}'.format(login_url, data))
-        response = requests.post(login_url, data=data)
+        response = requests.post(urljoin(self.host, 'api/login/'), data=data)
 
         if response.status_code == 401:
             raise OneTimePasswordError(response.json()['message'])
@@ -63,30 +66,26 @@ class AppknoxClient(object):
         self.token = json['token']
         self.user_id = str(json['user_id'])
 
-    def _request(self, method, endpoint, data=dict()):
-        url = urljoin(urljoin(self.host, '/api/'), endpoint)
-        logging.debug('Request {}: {}'.format(url, data))
-        response = method(url, data=data, auth=(self.user_id, self.token))
-
-        if response.status_code < 200 or response.status_code > 299:
-            raise ResponseError(response.content)
-
-        try:
-            return response.json()
-        except ValueError:
-            logging.debug('Response has no valid JSON')
-            return response.content.decode()
-
     def get_user(self, user_id):
-        url = 'users/{}'.format(user_id)
-        response = self._request(requests.get, url)
+        return self.api.users(user_id).get()
 
-        return response
+    def get_project(self, project_id):
+        return self.api.projects(project_id).get()
+
+    def list_projects(self):
+        return self.api.projects().get(limit=-1)
+
+    def get_file(self, file_id):
+        pass
+
+    def list_files(self, project_id):
+        pass
 
     def upload_file(self, _file):
-        url = 'signed_url'
         data = {'content_type': 'application/octet-stream'}
-        response = self._request(requests.get, url, data)
+        response = self.api.signed_url.get(data)
+        print(response)
+        return
 
         url = response['url']
         data=_file.read()
@@ -100,23 +99,6 @@ class AppknoxClient(object):
 
         return response
 
-    def get_project(self, project_id):
-        url = 'projects/{}'.format(project_id)
-        response = self._request(requests.get, url)
-
-        return response
-
-    def list_projects(self):
-        url = 'projects'
-        response = self._request(requests.get, url)
-
-        return response
-
-    def get_file(self, file_id):
-        pass
-
-    def list_files(self, project_id):
-        pass
 
     def start_dynamic(self, file_id):
         pass

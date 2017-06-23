@@ -135,27 +135,20 @@ def project_list(ctx):
 
 
 @cli.command()
-@click.argument('package')
-@click.pass_context
-def upload(ctx):
-    """
-    Upload package
-    """
-    pass
-
-
-@cli.command()
 @click.argument('project_id')
-def project_get(project_id):
+@click.pass_context
+def project_get(ctx, project_id):
     """
     Show project
     """
-    pass
+    client = ctx.obj['CLIENT']
+    echo(client.get_project(project_id))
 
 
 @cli.command()
 @click.argument('project_id')
-def file_list(project_id):
+@click.pass_context
+def file_list(ctx, project_id):
     """
     List files for project
     """
@@ -164,9 +157,20 @@ def file_list(project_id):
 
 @cli.command()
 @click.argument('file_id')
-def file_get(file_id):
+@click.pass_context
+def file_get(ctx, file_id):
     """
     Show file
+    """
+    pass
+
+
+@cli.command()
+@click.argument('package')
+@click.pass_context
+def upload(ctx):
+    """
+    Upload package
     """
     pass
 
