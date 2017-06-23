@@ -5,8 +5,8 @@ import configparser
 import logging
 import os
 import requests
+import slumber
 import sys
-import yaml
 
 from click import echo
 from tabulate import tabulate
@@ -103,11 +103,7 @@ def whoami(ctx):
     """
     client = ctx.obj['CLIENT']
     data = client.get_user(client.user_id)
-    data['session'] = {'username': client.username,
-                       'user_id': client.user_id,
-                       'host': client.host,
-                       'token': client.token}
-    echo(yaml.dump(data))
+    echo(data)
 
 
 @cli.command()
@@ -130,8 +126,7 @@ def project_list(ctx):
     List projects
     """
     client = ctx.obj['CLIENT']
-    data = client.list_projects()
-    echo(yaml.dump(data))
+    echo(client.list_projects())
 
 
 @cli.command()
@@ -152,7 +147,8 @@ def file_list(ctx, project_id):
     """
     List files for project
     """
-    pass
+    client = ctx.obj['CLIENT']
+    echo(client.list_files(project_id))
 
 
 @cli.command()
@@ -162,7 +158,13 @@ def file_get(ctx, file_id):
     """
     Show file
     """
-    pass
+    client = ctx.obj['CLIENT']
+    try:
+        data = client.get_file(file_id)
+    except slumber.exceptions.HttpNotFoundError as e:
+        echo(e)
+        sys.exit(1)
+    echo(data)
 
 
 @cli.command()

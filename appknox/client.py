@@ -1,14 +1,16 @@
+# (c) 2017, XYSec Labs
+
 import logging
 import requests
 import slumber
 
-from urllib.parse import urlencode, urljoin
+from urllib.parse import urljoin
 
 from appknox.exceptions import OneTimePasswordError, CredentialError, \
-    ResponseError, InvalidReportTypeError
+    ResponseError
 from appknox.defaults import DEFAULT_VULNERABILITY_LANGUAGE, \
-    DEFAULT_API_HOST, DEFAULT_REPORT_LANGUAGE, DEFAULT_OFFSET, \
-    DEFAULT_LIMIT, DEFAULT_REPORT_FORMAT
+    DEFAULT_API_HOST, DEFAULT_REPORT_LANGUAGE, DEFAULT_REPORT_FORMAT
+from appknox.mapper import mapper, Analysis, File, Project, User
 
 
 class AppknoxClient(object):
@@ -67,28 +69,36 @@ class AppknoxClient(object):
         self.user_id = str(json['user_id'])
 
     def get_user(self, user_id):
-        return self.api.users(user_id).get()
+        user = self.api.users(user_id).get()
+
+        return mapper(User, user)
 
     def get_project(self, project_id):
-        return self.api.projects(project_id).get()
+        project = self.api.projects(project_id).get()
+
+        return mapper(Project, project)
 
     def list_projects(self):
-        return self.api.projects().get(limit=-1)
+        projects = self.api.projects().get(limit=-1)
+
+        return [mapper(Project, dict(data=_)) for _ in projects['data']]
 
     def get_file(self, file_id):
-        pass
+        file_ = self.api.files(file_id).get()
+
+        return mapper(File, file_)
 
     def list_files(self, project_id):
-        pass
+        files = self.api.files().get(projectId=project_id, limit=-1)
+        
+        return [mapper(File, dict(data=_)) for _ in files['data']]
 
-    def upload_file(self, _file):
+    def upload_file(self, file_):
         data = {'content_type': 'application/octet-stream'}
         response = self.api.signed_url.get(data)
-        print(response)
-        return
 
         url = response['url']
-        data=_file.read()
+        data=file_.read()
         response = requests.put(url, data=data)
 
         url = 'uploaded_file'
