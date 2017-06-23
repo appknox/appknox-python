@@ -31,7 +31,8 @@ User = namedtuple(
 
 Project = namedtuple(
     'Project',
-    ['id', 'created_on', 'file_count', 'package_name', 'platform', 'updated_on']
+    ['id', 'created_on', 'file_count', 'package_name', 'platform',
+     'updated_on']
 )
 
 File = namedtuple(

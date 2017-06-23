@@ -7,7 +7,7 @@ import slumber
 from urllib.parse import urljoin
 
 from appknox.exceptions import OneTimePasswordError, CredentialError, \
-    ResponseError
+    AppknoxError
 from appknox.defaults import DEFAULT_VULNERABILITY_LANGUAGE, \
     DEFAULT_API_HOST, DEFAULT_REPORT_LANGUAGE, DEFAULT_REPORT_FORMAT
 from appknox.mapper import mapper, Analysis, File, Project, User
@@ -42,6 +42,8 @@ class AppknoxClient(object):
 
     def login(self, otp=None):
         """
+        Authenticate client with server
+
         :param otp: One-time password, if account has MFA enabled
         :type otp: int
         """
@@ -57,67 +59,141 @@ class AppknoxClient(object):
         if otp:
             data['otp'] = str(otp)
 
-        response = requests.post(urljoin(self.host, 'api/login/'), data=data)
+        response = requests.post(urljoin(self.host, 'api/login'), data=data)
 
         if response.status_code == 401:
             raise OneTimePasswordError(response.json()['message'])
         elif response.status_code == 403:
             raise CredentialError(response.json()['message'])
+        elif response.status_code != 200:
+            raise AppknoxError('Unknown error')
 
         json = response.json()
         self.token = json['token']
         self.user_id = str(json['user_id'])
 
     def get_user(self, user_id):
+        """
+        Fetch user details by user ID
+
+        :param user_id:
+        :type user_id:
+        :return:
+        :rtype:
+        """
         user = self.api.users(user_id).get()
 
         return mapper(User, user)
 
     def get_project(self, project_id):
+        """
+        Fetch project details by project ID
+
+        :param project_id:
+        :type project_id:
+        :return:
+        :rtype:
+        """
         project = self.api.projects(project_id).get()
 
         return mapper(Project, project)
 
     def list_projects(self):
+        """
+        List projects for currently authenticated user
+
+        :return:
+        :rtype:
+        """
         projects = self.api.projects().get(limit=-1)
 
         return [mapper(Project, dict(data=_)) for _ in projects['data']]
 
     def get_file(self, file_id):
+        """
+        Fetch file details by file ID
+
+        :param file_id:
+        :type file_id:
+        :return:
+        :rtype:
+        """
         file_ = self.api.files(file_id).get()
 
         return mapper(File, file_)
 
     def list_files(self, project_id):
+        """
+        List files in project
+
+        :param project_id:
+        :type project_id:
+        :return:
+        :rtype:
+        """
         files = self.api.files().get(projectId=project_id, limit=-1)
-        
+
         return [mapper(File, dict(data=_)) for _ in files['data']]
 
-    def upload_file(self, file_):
-        data = {'content_type': 'application/octet-stream'}
-        response = self.api.signed_url.get(data)
+    def list_analyses(self, file_id):
+        """
+        List analyses for file
+
+        :param file_id:
+        :type file_id:
+        :return:
+        :rtype:
+        """
+        raise NotImplementedError()
+
+    def upload_file(self, file):
+        """
+        Upload and scan a file
+
+        :param file:
+        :type file:
+        """
+        response = self.api.signed_url.get(
+            content_type='application/octet-stream')
 
         url = response['url']
-        data=file_.read()
-        response = requests.put(url, data=data)
+        data = file.read()
+        requests.put(url, data=data)
 
-        url = 'uploaded_file'
-        data = {
-            'file_key': json['file_key'],
-            'file_key_signed': json['file_key_signed']}
-        response = self._request(requests.post, url, data=data, auth=(self.user_id, self.token))
-
-        return response
-
+        requests.post(
+            urljoin(self.host, 'api/uploaded_file'),
+            auth=(self.user_id, self.token),
+            data=dict(
+                file_key=response['file_key'],
+                file_key_signed=response['file_key_signed']))
 
     def start_dynamic(self, file_id):
-        pass
+        """
+        Start dynamic scan for a file
+
+        :param file_id:
+        :type file_id:
+        """
+        self.api.dynamic(file_id).get()
 
     def stop_dynamic(self, file_id):
-        pass
+        """
+        Terminate dynamic scan for a file
 
-    def list_analyses(self, file_id):
-        pass
+        :param file_id: file ID
+        :type file_id: int
+        """
+        self.api.dynamic_shutdown(file_id).get()
 
-    def get_report(self, file_id):
-        pass
+    def get_report(self, file_id, format):
+        """
+        Fetch analyses report for a file
+
+        :param file_id: file ID
+        :param format:
+        :type file_id: int
+        :type format: str
+        :return:
+        :rtype:
+        """
+        raise NotImplementedError()

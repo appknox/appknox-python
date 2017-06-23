@@ -168,40 +168,52 @@ def file_get(ctx, file_id):
 
 
 @cli.command()
-@click.argument('package')
+@click.argument('path')
 @click.pass_context
-def upload(ctx):
+def upload(ctx, path):
     """
     Upload package
     """
-    pass
+    client = ctx.obj['CLIENT']
+    try:
+        file_ = open(path, 'rb')
+    except FileNotFoundError as e:
+        echo(e)
+        sys.exit(1)
+    client.upload_file(file_)
 
 
 @cli.command()
 @click.argument('file_id')
-def analyses_list(file_id):
+@click.pass_context
+def analyses_list(ctx, file_id):
     """
     List analyses for file
     """
-    pass
+    client = ctx.obj['CLIENT']
+    echo(client.list_analyses(file_id))
 
 
 @cli.command()
 @click.argument('file_id')
-def dynamic_start(file_id):
+@click.pass_context
+def dynamic_start(ctx, file_id):
     """
     Start dynamic scan for file
     """
-    pass
+    client = ctx.obj['CLIENT']
+    client.start_dynamic(file_id)
 
 
 @cli.command()
 @click.argument('file_id')
-def dynamic_stop(file_id):
+@click.pass_context
+def dynamic_stop(ctx, file_id):
     """
     Stop dynamic scan for file
     """
-    pass
+    client = ctx.obj['CLIENT']
+    client.stop_dynamic(file_id)
 
 
 def main():
