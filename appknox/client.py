@@ -14,6 +14,10 @@ from appknox.mapper import mapper, Analysis, File, Project, User
 
 
 class AppknoxClient(object):
+    """
+
+    """
+
     def __init__(self, username=None, password=None, user_id=None, token=None,
                  host=DEFAULT_API_HOST, log_level=logging.INFO):
         """
@@ -98,7 +102,7 @@ class AppknoxClient(object):
 
         return mapper(Project, project)
 
-    def list_projects(self):
+    def get_projects(self):
         """
         List projects for currently authenticated user
 
@@ -122,7 +126,7 @@ class AppknoxClient(object):
 
         return mapper(File, file_)
 
-    def list_files(self, project_id):
+    def get_files(self, project_id):
         """
         List files in project
 
@@ -135,7 +139,7 @@ class AppknoxClient(object):
 
         return [mapper(File, dict(data=_)) for _ in files['data']]
 
-    def list_analyses(self, file_id):
+    def get_analyses(self, file_id):
         """
         List analyses for file
 

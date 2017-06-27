@@ -145,18 +145,7 @@ def project_list(ctx):
     List projects
     """
     client = ctx.obj['CLIENT']
-    echo(table(Project, client.list_projects()))
-
-
-@cli.command()
-@click.argument('project_id')
-@click.pass_context
-def project_get(ctx, project_id):
-    """
-    Show details for a project
-    """
-    client = ctx.obj['CLIENT']
-    echo(table(Project, client.get_project(project_id)))
+    echo(table(Project, client.get_projects()))
 
 
 @cli.command()
@@ -167,23 +156,7 @@ def file_list(ctx, project_id):
     List files for project
     """
     client = ctx.obj['CLIENT']
-    echo(table(File, client.list_files(project_id)))
-
-
-@cli.command()
-@click.argument('file_id')
-@click.pass_context
-def file_get(ctx, file_id):
-    """
-    Show details for a file
-    """
-    client = ctx.obj['CLIENT']
-    try:
-        data = client.get_file(file_id)
-    except slumber.exceptions.HttpNotFoundError as e:
-        echo(e)
-        sys.exit(1)
-    echo(table(File, data))
+    echo(table(File, client.get_files(project_id)))
 
 
 @cli.command()
@@ -210,7 +183,7 @@ def analyses_list(ctx, file_id):
     List analyses for file
     """
     client = ctx.obj['CLIENT']
-    echo(table(Analysis, client.list_analyses(file_id)))
+    echo(table(Analysis, client.get_analyses(file_id)))
 
 
 @cli.command()

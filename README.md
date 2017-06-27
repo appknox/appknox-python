@@ -15,6 +15,18 @@ CLI tool & Python wrapper for Appknox API
 
 ## Library
 
+```py
+from appknox import AppknoxClient
+
+# Create an AppknoxClient instance and login
+appknox_client = AppknoxClient(**credentials)
+appknox_client.login()
+
+# Fetch all projects
+appknox_client.projects()
+```
+
+
 ---
 
 License: MIT

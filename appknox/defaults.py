@@ -3,9 +3,6 @@
 DEFAULT_API_HOST = 'https://api.appknox.com'
 DEFAULT_SESSION_PATH = '~/.config/appknox.ini'
 
-DEFAULT_LIMIT = 10
-DEFAULT_OFFSET = 0
-
 DEFAULT_REPORT_FORMAT = 'json'
 DEFAULT_REPORT_LANGUAGE = 'en'
 
