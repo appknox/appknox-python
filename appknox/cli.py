@@ -5,21 +5,31 @@ import configparser
 import logging
 import os
 import requests
-import slumber
 import sys
 import tabulate
 
 from click import echo
 
-from appknox.client import AppknoxClient
+from appknox.client import Appknox
 from appknox.defaults import DEFAULT_API_HOST, DEFAULT_SESSION_PATH
 from appknox.exceptions import AppknoxError, OneTimePasswordError, \
     CredentialError
-from appknox.mapper import Analysis, File, Project, User
+from appknox.mapper import Analysis, File, Project, User, Vulnerability
 
 
-def table(model, instances):
-    columns = model._fields
+def table(model, instances, ignore=list()):
+    """
+    Helper for tabulating data
+
+    :param model: Model defined in `appknox.mapper`
+    :param instances: Instance(s) to be tabulated
+    :param ignore: Fields to be hidden in table
+    """
+    columns = list()
+    for field in model._fields:
+        if field not in ignore:
+            columns.append(field)
+
     rows = list()
 
     if type(instances) is not list:
@@ -55,7 +65,7 @@ def cli(ctx, verbose):
         token = config['DEFAULT']['token']
         host = config['DEFAULT']['host']
 
-        ctx.obj['CLIENT'] = AppknoxClient(
+        ctx.obj['CLIENT'] = Appknox(
             username=username, user_id=user_id, token=token, host=host,
             log_level=ctx.obj['LOG_LEVEL'])
     else:
@@ -73,7 +83,7 @@ def login(ctx, username, password, host):
     """
     Log in and save session credentials
     """
-    ctx.obj['CLIENT'] = client = AppknoxClient(
+    ctx.obj['CLIENT'] = client = Appknox(
         username=username, password=password, host=host,
         log_level=ctx.obj['LOG_LEVEL'])
     try:
@@ -140,7 +150,7 @@ def logout(ctx):
 
 @cli.command()
 @click.pass_context
-def project_list(ctx):
+def projects(ctx):
     """
     List projects
     """
@@ -151,7 +161,7 @@ def project_list(ctx):
 @cli.command()
 @click.argument('project_id')
 @click.pass_context
-def file_list(ctx, project_id):
+def files(ctx, project_id):
     """
     List files for project
     """
@@ -178,12 +188,23 @@ def upload(ctx, path):
 @cli.command()
 @click.argument('file_id')
 @click.pass_context
-def analyses_list(ctx, file_id):
+def analyses(ctx, file_id):
     """
     List analyses for file
     """
     client = ctx.obj['CLIENT']
-    echo(table(Analysis, client.get_analyses(file_id)))
+    echo(table(Analysis, client.get_analyses(file_id), ignore=['findings']))
+
+
+@cli.command()
+@click.argument('vulnerability_id')
+@click.pass_context
+def vulnerability(ctx, vulnerability_id):
+    """
+    Get a vulnerability
+    """
+    client = ctx.obj['CLIENT']
+    echo(table(Vulnerability, client.get_vulnerability(vulnerability_id)))
 
 
 @cli.command()

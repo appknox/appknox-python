@@ -19,8 +19,8 @@ def mapper(model: type, resource: dict) -> object:
         if field == 'id':
             attr[field] = resource['data']['id']
         else:
-            attr[field] = resource['data']['attributes'].get(
-                field.replace('_', '-'), None)
+            attr[field] = resource['data']['attributes'][
+                field.replace('_', '-')]
     return model(**attr)
 
 
