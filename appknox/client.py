@@ -10,7 +10,7 @@ from appknox.exceptions import OneTimePasswordError, CredentialError, \
     AppknoxError
 from appknox.defaults import DEFAULT_VULNERABILITY_LANGUAGE, \
     DEFAULT_API_HOST, DEFAULT_REPORT_LANGUAGE, DEFAULT_REPORT_FORMAT
-from appknox.mapper import mapper, Analysis, File, Project, User
+from appknox.mapper import mapper, Analysis, File, Project, User, Vulnerability
 
 
 class AppknoxClient(object):
@@ -148,7 +148,34 @@ class AppknoxClient(object):
         :return:
         :rtype:
         """
-        raise NotImplementedError()
+        out = list()
+
+        file_ = self.api.files(file_id).get()
+        analyses = file_['data']['relationships']['analyses']['data']
+        for analysis_id in analyses:
+            analysis = self.api.analyses(analysis_id['id']).get()
+
+            vulnerability_id = analysis['data']['relationships']\
+                ['vulnerability']['data']['id']
+            analysis['data']['attributes']['vulnerability_id'] = \
+                vulnerability_id
+
+            analysis_obj = mapper(Analysis, analysis)
+            out.append(analysis_obj)
+        return out
+
+    def get_vulnerability(self, vulnerability_id):
+        """
+        Get vulnerability by ID
+
+        :param vulnerability_id:
+        :type vulnerability_id: int
+        :return:
+        :rtype:
+        """
+        vulnerability = self.api.vulnerability(vulnerability_id).get()
+
+        return mapper(Vulnerability, vulnerability)
 
     def upload_file(self, file):
         """

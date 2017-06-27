@@ -19,8 +19,8 @@ def mapper(model: type, resource: dict) -> object:
         if field == 'id':
             attr[field] = resource['data']['id']
         else:
-            attr[field] = \
-                resource['data']['attributes'][field.replace('_', '-')]
+            attr[field] = resource['data']['attributes'].get(
+                field.replace('_', '-'), None)
     return model(**attr)
 
 
@@ -42,5 +42,11 @@ File = namedtuple(
 
 Analysis = namedtuple(
     'Analysis',
-    ['id', 'risk', 'status', 'cvss_base', 'findings']
+    ['id', 'risk', 'status', 'cvss_base', 'findings', 'updated_on',
+     'vulnerability_id']
+)
+
+Vulnerability = namedtuple(
+    'Vulnerability',
+    ['name', 'description', 'intro', 'compliant', 'non_compliant']
 )
