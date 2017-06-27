@@ -10,11 +10,12 @@ import tabulate
 
 from click import echo
 
-from appknox.client import Appknox
-from appknox.defaults import DEFAULT_API_HOST, DEFAULT_SESSION_PATH
+from appknox.client import Appknox, DEFAULT_API_HOST
 from appknox.exceptions import AppknoxError, OneTimePasswordError, \
-    CredentialError
+    CredentialError, ReportError
 from appknox.mapper import Analysis, File, Project, User, Vulnerability
+
+DEFAULT_SESSION_PATH = '~/.config/appknox.ini'
 
 
 def table(model, instances, ignore=list()):
@@ -201,10 +202,29 @@ def analyses(ctx, file_id):
 @click.pass_context
 def vulnerability(ctx, vulnerability_id):
     """
-    Get a vulnerability
+    Get vulnerability
     """
     client = ctx.obj['CLIENT']
     echo(table(Vulnerability, client.get_vulnerability(vulnerability_id)))
+
+
+@cli.command()
+@click.argument('file_id')
+@click.option(
+    '-f', '--format', default='json', help='Report format: json, pdf')
+@click.option(
+    '-l', '--language', default='en', help='Report language: en, ja')
+@click.pass_context
+def report(ctx, file_id, format, language):
+    """
+    Download report for file
+    """
+    client = ctx.obj['CLIENT']
+    try:
+        echo(client.get_report(file_id, format=format, language=language))
+    except ReportError as e:
+        echo(e)
+        sys.exit(1)
 
 
 @cli.command()

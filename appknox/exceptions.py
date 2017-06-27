@@ -19,5 +19,5 @@ class OneTimePasswordError(AppknoxError):
     pass
 
 
-class InvalidReportTypeError(AppknoxError):
+class ReportError(AppknoxError):
     pass

@@ -7,9 +7,10 @@ import slumber
 from urllib.parse import urljoin
 
 from appknox.exceptions import OneTimePasswordError, CredentialError, \
-    AppknoxError
-from appknox.defaults import DEFAULT_API_HOST
+    AppknoxError, ReportError
 from appknox.mapper import mapper, Analysis, File, Project, User, Vulnerability
+
+DEFAULT_API_HOST = 'https://api.appknox.com'
 
 
 class Appknox(object):
@@ -228,15 +229,21 @@ class Appknox(object):
         """
         self.api.dynamic_shutdown(file_id).get()
 
-    def get_report(self, file_id, format):
+    def get_report(self, file_id, format='json', language='en'):
         """
         Fetch analyses report for a file
 
         :param file_id: File ID
-        :param format: Desired format of report
+        :param format: Report format (supported 'json', 'pdf'). Default 'json'
+        :param language: Report language (supported 'en', 'ja'). Default 'en'
         :type file_id: int
         :type format: str
+        :type language: str
         :return:
-        :rtype:
         """
-        raise NotImplementedError()
+        if format not in ['json', 'pdf']:
+            raise ReportError('Unsupported format')
+        if language not in ['en', 'ja']:
+            raise ReportError('Unsupported language')
+
+        return self.api.report(file_id).get(format=format, language=language)

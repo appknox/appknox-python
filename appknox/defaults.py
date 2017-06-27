@@ -1,9 +1,0 @@
-# (c) 2015-2017, XYSec Labs
-
-DEFAULT_API_HOST = 'https://api.appknox.com'
-DEFAULT_SESSION_PATH = '~/.config/appknox.ini'
-
-DEFAULT_REPORT_FORMAT = 'json'
-DEFAULT_REPORT_LANGUAGE = 'en'
-
-DEFAULT_VULNERABILITY_LANGUAGE = 'en'
