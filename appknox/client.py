@@ -56,8 +56,10 @@ class Appknox(object):
         self.token = token
         self.endpoint = urljoin(self.host, 'api/')
 
-        self.api = slumber.API(self.endpoint, auth=(self.user_id, self.token),
-                               append_slash=False)
+        if self.user_id and self.token:
+            self.api = slumber.API(self.endpoint,
+                                   auth=(self.user_id, self.token),
+                                   append_slash=False)
 
     def login(self, otp=None):
         """
@@ -90,6 +92,9 @@ class Appknox(object):
         json = response.json()
         self.token = json['token']
         self.user_id = str(json['user_id'])
+
+        self.api = slumber.API(self.endpoint, auth=(self.user_id, self.token),
+                               append_slash=False)
 
     def get_user(self, user_id):
         """
