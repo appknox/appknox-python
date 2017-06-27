@@ -15,16 +15,26 @@ DEFAULT_API_HOST = 'https://api.appknox.com'
 
 class Appknox(object):
     """
-    Appknox class provides an easy access to the Appknox API
+    Appknox class provides an easy access to the Appknox API.
 
     Instances of this class can be used to interact with the Appknox scanner.
     To obtain an instance of this class:
 
-    .. code-block: python
+    .. code-block:: python
 
         import appknox
-        appknox = appknox.Appknox(username='USERNAME', password='PASSWORD',
-                                  host='HOST')
+        appknox = appknox.Appknox(
+                    username='USERNAME',
+                    password='PASSWORD',
+                    host='HOST')
+
+    To perform authentication:
+
+    .. code-block:: python
+
+        appknox.login(otp=000000)
+
+    ``otp`` is required for accounts with multi-factor authentication.
 
     """
 
@@ -103,7 +113,7 @@ class Appknox(object):
 
         :param user_id: User ID
         :type user_id: int
-        :return: :class`.User`
+        :return: :class:`.User`
         """
         user = self.api.users(user_id).get()
 
@@ -115,7 +125,7 @@ class Appknox(object):
 
         :param project_id: Project ID
         :type project_id: int
-        :return: :class`.Project`
+        :return: :class:`.Project`
         """
         project = self.api.projects(project_id).get()
 
@@ -125,7 +135,7 @@ class Appknox(object):
         """
         List projects for currently authenticated user
 
-        :return: List of :class`.Project`
+        :return: List of :class:`.Project`
         """
         projects = self.api.projects().get(limit=-1)
 
@@ -137,7 +147,7 @@ class Appknox(object):
 
         :param file_id: File ID
         :type file_id: int
-        :return: :class`.File`
+        :return: :class:`.File`
         """
         file_ = self.api.files(file_id).get()
 
@@ -149,7 +159,7 @@ class Appknox(object):
 
         :param project_id: Project ID
         :type project_id: int
-        :return: List of :class`.File`
+        :return: List of :class:`.File`
         """
         files = self.api.files().get(projectId=project_id, limit=-1)
 
@@ -161,7 +171,7 @@ class Appknox(object):
 
         :param file_id: File ID
         :type file_id: int
-        :return: List of :class`.Analysis`
+        :return: List of :class:`.Analysis`
         """
         out = list()
 
@@ -184,7 +194,7 @@ class Appknox(object):
 
         :param vulnerability_id: vulnerability ID
         :type vulnerability_id: int
-        :return: :class`.Vulnerability`
+        :return: :class:`.Vulnerability`
         """
         vulnerability = self.api.vulnerabilities(vulnerability_id).get()
 
@@ -195,7 +205,7 @@ class Appknox(object):
         Upload and scan a package
 
         :param file: Package file to be uploaded and scanned
-        :type file: a :class`File` object
+        :type file: a :class:`File` object
         """
         response = self.api.signed_url.get(
             content_type='application/octet-stream')

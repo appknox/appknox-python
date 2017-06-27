@@ -5,14 +5,7 @@ from collections import namedtuple
 
 def mapper(model: type, resource: dict) -> object:
     """
-    Returns an object of type 'model' from dictified JSON 'resource'
-
-    :param model:
-    :param resource:
-    :type model: type
-    :type resource: dict
-    :return:
-    :rtype: object
+    Returns an object of type `model` from dictified JSON `resource`
     """
     attr = dict()
     for field in model._fields:
