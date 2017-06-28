@@ -38,7 +38,7 @@ local_settings.py
 instance/
 .webassets-cache
 .scrapy
-docs/_build/
+sphinx-docs/_build/
 target/
 .ipynb_checkpoints
 .python-version

@@ -1,0 +1,313 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>appknox.client &#8212; appknox-python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="appknox.mapper" href="mapper.html" />
+    <link rel="prev" title="appknox-python" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-appknox.client">
+<span id="appknox-client"></span><h1>appknox.client<a class="headerlink" href="#module-appknox.client" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="appknox.client.Appknox">
+<em class="property">class </em><code class="descclassname">appknox.client.</code><code class="descname">Appknox</code><span class="sig-paren">(</span><em>username: str = None</em>, <em>password: str = None</em>, <em>user_id: int = None</em>, <em>token: str = None</em>, <em>host: str = ‘https://api.appknox.com’</em>, <em>log_level: int = 20</em><span class="sig-paren">)</span><a class="headerlink" href="#appknox.client.Appknox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appknox class provides an easy access to the Appknox API.</p>
+<p>Instances of this class can be used to interact with the Appknox scanner.
+To obtain an instance of this class:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">appknox</span>
+<span class="n">appknox</span> <span class="o">=</span> <span class="n">appknox</span><span class="o">.</span><span class="n">Appknox</span><span class="p">(</span>
+            <span class="n">username</span><span class="o">=</span><span class="s1">&#39;USERNAME&#39;</span><span class="p">,</span>
+            <span class="n">password</span><span class="o">=</span><span class="s1">&#39;PASSWORD&#39;</span><span class="p">,</span>
+            <span class="n">host</span><span class="o">=</span><span class="s1">&#39;HOST&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To perform authentication:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">appknox</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">otp</span><span class="o">=</span><span class="mo">000000</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">otp</span></code> is required for accounts with multi-factor authentication.</p>
+<dl class="method">
+<dt id="appknox.client.Appknox.get_analyses">
+<code class="descname">get_analyses</code><span class="sig-paren">(</span><em>file_id: int</em><span class="sig-paren">)</span> &#x2192; typing.List[appknox.mapper.Analysis]<a class="headerlink" href="#appknox.client.Appknox.get_analyses" title="Permalink to this definition">¶</a></dt>
+<dd><p>List analyses for file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_id</strong> – File ID</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="appknox.client.Appknox.get_file">
+<code class="descname">get_file</code><span class="sig-paren">(</span><em>file_id: int</em><span class="sig-paren">)</span> &#x2192; appknox.mapper.File<a class="headerlink" href="#appknox.client.Appknox.get_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch file by file ID</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_id</strong> – File ID</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="appknox.client.Appknox.get_files">
+<code class="descname">get_files</code><span class="sig-paren">(</span><em>project_id: int</em><span class="sig-paren">)</span> &#x2192; typing.List[appknox.mapper.File]<a class="headerlink" href="#appknox.client.Appknox.get_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>List files in project</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>project_id</strong> – Project ID</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="appknox.client.Appknox.get_project">
+<code class="descname">get_project</code><span class="sig-paren">(</span><em>project_id: int</em><span class="sig-paren">)</span> &#x2192; appknox.mapper.Project<a class="headerlink" href="#appknox.client.Appknox.get_project" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch project by project ID</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>project_id</strong> – Project ID</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="appknox.client.Appknox.get_projects">
+<code class="descname">get_projects</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; typing.List[appknox.mapper.Project]<a class="headerlink" href="#appknox.client.Appknox.get_projects" title="Permalink to this definition">¶</a></dt>
+<dd><p>List projects for currently authenticated user</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="appknox.client.Appknox.get_report">
+<code class="descname">get_report</code><span class="sig-paren">(</span><em>file_id</em>, <em>format: str = ‘json’</em>, <em>language: str = ‘en’</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#appknox.client.Appknox.get_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch analyses report for a file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file_id</strong> (<em>int</em>) – File ID</li>
+<li><strong>format</strong> (<em>str</em>) – Report format (supported ‘json’, ‘pdf’). Default ‘json’</li>
+<li><strong>language</strong> (<em>str</em>) – Report language (supported ‘en’, ‘ja’). Default ‘en’</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="appknox.client.Appknox.get_user">
+<code class="descname">get_user</code><span class="sig-paren">(</span><em>user_id: int</em><span class="sig-paren">)</span> &#x2192; appknox.mapper.User<a class="headerlink" href="#appknox.client.Appknox.get_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch user by user ID</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_id</strong> – User ID</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="appknox.client.Appknox.get_vulnerability">
+<code class="descname">get_vulnerability</code><span class="sig-paren">(</span><em>vulnerability_id: int</em><span class="sig-paren">)</span> &#x2192; appknox.mapper.Vulnerability<a class="headerlink" href="#appknox.client.Appknox.get_vulnerability" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch vulnerability by vulnerability ID</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>vulnerability_id</strong> – vulnerability ID</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="appknox.client.Appknox.login">
+<code class="descname">login</code><span class="sig-paren">(</span><em>otp: int = None</em><span class="sig-paren">)</span><a class="headerlink" href="#appknox.client.Appknox.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Authenticate with server and create session</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>otp</strong> – One-time password, if account has MFA enabled</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="appknox.client.Appknox.start_dynamic">
+<code class="descname">start_dynamic</code><span class="sig-paren">(</span><em>file_id: int</em><span class="sig-paren">)</span><a class="headerlink" href="#appknox.client.Appknox.start_dynamic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start dynamic scan for a file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_id</strong> – File ID</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="appknox.client.Appknox.stop_dynamic">
+<code class="descname">stop_dynamic</code><span class="sig-paren">(</span><em>file_id: int</em><span class="sig-paren">)</span><a class="headerlink" href="#appknox.client.Appknox.stop_dynamic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Terminate dynamic scan for a file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_id</strong> – File ID</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="appknox.client.Appknox.upload_file">
+<code class="descname">upload_file</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="headerlink" href="#appknox.client.Appknox.upload_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upload and scan a package</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file</strong> – Package file to be uploaded and scanned</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Command-line interface and Python wrapper for Appknox</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=appknox&repo=appknox-python&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">appknox.client</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mapper.html">appknox.mapper</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">appknox-python</a></li>
+      <li>Next: <a href="mapper.html" title="next chapter">appknox.mapper</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, XYSec Labs Pte. Ltd..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/client.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
