@@ -1,188 +1,239 @@
+# (c) 2017, XYSec Labs
+
 import logging
-import sys
-from urllib.parse import urlencode
-
 import requests
+import slumber
 
-from appknox.errors import MissingCredentialsError, InvalidCredentialsError, \
-    ResponseError, InvalidReportTypeError
-from appknox.constants import DEFAULT_VULNERABILITY_LANGUAGE, \
-    DEFAULT_APPKNOX_URL, DEFAULT_REPORT_LANGUAGE, DEFAULT_OFFSET, \
-    DEFAULT_LIMIT, DEFAULT_REPORT_FORMAT, DEFAULT_SECURE_CONNECTION
+from typing import List
+from urllib.parse import urljoin
 
-FORMAT = '%(asctime)-15s %(message)s'
-logging.basicConfig(format=FORMAT)
-logger = logging.getLogger("appknox")
+from appknox.exceptions import OneTimePasswordError, CredentialError, \
+    AppknoxError, ReportError
+from appknox.mapper import mapper, Analysis, File, Project, User, Vulnerability
+
+DEFAULT_API_HOST = 'https://api.appknox.com'
 
 
-class AppknoxClient(object):
+class Appknox(object):
     """
-    Appknox Client
+    Appknox class provides an easy access to the Appknox API.
+
+    Instances of this class can be used to interact with the Appknox scanner.
+    To obtain an instance of this class:
+
+    .. code-block:: python
+
+        import appknox
+        appknox = appknox.Appknox(
+                    username='USERNAME',
+                    password='PASSWORD',
+                    host='HOST')
+
+    To perform authentication:
+
+    .. code-block:: python
+
+        appknox.login(otp=000000)
+
+    ``otp`` is required for accounts with multi-factor authentication.
+
     """
 
-    def login(self):
+    def __init__(self, username: str=None, password: str=None,
+                 user_id: int=None, token: str=None,
+                 host: str=DEFAULT_API_HOST, log_level: int=logging.INFO):
         """
-        Login and Get token
+        Initialise Appknox client
+
+        :param username: Username used to authenticate and fetch token
+        :param password: Password used to authenticate and fetch token
+        :param user_id: User ID. Set this only if a token is available
+        :param token: Token. Set this only if a token is available
+        :param host: API host. By default, https://api.appknox.com
+
+        If a token is not available, set ``username`` and ``password`` and use
+        the ``login`` method to authenticate. Otherwise, ``user_id`` and
+        ``token`` can be used.
         """
-        login_url = "%s/token/new.json" % self.api_base
+        logging.basicConfig(level=log_level)
+
+        self.host = host
+        self.username = username
+        self.password = password
+        self.user_id = user_id
+        self.token = token
+        self.endpoint = urljoin(self.host, 'api/')
+
+        if self.user_id and self.token:
+            self.api = slumber.API(self.endpoint,
+                                   auth=(self.user_id, self.token),
+                                   append_slash=False)
+
+    def login(self, otp: int=None):
+        """
+        Authenticate with server and create session
+
+        :param otp: One-time password, if account has MFA enabled
+        """
+
+        if not self.username or not self.password:
+            raise CredentialError('Both username and password are required')
+
         data = {
-            'username': self._username,
-            'password': self._password,
+            'username': self.username,
+            'password': self.password,
         }
-        logger.debug('Logging In: %s', login_url)
-        try:
-            response = requests.post(login_url, data=data)
-        except requests.exceptions.ConnectionError:
-            print('Unable to connect to server. Please try after sometime.')
-            sys.exit(0)
+
+        if otp:
+            data['otp'] = str(otp)
+
+        response = requests.post(urljoin(self.host, 'api/login'), data=data)
+
+        if response.status_code == 401:
+            raise OneTimePasswordError(response.json()['message'])
+        elif response.status_code == 403:
+            raise CredentialError(response.json()['message'])
+        elif response.status_code != 200:
+            raise AppknoxError('Unknown error')
+
         json = response.json()
-        if not json['success']:
-            raise InvalidCredentialsError
         self.token = json['token']
-        self.user = str(json['user'])
-        print(json)
+        self.user_id = str(json['user_id'])
 
-    def __init__(
-            self, username=None, password=None, api_key=None,
-            host=DEFAULT_APPKNOX_URL, secure=DEFAULT_SECURE_CONNECTION,
-            auto_login=True):
-        if username and password:
-            self.basic_auth = True
-            self._username = username
-            self._password = password
-        # API auth comes later
-        # elif api_key:
-        #     self.basic_auth = False
-        #     self.api_key = api_key
-        else:
-            raise MissingCredentialsError
-        protocol = 'http'
-        if secure:
-            protocol += 's'
-        self.api_base = "%s://%s/api" % (protocol, host)
-        self.login()
+        self.api = slumber.API(self.endpoint, auth=(self.user_id, self.token),
+                               append_slash=False)
 
-    def _request(self, req, endpoint, data={}):
+    def get_user(self, user_id: int) -> User:
         """
-        Make a request
-        """
-        url = "%s/%s" % (self.api_base, endpoint)
-        logger.debug('Making a request: %s', url)
-        response = req(url, data=data, auth=(self.user, self.token))
-        if response.status_code > 299 or response.status_code < 200:
-            # f = open("error.html", "w")
-            # f.write(response.content.decode())
-            # f.close()
-            raise ResponseError(response.content)
-        try:
-            return response.json()
-        except ValueError:
-            return response.content.decode()
+        Fetch user by user ID
 
-    def current_user(self):
+        :param user_id: User ID
         """
-        docstring for current_user
-        """
-        url = 'users/' + str(self.user)
-        return self._request(requests.get, url)
+        user = self.api.users(user_id).get()
 
-    def submit_url(self, store_url):
-        """
-        Submit a play store URL
-        """
-        data = {"storeURL": store_url}
-        return self._request(requests.post, 'store_url', data)
+        return mapper(User, user)
 
-    def upload_file(self, _file):
+    def get_project(self, project_id: int) -> Project:
         """
-        `_file` is a file-type object
-        """
-        data = {'content_type': 'application/octet-stream'}
-        json = self._request(requests.get, 'signed_url', data)
-        url = json['url']
-        logger.info('Please wait while uploading file..: %s', url)
-        response = requests.put(url, data=_file.read())
-        # print(response.content, response.status_code)
-        data = {
-            "file_key": json['file_key'],
-            "file_key_signed": json['file_key_signed'],
-        }
-        url = "%s/uploaded_file" % self.api_base
-        response = requests.post(
-            url, data=data, auth=(self.user, self.token))
-        return response.json()
+        Fetch project by project ID
 
-    def project_get(self, project_id):
+        :param project_id: Project ID
         """
-        get project details with project id
-        """
-        url = 'projects/' + str(project_id)
-        return self._request(requests.get, url)
+        project = self.api.projects(project_id).get()
 
-    def project_list(
-            self, limit=DEFAULT_LIMIT, offset=DEFAULT_OFFSET):
-        """
-        return list of projects
-        """
-        params = {'limit': limit, 'offset': offset}
-        url = 'projects?%s' % (urlencode(params))
-        return self._request(requests.get, url)
+        return mapper(Project, project)
 
-    def file_get(self, file_id):
+    def get_projects(self) -> List[Project]:
         """
-        get file details with file id
+        List projects for currently authenticated user
         """
-        url = 'files/' + str(file_id)
-        return self._request(requests.get, url)
+        projects = self.api.projects().get(limit=-1)
 
-    def file_list(
-            self, project_id, limit=DEFAULT_LIMIT, offset=DEFAULT_OFFSET):
-        """
-        return list of files for a project
-        """
-        params = {'projectId': project_id, 'offset': offset, 'limit': limit}
-        url = 'files?%s' % (urlencode(params))
-        return self._request(requests.get, url)
+        return [mapper(Project, dict(data=_)) for _ in projects['data']]
 
-    def dynamic_start(self, file_id):
-        url = 'dynamic/{}'.format(str(file_id))
-        return self._request(requests.get, url)
-
-    def dynamic_stop(self, file_id):
-        url = 'dynamic_shutdown/{}'.format(str(file_id))
-        return self._request(requests.get, url)
-
-    def dynamic_restart(self, file_id):
-        self.dynamic_stop(file_id)
-        return self.dynamic_start(file_id)
-
-    def analyses_list(self, file_id):
+    def get_file(self, file_id: int) -> File:
         """
-        get analyses details with file id
-        """
-        url = 'files/' + str(file_id)
-        return self._request(requests.get, url)
+        Fetch file by file ID
 
-    def report(
-            self, file_id, format_type=DEFAULT_REPORT_FORMAT,
-            language=DEFAULT_REPORT_LANGUAGE):
+        :param file_id: File ID
         """
-        get report in specified format
+        file_ = self.api.files(file_id).get()
+
+        return mapper(File, file_)
+
+    def get_files(self, project_id: int) -> List[File]:
         """
-        if format_type not in ['json', 'pdf']:
-            raise InvalidReportTypeError("Invalid format type")
+        List files in project
+
+        :param project_id: Project ID
+        """
+        files = self.api.files().get(projectId=project_id, limit=-1)
+
+        return [mapper(File, dict(data=_)) for _ in files['data']]
+
+    def get_analyses(self, file_id: int) -> List[Analysis]:
+        """
+        List analyses for file
+
+        :param file_id: File ID
+        """
+        out = list()
+
+        file_ = self.api.files(file_id).get()
+        analyses = file_['data']['relationships']['analyses']['data']
+
+        for analysis_id in analyses:
+            analysis = self.api.analyses(analysis_id['id']).get()
+
+            vuln_id = analysis[
+                'data']['relationships']['vulnerability']['data']['id']
+            analysis['data']['attributes']['vulnerability-id'] = vuln_id
+
+            out.append(mapper(Analysis, analysis))
+        return out
+
+    def get_vulnerability(self, vulnerability_id: int) -> Vulnerability:
+        """
+        Fetch vulnerability by vulnerability ID
+
+        :param vulnerability_id: vulnerability ID
+        """
+        vulnerability = self.api.vulnerabilities(vulnerability_id).get()
+
+        return mapper(Vulnerability, vulnerability)
+
+    def upload_file(self, file):
+        """
+        Upload and scan a package
+
+        :param file: Package file to be uploaded and scanned
+        """
+        response = self.api.signed_url.get(
+            content_type='application/octet-stream')
+
+        url = response['url']
+        data = file.read()
+        requests.put(url, data=data)
+
+        requests.post(
+            urljoin(self.host, 'api/uploaded_file'),
+            auth=(self.user_id, self.token),
+            data=dict(
+                file_key=response['file_key'],
+                file_key_signed=response['file_key_signed']))
+
+    def start_dynamic(self, file_id: int):
+        """
+        Start dynamic scan for a file
+
+        :param file_id: File ID
+        """
+        self.api.dynamic(file_id).get()
+
+    def stop_dynamic(self, file_id: int):
+        """
+        Terminate dynamic scan for a file
+
+        :param file_id: File ID
+        """
+        self.api.dynamic_shutdown(file_id).get()
+
+    def get_report(
+            self, file_id, format: str='json', language: str='en') -> str:
+        """
+        Fetch analyses report for a file
+
+        :param file_id: File ID
+        :param format: Report format (supported 'json', 'pdf'). Default 'json'
+        :param language: Report language (supported 'en', 'ja'). Default 'en'
+        :type file_id: int
+        :type format: str
+        :type language: str
+        :return:
+        """
+        if format not in ['json', 'pdf']:
+            raise ReportError('Unsupported format')
         if language not in ['en', 'ja']:
-            raise InvalidReportTypeError("Unsupported language")
+            raise ReportError('Unsupported language')
 
-        params = {'format': format_type, 'language': language}
-        url = 'report/%s?%s' % (str(file_id), urlencode(params))
-        return self._request(requests.get, url)
-
-    def payment(self, card):
-        data = {'card', card}
-        return self._request(requests.post, 'stripe_payment', data)
-
-    def vulnerability(
-            self, vulnerability_id, language=DEFAULT_VULNERABILITY_LANGUAGE):
-        url = 'vulnerabilities/' + str(vulnerability_id)
-        return self._request(requests.get, url)
+        return self.api.report(file_id).get(format=format, language=language)

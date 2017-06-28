@@ -1,222 +1,253 @@
+# (c) 2017, XYSec Labs
+
+import click
+import configparser
 import logging
+import os
+import requests
+import sys
+import tabulate
 
-from click import option, echo, group, make_pass_decorator, argument, File
+from click import echo
 
-from appknox import AppknoxClient, DEFAULT_VULNERABILITY_LANGUAGE, \
-    DEFAULT_APPKNOX_URL, DEFAULT_LIMIT, DEFAULT_REPORT_LANGUAGE, \
-    DEFAULT_OFFSET, DEFAULT_REPORT_FORMAT, DEFAULT_LOG_LEVEL, \
-    DEFAULT_SECURE_CONNECTION
-from pprint import pprint
-logger = logging.getLogger("appknox")
-logger.setLevel(10)
+from appknox.client import Appknox, DEFAULT_API_HOST
+from appknox.exceptions import AppknoxError, OneTimePasswordError, \
+    CredentialError, ReportError
+from appknox.mapper import Analysis, File, Project, User, Vulnerability
 
-
-__author__ = "dhilipsiva"
-__status__ = "development"
-
-
-APPKNOX = """
-.______  ._______ ._______ .____/\ .______  ._______   ____   ____
-:      \ : ____  |: ____  |:   /  \:      \ : .___  \  \   \_/   /
-|   .   ||    :  ||    :  ||.  ___/|       || :   |  |  \___ ___/
-|   :   ||   |___||   |___||     \ |   |   ||     :  |  /   _   \\
-|___|   ||___|    |___|    |      \|___|   | \______/  /___/ \___\\
-    |___|                  |___\  /    |___|
-                                \/
-"""
+DEFAULT_SESSION_PATH = '~/.config/appknox.ini'
 
 
-class Config(object):
-    def __init__(self):
-        self.client = None
-
-
-pass_config = make_pass_decorator(Config, ensure=True)
-
-
-@group()
-@option('--username', envvar='APPKNOX_USERNAME', help="Username")
-@option('--password', envvar='APPKNOX_PASSWORD', help="Password")
-@option('--level', default=DEFAULT_LOG_LEVEL, help="Log Level")
-@option('--host', default=DEFAULT_APPKNOX_URL, help="Set Host")
-@option('--secure/--no-secure', default=DEFAULT_SECURE_CONNECTION)
-@pass_config
-def cli(config, username, password, level, host, secure):
+def table(model, instances, ignore=list()):
     """
-    Command line tool For Appknox's REST API
+    Helper for tabulating data
+
+    :param model: Model defined in `appknox.mapper`
+    :param instances: Instance(s) to be tabulated
+    :param ignore: Fields to be hidden in table
     """
-    echo(APPKNOX)
-    logger.setLevel(level)
-    config.client = AppknoxClient(
-        username=username, password=password, host=host, secure=secure)
+    columns = list()
+    for field in model._fields:
+        if field not in ignore:
+            columns.append(field)
+
+    rows = list()
+
+    if type(instances) is not list:
+        instances = [instances]
+
+    for instance in instances:
+        row = [instance.__getattribute__(_) for _ in columns]
+        rows.append(row)
+
+    return tabulate.tabulate(rows, headers=columns)
+
+
+@click.group()
+@click.option('-v', '--verbose', count=True, help='Specify log verbosity.')
+@click.pass_context
+def cli(ctx, verbose):
+    """
+    Command line wrapper for the Appknox API
+    """
+    if verbose == 1:
+        ctx.obj['LOG_LEVEL'] = logging.INFO
+    elif verbose > 1:
+        ctx.obj['LOG_LEVEL'] = logging.DEBUG
+    else:
+        ctx.obj['LOG_LEVEL'] = logging.WARNING
+
+    logging.basicConfig(level=ctx.obj['LOG_LEVEL'])
+
+    config = configparser.ConfigParser()
+    if config.read(os.path.expanduser(DEFAULT_SESSION_PATH)):
+        user_id = config['DEFAULT']['user_id']
+        username = config['DEFAULT']['username']
+        token = config['DEFAULT']['token']
+        host = config['DEFAULT']['host']
+
+        ctx.obj['CLIENT'] = Appknox(
+            username=username, user_id=user_id, token=token, host=host,
+            log_level=ctx.obj['LOG_LEVEL'])
+    else:
+        if ctx.invoked_subcommand not in ['login', 'logout']:
+            echo('Not logged in')
+            sys.exit(1)
 
 
 @cli.command()
-@pass_config
-def validate(config):
+@click.option('-u', '--username', prompt=True)
+@click.option('-p', '--password', prompt=True, hide_input=True)
+@click.option('-h', '--host', default=DEFAULT_API_HOST)
+@click.pass_context
+def login(ctx, username, password, host):
     """
-    Validate if credentials are correct!
+    Log in and save session credentials
     """
-    pprint(config.client.current_user())
-    echo("Your credentials are valid!")
+    ctx.obj['CLIENT'] = client = Appknox(
+        username=username, password=password, host=host,
+        log_level=ctx.obj['LOG_LEVEL'])
+    try:
+        client.login()
+    except requests.exceptions.InvalidSchema as e:
+        echo(e)
+        echo('Perhaps you missed http/https in host?')
+        sys.exit(1)
+    except requests.exceptions.ConnectionError as e:
+        echo(e)
+        echo('Perhaps your network is down?')
+        sys.exit(1)
+    except OneTimePasswordError as e:
+        otp = click.prompt('OTP', type=int)
+        try:
+            client.login(otp=otp)
+        except CredentialError as e:
+            echo(e)
+            sys.exit(1)
+    except AppknoxError as e:
+        echo(e)
+        sys.exit(1)
+
+    config = configparser.ConfigParser()
+    config['DEFAULT']['username'] = username
+    config['DEFAULT']['user_id'] = client.user_id
+    config['DEFAULT']['token'] = client.token
+    config['DEFAULT']['host'] = host
+
+    if os.path.isfile(os.path.expanduser(DEFAULT_SESSION_PATH)):
+        logging.warn('Overwriting existing local session')
+
+    with open(os.path.expanduser(DEFAULT_SESSION_PATH), 'w') as f:
+        config.write(f)
+        logging.debug('Session credentials written to {}'.format(
+            DEFAULT_SESSION_PATH))
+
+    echo('Logged in to {}'.format(host))
 
 
 @cli.command()
-@argument('url')
-@pass_config
-def submit_url(config, url):
+@click.pass_context
+def whoami(ctx):
     """
-    Submit store urls!
+    Show session info
     """
-    echo("Submitting Store URL")
-    config.client.submit_url(url)
+    client = ctx.obj['CLIENT']
+    data = client.get_user(client.user_id)
+    echo(table(User, data))
 
 
 @cli.command()
-@argument('file', type=File('rb'))
-@pass_config
-def upload(config, file):
+@click.pass_context
+def logout(ctx):
     """
-    Upload a file!
+    Delete session credentials
     """
-    config.client.upload_file(file)
+    try:
+        os.remove(os.path.expanduser(DEFAULT_SESSION_PATH))
+    except FileNotFoundError:
+        echo('Not logged in')
+        sys.exit(1)
 
 
 @cli.command()
-@argument('project_id')
-@pass_config
-def project_get(config, project_id):
+@click.pass_context
+def projects(ctx):
     """
-    Get a particular project with id
+    List projects
     """
-    echo("Get a particular project with id")
-    pprint(config.client.project_get(project_id))
+    client = ctx.obj['CLIENT']
+    echo(table(Project, client.get_projects()))
 
 
 @cli.command()
-@option(
-    '--limit', default=DEFAULT_LIMIT, help="Limit of projects to retrieve")
-@option(
-    '--offset', default=DEFAULT_OFFSET, help="Project offset")
-@pass_config
-def project_list(config, limit, offset):
+@click.argument('project_id')
+@click.pass_context
+def files(ctx, project_id):
     """
-    Get a list of your projects
+    List files for project
     """
-    echo("Get list of your projects")
-    pprint(config.client.project_list(limit, offset))
+    client = ctx.obj['CLIENT']
+    echo(table(File, client.get_files(project_id)))
 
 
 @cli.command()
-@argument('file_id')
-@pass_config
-def file_get(config, file_id):
+@click.argument('path')
+@click.pass_context
+def upload(ctx, path):
     """
-    Get a file with id
+    Upload and scan package
     """
-    echo("Get a file with id")
-    pprint(config.client.file_get(file_id))
+    client = ctx.obj['CLIENT']
+    try:
+        file_ = open(path, 'rb')
+    except FileNotFoundError as e:
+        echo(e)
+        sys.exit(1)
+    client.upload_file(file_)
 
 
 @cli.command()
-@option(
-    '--limit', default=DEFAULT_LIMIT, help="Limit of files to retrieve")
-@option(
-    '--offset', default=DEFAULT_OFFSET, help="File offset")
-@argument('project_id')
-@pass_config
-def file_list(config, project_id, limit, offset):
+@click.argument('file_id')
+@click.pass_context
+def analyses(ctx, file_id):
     """
-    Get list of files for a project with id
+    List analyses for file
     """
-    echo("Get list of files for a project with id")
-    pprint(config.client.file_list(project_id, limit, offset))
+    client = ctx.obj['CLIENT']
+    echo(table(Analysis, client.get_analyses(file_id), ignore=['findings']))
 
 
 @cli.command()
-@argument('file_id')
-@pass_config
-def dynamic_start(config, file_id):
+@click.argument('vulnerability_id')
+@click.pass_context
+def vulnerability(ctx, vulnerability_id):
     """
-    Start dynamic scan on the file
+    Get vulnerability
     """
-    echo("Starting dynamic scan for file {}".format(file_id))
-    pprint(config.client.dynamic_start(file_id))
+    client = ctx.obj['CLIENT']
+    echo(table(Vulnerability, client.get_vulnerability(vulnerability_id)))
 
 
 @cli.command()
-@argument('file_id')
-@pass_config
-def dynamic_stop(config, file_id):
+@click.argument('file_id')
+@click.option(
+    '-f', '--format', default='json', help='Report format: json, pdf')
+@click.option(
+    '-l', '--language', default='en', help='Report language: en, ja')
+@click.pass_context
+def report(ctx, file_id, format, language):
     """
-    Stop dynamic scan on the file
+    Download report for file
     """
-    echo("Stopping dynamic scan for file {}".format(file_id))
-    pprint(config.client.dynamic_stop(file_id))
+    client = ctx.obj['CLIENT']
+    try:
+        echo(client.get_report(file_id, format=format, language=language))
+    except ReportError as e:
+        echo(e)
+        sys.exit(1)
 
 
 @cli.command()
-@argument('file_id')
-@pass_config
-def dynamic_restart(config, file_id):
+@click.argument('file_id')
+@click.pass_context
+def dynamic_start(ctx, file_id):
     """
-    Restart dynamic scan on the file
+    Start dynamic scan for file
     """
-    echo("Restarting dynamic scan for file {}".format(file_id))
-    pprint(config.client.dynamic_restart(file_id))
+    client = ctx.obj['CLIENT']
+    client.start_dynamic(file_id)
 
 
 @cli.command()
-@argument('file_id')
-@pass_config
-def analyses_list(config, file_id):
+@click.argument('file_id')
+@click.pass_context
+def dynamic_stop(ctx, file_id):
     """
-    Get analyses for a file with id
+    Stop dynamic scan for file
     """
-    echo("Get analyses for a file with id")
-    pprint(config.client.analyses_list(file_id))
+    client = ctx.obj['CLIENT']
+    client.stop_dynamic(file_id)
 
 
-@cli.command()
-@argument('file_id')
-@option(
-    '--format_type', default=DEFAULT_REPORT_FORMAT,
-    help='Valid formats are json/pdf')
-@option(
-    '--language', default=DEFAULT_REPORT_LANGUAGE,
-    help='Supported languages are en/ja')
-@pass_config
-def report(config, file_id, format_type, language):
-    """
-    Get report with format_type and file_id
-    """
-    echo("Get file report by specifying format and file id")
-    response = config.client.report(file_id, format_type, language)
-    return pprint(response)
-
-
-@cli.command()
-@argument('card')
-@pass_config
-def payment(config, card):
-    """
-    Make payment
-    """
-    echo("Make a payment for user")
-    response = config.client.payment(card)
-    return pprint(response.decode())
-
-
-@cli.command()
-@argument('vulnerability_id')
-@option(
-    '--language', default=DEFAULT_VULNERABILITY_LANGUAGE,
-    help='Supported languages are en/ja')
-@pass_config
-def vulnerability(config, vulnerability_id, language):
-    """
-    Get report with format_type and file_id
-    """
-    echo("Get file report by specifying format and file id")
-    response = config.client.vulnerability(vulnerability_id, language)
-    return pprint(response)
+def main():
+    cli(obj=dict())
