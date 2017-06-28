@@ -99,6 +99,7 @@ html_theme_options = {
     'github_user': 'appknox',
     'github_repo': 'appknox-python',
     'github_button': True,
+    'travis_button': True,
 }
 
 
