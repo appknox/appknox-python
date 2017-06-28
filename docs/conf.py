@@ -92,7 +92,25 @@ html_theme = 'alabaster'
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+html_theme_options = {
+    'description': 'Command-line interface and Python wrapper for Appknox',
+    'logo': 'logo.png',
+    'logo_name': False,
+    'github_user': 'appknox',
+    'github_repo': 'appknox-python',
+    'github_button': True,
+}
+
+
+html_sidebars = {
+    '**': [
+        'about.html',
+        'navigation.html',
+        'relations.html',
+        'searchbox.html',
+        'donate.html',
+    ]
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

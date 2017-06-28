@@ -3,8 +3,11 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to appknox-python's documentation!
+appknox-python
 ==========================================
+
+appknox-python provides command-line interface and Python wrapper for the
+Appknox API.
 
 .. toctree::
    :maxdepth: 2

@@ -4,6 +4,7 @@ import logging
 import requests
 import slumber
 
+from typing import List
 from urllib.parse import urljoin
 
 from appknox.exceptions import OneTimePasswordError, CredentialError, \
@@ -38,21 +39,17 @@ class Appknox(object):
 
     """
 
-    def __init__(self, username=None, password=None, user_id=None, token=None,
-                 host=DEFAULT_API_HOST, log_level=logging.INFO):
+    def __init__(self, username: str=None, password: str=None,
+                 user_id: int=None, token: str=None,
+                 host: str=DEFAULT_API_HOST, log_level: int=logging.INFO):
         """
-        Initialise an Appknox client
+        Initialise Appknox client
 
         :param username: Username used to authenticate and fetch token
         :param password: Password used to authenticate and fetch token
         :param user_id: User ID. Set this only if a token is available
         :param token: Token. Set this only if a token is available
         :param host: API host. By default, https://api.appknox.com
-        :type username: str
-        :type password: str
-        :type user_id: int
-        :type token: str
-        :type host: str
 
         If a token is not available, set ``username`` and ``password`` and use
         the ``login`` method to authenticate. Otherwise, ``user_id`` and
@@ -72,12 +69,11 @@ class Appknox(object):
                                    auth=(self.user_id, self.token),
                                    append_slash=False)
 
-    def login(self, otp=None):
+    def login(self, otp: int=None):
         """
-        Authenticate with server and fetch a token
+        Authenticate with server and create session
 
         :param otp: One-time password, if account has MFA enabled
-        :type otp: int
         """
 
         if not self.username or not self.password:
@@ -107,71 +103,59 @@ class Appknox(object):
         self.api = slumber.API(self.endpoint, auth=(self.user_id, self.token),
                                append_slash=False)
 
-    def get_user(self, user_id):
+    def get_user(self, user_id: int) -> User:
         """
         Fetch user by user ID
 
         :param user_id: User ID
-        :type user_id: int
-        :return: :class:`.User`
         """
         user = self.api.users(user_id).get()
 
         return mapper(User, user)
 
-    def get_project(self, project_id):
+    def get_project(self, project_id: int) -> Project:
         """
         Fetch project by project ID
 
         :param project_id: Project ID
-        :type project_id: int
-        :return: :class:`.Project`
         """
         project = self.api.projects(project_id).get()
 
         return mapper(Project, project)
 
-    def get_projects(self):
+    def get_projects(self) -> List[Project]:
         """
         List projects for currently authenticated user
-
-        :return: List of :class:`.Project`
         """
         projects = self.api.projects().get(limit=-1)
 
         return [mapper(Project, dict(data=_)) for _ in projects['data']]
 
-    def get_file(self, file_id):
+    def get_file(self, file_id: int) -> File:
         """
         Fetch file by file ID
 
         :param file_id: File ID
-        :type file_id: int
-        :return: :class:`.File`
         """
         file_ = self.api.files(file_id).get()
 
         return mapper(File, file_)
 
-    def get_files(self, project_id):
+    def get_files(self, project_id: int) -> List[File]:
         """
         List files in project
 
         :param project_id: Project ID
-        :type project_id: int
-        :return: List of :class:`.File`
         """
         files = self.api.files().get(projectId=project_id, limit=-1)
 
         return [mapper(File, dict(data=_)) for _ in files['data']]
 
-    def get_analyses(self, file_id):
+    def get_analyses(self, file_id: int) -> List[Analysis]:
         """
         List analyses for file
 
         :param file_id: File ID
-        :type file_id: int
-        :return: List of :class:`.Analysis`
         """
         out = list()
 
@@ -188,13 +172,11 @@ class Appknox(object):
             out.append(mapper(Analysis, analysis))
         return out
 
-    def get_vulnerability(self, vulnerability_id):
+    def get_vulnerability(self, vulnerability_id: int) -> Vulnerability:
         """
         Fetch vulnerability by vulnerability ID
 
         :param vulnerability_id: vulnerability ID
-        :type vulnerability_id: int
-        :return: :class:`.Vulnerability`
         """
         vulnerability = self.api.vulnerabilities(vulnerability_id).get()
 
@@ -205,7 +187,6 @@ class Appknox(object):
         Upload and scan a package
 
         :param file: Package file to be uploaded and scanned
-        :type file: a :class:`File` object
         """
         response = self.api.signed_url.get(
             content_type='application/octet-stream')
@@ -221,25 +202,24 @@ class Appknox(object):
                 file_key=response['file_key'],
                 file_key_signed=response['file_key_signed']))
 
-    def start_dynamic(self, file_id):
+    def start_dynamic(self, file_id: int):
         """
         Start dynamic scan for a file
 
         :param file_id: File ID
-        :type file_id: int
         """
         self.api.dynamic(file_id).get()
 
-    def stop_dynamic(self, file_id):
+    def stop_dynamic(self, file_id: int):
         """
         Terminate dynamic scan for a file
 
         :param file_id: File ID
-        :type file_id: int
         """
         self.api.dynamic_shutdown(file_id).get()
 
-    def get_report(self, file_id, format='json', language='en'):
+    def get_report(
+            self, file_id, format: str='json', language: str='en') -> str:
         """
         Fetch analyses report for a file
 

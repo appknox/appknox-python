@@ -71,7 +71,7 @@ Out[9]: Vulnerability(name='Improper Content Provider Permissions',
 ## Command-line interface
 
 ```
-$ appknox login -h https://api.appknox.com
+$ appknox login
 Username: viren
 Password:
 Logged in to https://api.appknox.com
