@@ -4,7 +4,7 @@
 
 # appknox-python
 
-Command-line interface & Python wrapper for the Appknox API
+Command-line interface & Python wrapper for the Appknox API.
 
 ## Installation
 
@@ -13,6 +13,8 @@ appknox-python is officially supported on python 3.5. pip is the recommended way
 ```
 pip install appknox
 ```
+
+Documentation is available [here](http://appknox.org/appknox-python/).
 
 ## Quickstart
 
