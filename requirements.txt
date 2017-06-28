@@ -1,4 +1,4 @@
-click
-requests
-slumber
-tabulate
+click==6.7
+requests==2.18.1
+slumber==0.7.1
+tabulate==0.7.7
