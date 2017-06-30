@@ -15,7 +15,11 @@ from appknox.exceptions import AppknoxError, OneTimePasswordError, \
     CredentialError, ReportError
 from appknox.mapper import Analysis, File, Project, User, Vulnerability
 
-DEFAULT_SESSION_PATH = '~/.config/appknox.ini'
+CONFIG_FILE = os.path.expanduser('~/.config/appknox.ini')
+DEFAULT_PROFILE = 'default'
+
+config = configparser.ConfigParser()
+config.read(CONFIG_FILE)
 
 
 def table(model, instances, ignore=list()):
@@ -43,10 +47,32 @@ def table(model, instances, ignore=list()):
     return tabulate.tabulate(rows, headers=columns)
 
 
+def get_profile(name):
+    try:
+        profile = config[name]
+    except KeyError:
+        profile = None
+    return profile
+
+
+def save_profile(name, data):
+    config[name] = data
+    with open(CONFIG_FILE, 'w') as fh:
+        config.write(fh)
+
+
+def remove_profile(name):
+    result = config.remove_section(name)
+    with open(CONFIG_FILE, 'w') as fh:
+        config.write(fh)
+    return result
+
+
 @click.group()
 @click.option('-v', '--verbose', count=True, help='Specify log verbosity.')
+@click.option('-n', '--profile', default=DEFAULT_PROFILE)
 @click.pass_context
-def cli(ctx, verbose):
+def cli(ctx, verbose, profile):
     """
     Command line wrapper for the Appknox API
     """
@@ -57,18 +83,15 @@ def cli(ctx, verbose):
     else:
         ctx.obj['LOG_LEVEL'] = logging.WARNING
 
+    ctx.obj['PROFILE'] = profile
+
     logging.basicConfig(level=ctx.obj['LOG_LEVEL'])
-
-    config = configparser.ConfigParser()
-    if config.read(os.path.expanduser(DEFAULT_SESSION_PATH)):
-        user_id = config['DEFAULT']['user_id']
-        username = config['DEFAULT']['username']
-        token = config['DEFAULT']['token']
-        host = config['DEFAULT']['host']
-
+    profile = get_profile(profile)
+    if profile:
         ctx.obj['CLIENT'] = Appknox(
-            username=username, user_id=user_id, token=token, host=host,
-            log_level=ctx.obj['LOG_LEVEL'])
+            username=profile['username'], user_id=profile['user_id'],
+            token=profile['token'], host=profile['host'],
+        )
     else:
         if ctx.invoked_subcommand not in ['login', 'logout']:
             echo('Not logged in')
@@ -108,20 +131,13 @@ def login(ctx, username, password, host):
         echo(e)
         sys.exit(1)
 
-    config = configparser.ConfigParser()
-    config['DEFAULT']['username'] = username
-    config['DEFAULT']['user_id'] = client.user_id
-    config['DEFAULT']['token'] = client.token
-    config['DEFAULT']['host'] = host
-
-    if os.path.isfile(os.path.expanduser(DEFAULT_SESSION_PATH)):
-        logging.warn('Overwriting existing local session')
-
-    with open(os.path.expanduser(DEFAULT_SESSION_PATH), 'w') as f:
-        config.write(f)
-        logging.debug('Session credentials written to {}'.format(
-            DEFAULT_SESSION_PATH))
-
+    data = {
+        'username': username,
+        'user_id': client.user_id,
+        'token': client.token,
+        'host': host,
+    }
+    save_profile(name=ctx.obj['PROFILE'], data=data)
     echo('Logged in to {}'.format(host))
 
 
@@ -142,11 +158,12 @@ def logout(ctx):
     """
     Delete session credentials
     """
-    try:
-        os.remove(os.path.expanduser(DEFAULT_SESSION_PATH))
-    except FileNotFoundError:
+    profile = ctx.obj['PROFILE']
+    success = remove_profile(profile)
+    if success:
+        echo('Logged out')
+    else:
         echo('Not logged in')
-        sys.exit(1)
 
 
 @cli.command()
