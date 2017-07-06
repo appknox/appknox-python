@@ -16,27 +16,6 @@ DEFAULT_API_HOST = 'https://api.appknox.com'
 
 class Appknox(object):
     """
-    Appknox class provides an easy access to the Appknox API.
-
-    Instances of this class can be used to interact with the Appknox scanner.
-    To obtain an instance of this class:
-
-    .. code-block:: python
-
-        import appknox
-        appknox = appknox.Appknox(
-                    username='USERNAME',
-                    password='PASSWORD',
-                    host='HOST')
-
-    To perform authentication:
-
-    .. code-block:: python
-
-        appknox.login(otp=000000)
-
-    ``otp`` is required for accounts with multi-factor authentication.
-
     """
 
     def __init__(self, username: str=None, password: str=None,

@@ -47,25 +47,10 @@
 <span id="appknox-client"></span><h1>appknox.client<a class="headerlink" href="#module-appknox.client" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="appknox.client.Appknox">
-<em class="property">class </em><code class="descclassname">appknox.client.</code><code class="descname">Appknox</code><span class="sig-paren">(</span><em>username: str = None</em>, <em>password: str = None</em>, <em>user_id: int = None</em>, <em>token: str = None</em>, <em>host: str = ‘https://api.appknox.com’</em>, <em>log_level: int = 20</em><span class="sig-paren">)</span><a class="headerlink" href="#appknox.client.Appknox" title="Permalink to this definition">¶</a></dt>
-<dd><p>Appknox class provides an easy access to the Appknox API.</p>
-<p>Instances of this class can be used to interact with the Appknox scanner.
-To obtain an instance of this class:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">appknox</span>
-<span class="n">appknox</span> <span class="o">=</span> <span class="n">appknox</span><span class="o">.</span><span class="n">Appknox</span><span class="p">(</span>
-            <span class="n">username</span><span class="o">=</span><span class="s1">&#39;USERNAME&#39;</span><span class="p">,</span>
-            <span class="n">password</span><span class="o">=</span><span class="s1">&#39;PASSWORD&#39;</span><span class="p">,</span>
-            <span class="n">host</span><span class="o">=</span><span class="s1">&#39;HOST&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>To perform authentication:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">appknox</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">otp</span><span class="o">=</span><span class="mo">000000</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><code class="docutils literal"><span class="pre">otp</span></code> is required for accounts with multi-factor authentication.</p>
-<dl class="method">
+<em class="property">class </em><code class="descclassname">appknox.client.</code><code class="descname">Appknox</code><span class="sig-paren">(</span><em>username: str = None</em>, <em>password: str = None</em>, <em>user_id: int = None</em>, <em>token: str = None</em>, <em>host: str = ‘https://api.appknox.com’</em>, <em>log_level: int = 20</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/appknox/client.html#Appknox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
 <dt id="appknox.client.Appknox.get_analyses">
-<code class="descname">get_analyses</code><span class="sig-paren">(</span><em>file_id: int</em><span class="sig-paren">)</span> &#x2192; typing.List[appknox.mapper.Analysis]<a class="headerlink" href="#appknox.client.Appknox.get_analyses" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_analyses</code><span class="sig-paren">(</span><em>file_id: int</em><span class="sig-paren">)</span> &#x2192; typing.List[appknox.mapper.Analysis]<a class="reference internal" href="_modules/appknox/client.html#Appknox.get_analyses"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.get_analyses" title="Permalink to this definition">¶</a></dt>
 <dd><p>List analyses for file</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -79,7 +64,7 @@ To obtain an instance of this class:</p>
 
 <dl class="method">
 <dt id="appknox.client.Appknox.get_file">
-<code class="descname">get_file</code><span class="sig-paren">(</span><em>file_id: int</em><span class="sig-paren">)</span> &#x2192; appknox.mapper.File<a class="headerlink" href="#appknox.client.Appknox.get_file" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_file</code><span class="sig-paren">(</span><em>file_id: int</em><span class="sig-paren">)</span> &#x2192; appknox.mapper.File<a class="reference internal" href="_modules/appknox/client.html#Appknox.get_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.get_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetch file by file ID</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -93,7 +78,7 @@ To obtain an instance of this class:</p>
 
 <dl class="method">
 <dt id="appknox.client.Appknox.get_files">
-<code class="descname">get_files</code><span class="sig-paren">(</span><em>project_id: int</em><span class="sig-paren">)</span> &#x2192; typing.List[appknox.mapper.File]<a class="headerlink" href="#appknox.client.Appknox.get_files" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_files</code><span class="sig-paren">(</span><em>project_id: int</em><span class="sig-paren">)</span> &#x2192; typing.List[appknox.mapper.File]<a class="reference internal" href="_modules/appknox/client.html#Appknox.get_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.get_files" title="Permalink to this definition">¶</a></dt>
 <dd><p>List files in project</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -107,7 +92,7 @@ To obtain an instance of this class:</p>
 
 <dl class="method">
 <dt id="appknox.client.Appknox.get_project">
-<code class="descname">get_project</code><span class="sig-paren">(</span><em>project_id: int</em><span class="sig-paren">)</span> &#x2192; appknox.mapper.Project<a class="headerlink" href="#appknox.client.Appknox.get_project" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_project</code><span class="sig-paren">(</span><em>project_id: int</em><span class="sig-paren">)</span> &#x2192; appknox.mapper.Project<a class="reference internal" href="_modules/appknox/client.html#Appknox.get_project"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.get_project" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetch project by project ID</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -121,13 +106,13 @@ To obtain an instance of this class:</p>
 
 <dl class="method">
 <dt id="appknox.client.Appknox.get_projects">
-<code class="descname">get_projects</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; typing.List[appknox.mapper.Project]<a class="headerlink" href="#appknox.client.Appknox.get_projects" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_projects</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; typing.List[appknox.mapper.Project]<a class="reference internal" href="_modules/appknox/client.html#Appknox.get_projects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.get_projects" title="Permalink to this definition">¶</a></dt>
 <dd><p>List projects for currently authenticated user</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="appknox.client.Appknox.get_report">
-<code class="descname">get_report</code><span class="sig-paren">(</span><em>file_id</em>, <em>format: str = ‘json’</em>, <em>language: str = ‘en’</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#appknox.client.Appknox.get_report" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_report</code><span class="sig-paren">(</span><em>file_id</em>, <em>format: str = ‘json’</em>, <em>language: str = ‘en’</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/appknox/client.html#Appknox.get_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.get_report" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetch analyses report for a file</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -149,7 +134,7 @@ To obtain an instance of this class:</p>
 
 <dl class="method">
 <dt id="appknox.client.Appknox.get_user">
-<code class="descname">get_user</code><span class="sig-paren">(</span><em>user_id: int</em><span class="sig-paren">)</span> &#x2192; appknox.mapper.User<a class="headerlink" href="#appknox.client.Appknox.get_user" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_user</code><span class="sig-paren">(</span><em>user_id: int</em><span class="sig-paren">)</span> &#x2192; appknox.mapper.User<a class="reference internal" href="_modules/appknox/client.html#Appknox.get_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.get_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetch user by user ID</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -163,7 +148,7 @@ To obtain an instance of this class:</p>
 
 <dl class="method">
 <dt id="appknox.client.Appknox.get_vulnerability">
-<code class="descname">get_vulnerability</code><span class="sig-paren">(</span><em>vulnerability_id: int</em><span class="sig-paren">)</span> &#x2192; appknox.mapper.Vulnerability<a class="headerlink" href="#appknox.client.Appknox.get_vulnerability" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_vulnerability</code><span class="sig-paren">(</span><em>vulnerability_id: int</em><span class="sig-paren">)</span> &#x2192; appknox.mapper.Vulnerability<a class="reference internal" href="_modules/appknox/client.html#Appknox.get_vulnerability"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.get_vulnerability" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetch vulnerability by vulnerability ID</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -177,7 +162,7 @@ To obtain an instance of this class:</p>
 
 <dl class="method">
 <dt id="appknox.client.Appknox.login">
-<code class="descname">login</code><span class="sig-paren">(</span><em>otp: int = None</em><span class="sig-paren">)</span><a class="headerlink" href="#appknox.client.Appknox.login" title="Permalink to this definition">¶</a></dt>
+<code class="descname">login</code><span class="sig-paren">(</span><em>otp: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/appknox/client.html#Appknox.login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.login" title="Permalink to this definition">¶</a></dt>
 <dd><p>Authenticate with server and create session</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -191,7 +176,7 @@ To obtain an instance of this class:</p>
 
 <dl class="method">
 <dt id="appknox.client.Appknox.start_dynamic">
-<code class="descname">start_dynamic</code><span class="sig-paren">(</span><em>file_id: int</em><span class="sig-paren">)</span><a class="headerlink" href="#appknox.client.Appknox.start_dynamic" title="Permalink to this definition">¶</a></dt>
+<code class="descname">start_dynamic</code><span class="sig-paren">(</span><em>file_id: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/appknox/client.html#Appknox.start_dynamic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.start_dynamic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start dynamic scan for a file</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -205,7 +190,7 @@ To obtain an instance of this class:</p>
 
 <dl class="method">
 <dt id="appknox.client.Appknox.stop_dynamic">
-<code class="descname">stop_dynamic</code><span class="sig-paren">(</span><em>file_id: int</em><span class="sig-paren">)</span><a class="headerlink" href="#appknox.client.Appknox.stop_dynamic" title="Permalink to this definition">¶</a></dt>
+<code class="descname">stop_dynamic</code><span class="sig-paren">(</span><em>file_id: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/appknox/client.html#Appknox.stop_dynamic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.stop_dynamic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Terminate dynamic scan for a file</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -219,7 +204,7 @@ To obtain an instance of this class:</p>
 
 <dl class="method">
 <dt id="appknox.client.Appknox.upload_file">
-<code class="descname">upload_file</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="headerlink" href="#appknox.client.Appknox.upload_file" title="Permalink to this definition">¶</a></dt>
+<code class="descname">upload_file</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/appknox/client.html#Appknox.upload_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.upload_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Upload and scan a package</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -264,8 +249,19 @@ To obtain an instance of this class:</p>
 
 
 
+    
+
+<p>
+<a href="https://travis-ci.org/appknox/appknox-python">
+    <img
+        alt="https://secure.travis-ci.org/appknox/appknox-python.svg?branch=master"
+        src="https://secure.travis-ci.org/appknox/appknox-python.svg?branch=master"
+    />
+</a>
+</p>
+
+
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">appknox.client</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mapper.html">appknox.mapper</a></li>
