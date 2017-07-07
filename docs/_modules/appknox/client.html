@@ -1,0 +1,347 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>appknox.client &#8212; appknox-python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for appknox.client</h1><div class="highlight"><pre>
+<span></span><span class="c1"># (c) 2017, XYSec Labs</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">slumber</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="k">import</span> <span class="n">urljoin</span>
+
+<span class="kn">from</span> <span class="nn">appknox.exceptions</span> <span class="k">import</span> <span class="n">OneTimePasswordError</span><span class="p">,</span> <span class="n">CredentialError</span><span class="p">,</span> \
+    <span class="n">AppknoxError</span><span class="p">,</span> <span class="n">ReportError</span>
+<span class="kn">from</span> <span class="nn">appknox.mapper</span> <span class="k">import</span> <span class="n">mapper</span><span class="p">,</span> <span class="n">Analysis</span><span class="p">,</span> <span class="n">File</span><span class="p">,</span> <span class="n">Project</span><span class="p">,</span> <span class="n">User</span><span class="p">,</span> <span class="n">Vulnerability</span>
+
+<span class="n">DEFAULT_API_HOST</span> <span class="o">=</span> <span class="s1">&#39;https://api.appknox.com&#39;</span>
+
+
+<div class="viewcode-block" id="Appknox"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox">[docs]</a><span class="k">class</span> <span class="nc">Appknox</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="n">DEFAULT_API_HOST</span><span class="p">,</span> <span class="n">log_level</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialise Appknox client</span>
+
+<span class="sd">        :param username: Username used to authenticate and fetch token</span>
+<span class="sd">        :param password: Password used to authenticate and fetch token</span>
+<span class="sd">        :param user_id: User ID. Set this only if a token is available</span>
+<span class="sd">        :param token: Token. Set this only if a token is available</span>
+<span class="sd">        :param host: API host. By default, https://api.appknox.com</span>
+
+<span class="sd">        If a token is not available, set ``username`` and ``password`` and use</span>
+<span class="sd">        the ``login`` method to authenticate. Otherwise, ``user_id`` and</span>
+<span class="sd">        ``token`` can be used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">log_level</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">password</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span> <span class="o">=</span> <span class="n">user_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="n">token</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">endpoint</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="s1">&#39;api/&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">slumber</span><span class="o">.</span><span class="n">API</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endpoint</span><span class="p">,</span>
+                                   <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">),</span>
+                                   <span class="n">append_slash</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Appknox.login"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.login">[docs]</a>    <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">otp</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Authenticate with server and create session</span>
+
+<span class="sd">        :param otp: One-time password, if account has MFA enabled</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">CredentialError</span><span class="p">(</span><span class="s1">&#39;Both username and password are required&#39;</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span>
+            <span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">otp</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;otp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">otp</span><span class="p">)</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="s1">&#39;api/login&#39;</span><span class="p">),</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">401</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">OneTimePasswordError</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">&#39;message&#39;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">403</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">CredentialError</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">&#39;message&#39;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AppknoxError</span><span class="p">(</span><span class="s1">&#39;Unknown error&#39;</span><span class="p">)</span>
+
+        <span class="n">json</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="n">json</span><span class="p">[</span><span class="s1">&#39;token&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">slumber</span><span class="o">.</span><span class="n">API</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">),</span>
+                               <span class="n">append_slash</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Appknox.get_user"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.get_user">[docs]</a>    <span class="k">def</span> <span class="nf">get_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch user by user ID</span>
+
+<span class="sd">        :param user_id: User ID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">users</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">mapper</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Appknox.get_project"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.get_project">[docs]</a>    <span class="k">def</span> <span class="nf">get_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Project</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch project by project ID</span>
+
+<span class="sd">        :param project_id: Project ID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">project</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">projects</span><span class="p">(</span><span class="n">project_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">mapper</span><span class="p">(</span><span class="n">Project</span><span class="p">,</span> <span class="n">project</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Appknox.get_projects"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.get_projects">[docs]</a>    <span class="k">def</span> <span class="nf">get_projects</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Project</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        List projects for currently authenticated user</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">projects</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">projects</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">limit</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">mapper</span><span class="p">(</span><span class="n">Project</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">_</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">projects</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]]</span></div>
+
+<div class="viewcode-block" id="Appknox.get_file"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.get_file">[docs]</a>    <span class="k">def</span> <span class="nf">get_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">File</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch file by file ID</span>
+
+<span class="sd">        :param file_id: File ID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">file_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">file_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">mapper</span><span class="p">(</span><span class="n">File</span><span class="p">,</span> <span class="n">file_</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Appknox.get_files"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.get_files">[docs]</a>    <span class="k">def</span> <span class="nf">get_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">File</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        List files in project</span>
+
+<span class="sd">        :param project_id: Project ID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">files</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">projectId</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">limit</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">mapper</span><span class="p">(</span><span class="n">File</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">_</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">files</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]]</span></div>
+
+<div class="viewcode-block" id="Appknox.get_analyses"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.get_analyses">[docs]</a>    <span class="k">def</span> <span class="nf">get_analyses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Analysis</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        List analyses for file</span>
+
+<span class="sd">        :param file_id: File ID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="n">file_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">file_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="n">analyses</span> <span class="o">=</span> <span class="n">file_</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;relationships&#39;</span><span class="p">][</span><span class="s1">&#39;analyses&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">analysis_id</span> <span class="ow">in</span> <span class="n">analyses</span><span class="p">:</span>
+            <span class="n">analysis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">analyses</span><span class="p">(</span><span class="n">analysis_id</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+            <span class="n">vuln_id</span> <span class="o">=</span> <span class="n">analysis</span><span class="p">[</span>
+                <span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;relationships&#39;</span><span class="p">][</span><span class="s1">&#39;vulnerability&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+            <span class="n">analysis</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;attributes&#39;</span><span class="p">][</span><span class="s1">&#39;vulnerability-id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vuln_id</span>
+
+            <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mapper</span><span class="p">(</span><span class="n">Analysis</span><span class="p">,</span> <span class="n">analysis</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+<div class="viewcode-block" id="Appknox.get_vulnerability"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.get_vulnerability">[docs]</a>    <span class="k">def</span> <span class="nf">get_vulnerability</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vulnerability_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vulnerability</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch vulnerability by vulnerability ID</span>
+
+<span class="sd">        :param vulnerability_id: vulnerability ID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">vulnerability</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">vulnerabilities</span><span class="p">(</span><span class="n">vulnerability_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">mapper</span><span class="p">(</span><span class="n">Vulnerability</span><span class="p">,</span> <span class="n">vulnerability</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Appknox.upload_file"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.upload_file">[docs]</a>    <span class="k">def</span> <span class="nf">upload_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Upload and scan a package</span>
+
+<span class="sd">        :param file: Package file to be uploaded and scanned</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">signed_url</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;application/octet-stream&#39;</span><span class="p">)</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="s1">&#39;api/uploaded_file&#39;</span><span class="p">),</span>
+            <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">),</span>
+            <span class="n">data</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+                <span class="n">file_key</span><span class="o">=</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;file_key&#39;</span><span class="p">],</span>
+                <span class="n">file_key_signed</span><span class="o">=</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;file_key_signed&#39;</span><span class="p">]))</span></div>
+
+<div class="viewcode-block" id="Appknox.start_dynamic"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.start_dynamic">[docs]</a>    <span class="k">def</span> <span class="nf">start_dynamic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Start dynamic scan for a file</span>
+
+<span class="sd">        :param file_id: File ID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">dynamic</span><span class="p">(</span><span class="n">file_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Appknox.stop_dynamic"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.stop_dynamic">[docs]</a>    <span class="k">def</span> <span class="nf">stop_dynamic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Terminate dynamic scan for a file</span>
+
+<span class="sd">        :param file_id: File ID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">dynamic_shutdown</span><span class="p">(</span><span class="n">file_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Appknox.get_report"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.get_report">[docs]</a>    <span class="k">def</span> <span class="nf">get_report</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">file_id</span><span class="p">,</span> <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;en&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch analyses report for a file</span>
+
+<span class="sd">        :param file_id: File ID</span>
+<span class="sd">        :param format: Report format (supported &#39;json&#39;, &#39;pdf&#39;). Default &#39;json&#39;</span>
+<span class="sd">        :param language: Report language (supported &#39;en&#39;, &#39;ja&#39;). Default &#39;en&#39;</span>
+<span class="sd">        :type file_id: int</span>
+<span class="sd">        :type format: str</span>
+<span class="sd">        :type language: str</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">format</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="s1">&#39;pdf&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">ReportError</span><span class="p">(</span><span class="s1">&#39;Unsupported format&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">language</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;en&#39;</span><span class="p">,</span> <span class="s1">&#39;ja&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">ReportError</span><span class="p">(</span><span class="s1">&#39;Unsupported language&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">report</span><span class="p">(</span><span class="n">file_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="nb">format</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="n">language</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Command-line interface and Python wrapper for Appknox</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=appknox&repo=appknox-python&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+    
+
+<p>
+<a href="https://travis-ci.org/appknox/appknox-python">
+    <img
+        alt="https://secure.travis-ci.org/appknox/appknox-python.svg?branch=master"
+        src="https://secure.travis-ci.org/appknox/appknox-python.svg?branch=master"
+    />
+</a>
+</p>
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../client.html">appknox.client</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mapper.html">appknox.mapper</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, XYSec Labs Pte. Ltd..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

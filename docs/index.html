@@ -46,12 +46,85 @@
 <h1>appknox-python<a class="headerlink" href="#appknox-python" title="Permalink to this headline">¶</a></h1>
 <p>appknox-python provides command-line interface and Python wrapper for the
 Appknox API.</p>
+<div class="section" id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="client.html">appknox.client</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mapper.html">appknox.mapper</a></li>
 </ul>
+</div>
+</div>
+<div class="section" id="quickstart">
+<h2>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>Appknox class provides an easy access to the Appknox API.</p>
+<p>Instances of this class can be used to interact with the Appknox scanner.</p>
+<p>To obtain an instance of this class:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">appknox</span>
+<span class="n">In</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="n">appknox</span> <span class="o">=</span> <span class="n">appknox</span><span class="o">.</span><span class="n">Appknox</span><span class="p">(</span>
+                        <span class="n">username</span><span class="o">=</span><span class="s1">&#39;USERNAME&#39;</span><span class="p">,</span>
+                        <span class="n">password</span><span class="o">=</span><span class="s1">&#39;PASSWORD&#39;</span><span class="p">,</span>
+                        <span class="n">host</span><span class="o">=</span><span class="s1">&#39;HOST&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To perform authentication:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">In</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">appknox</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">otp</span><span class="o">=</span><span class="mo">013370</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">otp</span></code> is required only for accounts with multi-factor authentication.</p>
+<p>To list projects for authenticated user</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="n">client</span><span class="o">.</span><span class="n">get_projects</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">4</span><span class="p">]:</span>
+<span class="p">[</span><span class="n">Project</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">created_on</span><span class="o">=</span><span class="s1">&#39;2017-06-23 07:19:26.720829+00:00&#39;</span><span class="p">,</span> <span class="n">file_count</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+         <span class="n">package_name</span><span class="o">=</span><span class="s1">&#39;org.owasp.goatdroid.fourgoats&#39;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+         <span class="n">updated_on</span><span class="o">=</span><span class="s1">&#39;2017-06-23 07:26:55.456744+00:00&#39;</span><span class="p">),</span>
+ <span class="n">Project</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">created_on</span><span class="o">=</span><span class="s1">&#39;2017-06-27 08:27:54.486226+00:00&#39;</span><span class="p">,</span> <span class="n">file_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+         <span class="n">package_name</span><span class="o">=</span><span class="s1">&#39;com.appknox.mfva&#39;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+         <span class="n">updated_on</span><span class="o">=</span><span class="s1">&#39;2017-06-27 08:27:54.637432+00:00&#39;</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>All results are Python objects, with its respective attributes.</p>
+<p>For listing files within a project:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="n">client</span><span class="o">.</span><span class="n">get_files</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="p">[</span><span class="n">File</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;MFVA&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s1">&#39;1.0&#39;</span><span class="p">,</span> <span class="n">version_code</span><span class="o">=</span><span class="s1">&#39;6&#39;</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>To upload and scan a new package:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="n">client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/home/viren/apk/mfva_1.0.apk&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Note the file that was just uploaded below:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="n">client</span><span class="o">.</span><span class="n">get_files</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">7</span><span class="p">]:</span>
+<span class="p">[</span><span class="n">File</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;MFVA&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s1">&#39;1.0&#39;</span><span class="p">,</span> <span class="n">version_code</span><span class="o">=</span><span class="s1">&#39;6&#39;</span><span class="p">),</span>
+ <span class="n">File</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;MFVA&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s1">&#39;1.0&#39;</span><span class="p">,</span> <span class="n">version_code</span><span class="o">=</span><span class="s1">&#39;6&#39;</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>Get the analyses for this new file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]:</span> <span class="n">client</span><span class="o">.</span><span class="n">get_analyses</span><span class="p">(</span><span class="mi">6</span><span class="p">)[:</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">8</span><span class="p">]:</span>
+<span class="p">[</span><span class="n">Analysis</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">267</span><span class="p">,</span> <span class="n">risk</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">cvss_base</span><span class="o">=</span><span class="mf">6.8</span><span class="p">,</span>
+          <span class="n">findings</span><span class="o">=</span><span class="p">[{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Unprotected service: com.appknox.mfva.ExportedService&#39;</span><span class="p">}],</span>
+          <span class="n">updated_on</span><span class="o">=</span><span class="s1">&#39;2017-06-27 08:28:35.166608+00:00&#39;</span><span class="p">,</span> <span class="n">vulnerability_id</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+ <span class="n">Analysis</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">235</span><span class="p">,</span> <span class="n">risk</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">cvss_base</span><span class="o">=</span><span class="mf">7.3</span><span class="p">,</span>
+          <span class="n">findings</span><span class="o">=</span><span class="p">[{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;pathPrefix=/&#39;</span><span class="p">}],</span>
+          <span class="n">updated_on</span><span class="o">=</span><span class="s1">&#39;2017-06-27 08:28:35.240543+00:00&#39;</span><span class="p">,</span> <span class="n">vulnerability_id</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+ <span class="n">Analysis</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">236</span><span class="p">,</span> <span class="n">risk</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">cvss_base</span><span class="o">=</span><span class="mf">7.7</span><span class="p">,</span>
+          <span class="n">findings</span><span class="o">=</span><span class="p">[{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Debug enabled within the app&#39;</span><span class="p">}],</span>
+          <span class="n">updated_on</span><span class="o">=</span><span class="s1">&#39;2017-06-27 08:28:35.296126+00:00&#39;</span><span class="p">,</span> <span class="n">vulnerability_id</span><span class="o">=</span><span class="mi">3</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>Note the <code class="docutils literal"><span class="pre">vulnerability_id</span></code> for <code class="docutils literal"><span class="pre">Analysis(id=235)</span></code>. To get details about this vulnerability:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]:</span> <span class="n">client</span><span class="o">.</span><span class="n">get_vulnerability</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">9</span><span class="p">]:</span> <span class="n">Vulnerability</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Improper Content Provider Permissions&#39;</span><span class="p">,</span>
+                      <span class="n">description</span><span class="o">=</span><span class="s1">&#39;A content provider permission was set to allow access from any other app on the device.</span>
+                                   <span class="n">Content</span> <span class="n">providers</span> <span class="n">may</span> <span class="n">contain</span> <span class="n">sensitive</span> <span class="n">information</span> <span class="n">about</span> <span class="n">an</span> <span class="n">app</span> <span class="ow">and</span> <span class="n">therefore</span> <span class="n">should</span> <span class="ow">not</span> <span class="n">be</span> <span class="n">shared</span><span class="o">.</span><span class="s1">&#39;,</span>
+                      <span class="n">intro</span><span class="o">=</span><span class="s2">&quot;The `ContentProvider` class provides a mechanism for managing and sharing data with other applications.</span>
+                             <span class="n">When</span> <span class="n">sharing</span> <span class="n">a</span> <span class="n">provider</span><span class="s1">&#39;s data with other apps, access control should be carefully implemented to prohibit unauthorized access to sensitive data.&quot;)</span>
+</pre></div>
+</div>
+</div></blockquote>
 </div>
 </div>
 <div class="section" id="indices-and-tables">
@@ -92,8 +165,19 @@ Appknox API.</p>
 
 
 
+    
+
+<p>
+<a href="https://travis-ci.org/appknox/appknox-python">
+    <img
+        alt="https://secure.travis-ci.org/appknox/appknox-python.svg?branch=master"
+        src="https://secure.travis-ci.org/appknox/appknox-python.svg?branch=master"
+    />
+</a>
+</p>
+
+
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="client.html">appknox.client</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mapper.html">appknox.mapper</a></li>
