@@ -1,13 +1,17 @@
 # (c) 2017, XYSec Labs
 
-import click
+
 import configparser
+import datetime
 import logging
 import os
 import requests
 import sys
 import tabulate
+import time
+from datetime import datetime as dt
 
+import click
 from click import echo
 
 from appknox.client import Appknox, DEFAULT_API_HOST
@@ -17,6 +21,7 @@ from appknox.mapper import Analysis, File, Project, User, Vulnerability
 
 CONFIG_FILE = os.path.expanduser('~/.config/appknox.ini')
 DEFAULT_PROFILE = 'default'
+TOKEN_EXPIRY_DAYS = 7
 
 config = configparser.ConfigParser()
 config.read(CONFIG_FILE)
@@ -68,6 +73,14 @@ def remove_profile(name):
     return result
 
 
+def is_expired(profile):
+    timestamp = int(profile.get('timestamp', 0))
+    logged = dt.utcfromtimestamp(timestamp)
+    now = dt.now()
+    expiry = datetime.timedelta(days=TOKEN_EXPIRY_DAYS)
+    return logged + expiry < now
+
+
 @click.group()
 @click.option('-v', '--verbose', count=True, help='Specify log verbosity.')
 @click.option('-n', '--profile', default=DEFAULT_PROFILE)
@@ -86,16 +99,23 @@ def cli(ctx, verbose, profile):
     ctx.obj['PROFILE'] = profile
 
     logging.basicConfig(level=ctx.obj['LOG_LEVEL'])
+
+    if ctx.invoked_subcommand in ['login', 'logout']:
+        return
+
     profile = get_profile(profile)
-    if profile:
-        ctx.obj['CLIENT'] = Appknox(
-            username=profile['username'], user_id=profile['user_id'],
-            token=profile['token'], host=profile['host'],
-        )
-    else:
-        if ctx.invoked_subcommand not in ['login', 'logout']:
-            echo('Not logged in')
-            sys.exit(1)
+
+    if not profile:
+        echo('Not logged in')
+        sys.exit(1)
+    if is_expired(profile):
+        echo('Your session is expired. Login again')
+        sys.exit(1)
+
+    ctx.obj['CLIENT'] = Appknox(
+        username=profile['username'], user_id=profile['user_id'],
+        token=profile['token'], host=profile['host'],
+    )
 
 
 @cli.command()
@@ -136,6 +156,7 @@ def login(ctx, username, password, host):
         'user_id': client.user_id,
         'token': client.token,
         'host': host,
+        'timestamp': str(int(time.time())),
     }
     save_profile(name=ctx.obj['PROFILE'], data=data)
     echo('Logged in to {}'.format(host))
