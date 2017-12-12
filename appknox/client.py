@@ -2,16 +2,23 @@
 
 import logging
 import requests
-import slumber
+import time
 
-from typing import List
+from functools import partial
+from typing import List, Dict
 from urllib.parse import urljoin
 
 from appknox.exceptions import OneTimePasswordError, CredentialError, \
     AppknoxError, ReportError
-from appknox.mapper import mapper, Analysis, File, Project, User, Vulnerability
+from appknox.mapper import mapper, Analysis, File, Project, User, \
+    Vulnerability, PersonalToken
 
 DEFAULT_API_HOST = 'https://api.appknox.com'
+API_BASE = '/api'
+JSON_API_HEADERS = {
+    'Content-Type': 'application/vnd.api+json',
+    'Accept': 'application/vnd.api+json'
+}
 
 
 class Appknox(object):
@@ -19,7 +26,7 @@ class Appknox(object):
     """
 
     def __init__(self, username: str=None, password: str=None,
-                 user_id: int=None, token: str=None,
+                 user_id: int=None, token: str=None, access_token: str=None,
                  host: str=DEFAULT_API_HOST, log_level: int=logging.INFO):
         """
         Initialise Appknox client
@@ -41,12 +48,20 @@ class Appknox(object):
         self.password = password
         self.user_id = user_id
         self.token = token
-        self.endpoint = urljoin(self.host, 'api/')
+        self.access_token = access_token
 
-        if self.user_id and self.token:
-            self.api = slumber.API(self.endpoint,
-                                   auth=(self.user_id, self.token),
-                                   append_slash=False)
+        if self.access_token:
+            self.api = ApiResource(
+                host=self.host,
+                headers={
+                    'Authorization': 'Token {}'.format(self.access_token)
+                }
+            )
+        elif self.user_id and self.token:
+            self.api = ApiResource(
+                host=self.host,
+                auth=(self.user_id, self.token)
+            )
 
     def login(self, otp: int=None):
         """
@@ -78,9 +93,23 @@ class Appknox(object):
         json = response.json()
         self.token = json['token']
         self.user_id = str(json['user_id'])
+        self.access_token = self.generate_access_token().key
+        self.api = ApiResource(
+            host=self.host,
+            headers={'Authorization': 'Token {}'.format(self.access_token)}
+        )
 
-        self.api = slumber.API(self.endpoint, auth=(self.user_id, self.token),
-                               append_slash=False)
+    def generate_access_token(self):
+        access_token = requests.post(
+            urljoin(self.host, 'api/personaltokens'),
+            auth=(self.user_id, self.token),
+            data={
+                'name': 'appknox-python for {} @{}'.format(
+                    self.username, str(int(time.time()))
+                )
+            }
+        )
+        return mapper(PersonalToken, access_token.json())
 
     def get_user(self, user_id: int) -> User:
         """
@@ -216,3 +245,34 @@ class Appknox(object):
             raise ReportError('Unsupported language')
 
         return self.api.report(file_id).get(format=format, language=language)
+
+
+class ApiResource(object):
+    def __init__(
+        self, host: str=DEFAULT_API_HOST,
+        headers: object=None, auth: Dict[str, str]=None
+    ):
+        self.host = host
+        self.headers = {**JSON_API_HEADERS, **headers}
+        self.auth = auth
+
+        self.endpoint = urljoin(host, API_BASE)
+
+    def __getattr__(self, resource):
+        return partial(self.set_endpoint, resource)
+
+    def set_endpoint(self, resource, resource_id=None):
+        self.endpoint = '{}/{}'.format(urljoin(self.host, API_BASE), resource)
+        if resource_id:
+            self.endpoint += '/{}'.format(str(resource_id))
+        return self
+
+    def get(self, *args, **kwargs):
+        try:
+            resp = requests.get(
+                self.endpoint, headers=self.headers, auth=self.auth,
+                params=kwargs
+            )
+            return resp.json()
+        except Exception as e:
+            return {}
