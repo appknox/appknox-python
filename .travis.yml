@@ -1,8 +1,8 @@
 language: python
 sudo: false
 python:
+  - "3.6"
   - "3.5"
-  - "3.5-dev"
 # command to install dependencies
 install:
   - pip install -r requirements.txt
