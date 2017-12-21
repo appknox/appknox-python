@@ -89,7 +89,7 @@ def cli(ctx, verbose, profile):
 
     logging.basicConfig(level=ctx.obj['LOG_LEVEL'])
 
-    if ctx.invoked_subcommand in ['login', 'logout']:
+    if ctx.invoked_subcommand in ['login']:
         return
 
     profile = get_profile(profile)
@@ -173,6 +173,10 @@ def logout(ctx):
     """
     profile = ctx.obj['PROFILE']
     success = remove_profile(profile)
+
+    client = ctx.obj['CLIENT']
+    client.revoke_access_token()
+
     if success:
         echo('Logged out')
     else:

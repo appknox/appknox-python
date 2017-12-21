@@ -100,6 +100,9 @@ class Appknox(object):
         )
 
     def generate_access_token(self):
+        """
+        Generates personal access token
+        """
         access_token = requests.post(
             urljoin(self.host, 'api/personaltokens'),
             auth=(self.user_id, self.token),
@@ -110,6 +113,25 @@ class Appknox(object):
             }
         )
         return mapper(PersonalToken, access_token.json())
+
+    def revoke_access_token(self):
+        """
+        Revokes existing personal access token
+        """
+        resp = requests.get(
+            urljoin(self.host, 'api/personaltokens?key=' + self.access_token),
+            auth=(self.user_id, self.token)
+        )
+        resp_json = resp.json()
+        personal_token = next((p for p in resp_json.get('data')), None)
+        if not personal_token:
+            return
+
+        token_id = personal_token['id']
+        return requests.delete(
+            urljoin(self.host, 'api/personaltokens/' + token_id),
+            auth=(self.user_id, self.token)
+        )
 
     def get_user(self, user_id: int) -> User:
         """
