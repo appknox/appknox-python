@@ -2,14 +2,12 @@
 
 
 import configparser
-import datetime
 import logging
 import os
 import requests
 import sys
 import tabulate
 import time
-from datetime import datetime as dt
 
 import click
 from click import echo
@@ -21,7 +19,6 @@ from appknox.mapper import Analysis, File, Project, User, Vulnerability
 
 CONFIG_FILE = os.path.expanduser('~/.config/appknox.ini')
 DEFAULT_PROFILE = 'default'
-TOKEN_EXPIRY_DAYS = 7
 
 config = configparser.ConfigParser()
 config.read(CONFIG_FILE)
@@ -73,14 +70,6 @@ def remove_profile(name):
     return result
 
 
-def is_expired(profile):
-    timestamp = int(profile.get('timestamp', 0))
-    logged = dt.utcfromtimestamp(timestamp)
-    now = dt.now()
-    expiry = datetime.timedelta(days=TOKEN_EXPIRY_DAYS)
-    return logged + expiry < now
-
-
 @click.group()
 @click.option('-v', '--verbose', count=True, help='Specify log verbosity.')
 @click.option('-n', '--profile', default=DEFAULT_PROFILE)
@@ -100,7 +89,7 @@ def cli(ctx, verbose, profile):
 
     logging.basicConfig(level=ctx.obj['LOG_LEVEL'])
 
-    if ctx.invoked_subcommand in ['login', 'logout']:
+    if ctx.invoked_subcommand in ['login']:
         return
 
     profile = get_profile(profile)
@@ -108,13 +97,15 @@ def cli(ctx, verbose, profile):
     if not profile:
         echo('Not logged in')
         sys.exit(1)
-    if is_expired(profile):
-        echo('Your session is expired. Login again')
+
+    if not profile.get('access_token', None):
+        echo('Access token doesn\'t exist. Login again')
         sys.exit(1)
 
     ctx.obj['CLIENT'] = Appknox(
         username=profile['username'], user_id=profile['user_id'],
-        token=profile['token'], host=profile['host'],
+        token=profile['token'], access_token=profile['access_token'],
+        host=profile['host']
     )
 
 
@@ -155,6 +146,7 @@ def login(ctx, username, password, host):
         'username': username,
         'user_id': client.user_id,
         'token': client.token,
+        'access_token': client.access_token,
         'host': host,
         'timestamp': str(int(time.time())),
     }
@@ -181,6 +173,10 @@ def logout(ctx):
     """
     profile = ctx.obj['PROFILE']
     success = remove_profile(profile)
+
+    client = ctx.obj['CLIENT']
+    client.revoke_access_token()
+
     if success:
         echo('Logged out')
     else:

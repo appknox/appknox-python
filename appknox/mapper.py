@@ -43,3 +43,8 @@ Vulnerability = namedtuple(
     'Vulnerability',
     ['name', 'description', 'intro', 'compliant', 'non_compliant']
 )
+
+PersonalToken = namedtuple(
+    'AccessToken',
+    ['name', 'key']
+)
