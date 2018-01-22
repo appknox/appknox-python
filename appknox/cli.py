@@ -10,7 +10,7 @@ import tabulate
 import time
 
 import click
-from click import echo
+from click import echo, echo_via_pager
 
 from appknox.client import Appknox, DEFAULT_API_HOST
 from appknox.exceptions import AppknoxError, OneTimePasswordError, \
@@ -190,7 +190,7 @@ def projects(ctx):
     List projects
     """
     client = ctx.obj['CLIENT']
-    echo(table(Project, client.get_projects()))
+    echo_via_pager(table(Project, client.get_projects()))
 
 
 @cli.command()

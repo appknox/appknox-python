@@ -153,13 +153,33 @@ class Appknox(object):
 
         return mapper(Project, project)
 
+    def pagination_fix(self, projects):
+        link = projects['links']['next']
+        initial_data = [mapper(
+            Project, dict(data=_)
+        ) for _ in projects['data']]
+
+        if link is not None:
+            while link is not None:
+                resp = requests.get(
+                    urljoin(self.host, link),
+                    auth=(self.user_id, self.token)
+                )
+                resp_json = resp.json()
+                link = resp_json['links']['next']
+                initial_data += [mapper(
+                    Project, dict(data=_)
+                ) for _ in resp_json['data']]
+
+        return initial_data
+
     def get_projects(self) -> List[Project]:
         """
         List projects for currently authenticated user
         """
         projects = self.api.projects().get(limit=-1)
 
-        return [mapper(Project, dict(data=_)) for _ in projects['data']]
+        return self.pagination_fix(projects)
 
     def get_file(self, file_id: int) -> File:
         """
