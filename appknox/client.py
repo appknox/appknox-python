@@ -153,23 +153,26 @@ class Appknox(object):
 
         return mapper(Project, project)
 
-    def pagination_fix(self, projects):
-        link = projects['links']['next']
+    def paginated_data(self, response, mapper_class):
         initial_data = [mapper(
-            Project, dict(data=_)
-        ) for _ in projects['data']]
+            mapper_class, dict(data=value)
+        ) for value in response['data']]
 
-        if link is not None:
-            while link is not None:
-                resp = requests.get(
-                    urljoin(self.host, link),
-                    auth=(self.user_id, self.token)
-                )
-                resp_json = resp.json()
-                link = resp_json['links']['next']
-                initial_data += [mapper(
-                    Project, dict(data=_)
-                ) for _ in resp_json['data']]
+        if not response.get('links'):
+            return initial_data
+
+        link = response['links']['next']
+
+        while link is not None:
+            resp = requests.get(
+                urljoin(self.host, link),
+                auth=(self.user_id, self.token)
+            )
+            resp_json = resp.json()
+            link = resp_json['links']['next']
+            initial_data += [mapper(
+                mapper_class, dict(data=value)
+            ) for value in resp_json['data']]
 
         return initial_data
 
@@ -179,7 +182,7 @@ class Appknox(object):
         """
         projects = self.api.projects().get(limit=-1)
 
-        return self.pagination_fix(projects)
+        return self.paginated_data(projects, Project)
 
     def get_file(self, file_id: int) -> File:
         """
@@ -199,7 +202,7 @@ class Appknox(object):
         """
         files = self.api.files().get(projectId=project_id, limit=-1)
 
-        return [mapper(File, dict(data=_)) for _ in files['data']]
+        return self.paginated_data(files, File)
 
     def get_analyses(self, file_id: int) -> List[Analysis]:
         """
