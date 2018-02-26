@@ -198,13 +198,22 @@ class Appknox(object):
 
         return mapper(File, file_)
 
-    def get_files(self, project_id: int) -> List[File]:
+    def get_files(
+        self, project_id: int, version_code: int = None
+    ) -> List[File]:
         """
         List files in project
 
         :param project_id: Project ID
         """
-        files = self.api.files().get(projectId=project_id, limit=-1)
+        filter_options = {
+            'projectId': project_id,
+            'limit': -1
+        }
+        if version_code:
+            filter_options['version_code'] = version_code
+
+        files = self.api.files().get(**filter_options)
 
         return self.paginated_data(files, File)
 
