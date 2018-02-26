@@ -176,11 +176,15 @@ class Appknox(object):
 
         return initial_data
 
-    def get_projects(self) -> List[Project]:
+    def get_projects(
+        self, platform: int = -1, package_name: str = ''
+    ) -> List[Project]:
         """
         List projects for currently authenticated user
         """
-        projects = self.api.projects().get(limit=-1)
+        projects = self.api.projects().get(
+            limit=-1, platform=platform, query=package_name
+        )
 
         return self.paginated_data(projects, Project)
 

@@ -30,7 +30,7 @@ Project = namedtuple(
 
 File = namedtuple(
     'File',
-    ['id', 'name', 'version', 'version_code']
+    ['id', 'name', 'version', 'version_code', 'static_scan_progress']
 )
 
 Analysis = namedtuple(
@@ -41,7 +41,7 @@ Analysis = namedtuple(
 
 Vulnerability = namedtuple(
     'Vulnerability',
-    ['name', 'description', 'intro', 'compliant', 'non_compliant']
+    ['name', 'description', 'intro', 'compliant', 'non_compliant', 'types']
 )
 
 PersonalToken = namedtuple(
