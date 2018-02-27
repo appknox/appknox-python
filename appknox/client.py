@@ -16,7 +16,6 @@ from appknox.mapper import mapper, Analysis, File, Project, User, \
 DEFAULT_API_HOST = 'https://api.appknox.com'
 API_BASE = '/api'
 JSON_API_HEADERS = {
-    'Content-Type': 'application/vnd.api+json',
     'Accept': 'application/vnd.api+json'
 }
 
@@ -254,19 +253,17 @@ class Appknox(object):
 
         :param file: Package file to be uploaded and scanned
         """
-        response = self.api.signed_url.get(
-            content_type='application/octet-stream')
-
+        response = self.api.signed_url().get()
         url = response['url']
         data = file.read()
         requests.put(url, data=data)
 
-        requests.post(
-            urljoin(self.host, 'api/uploaded_file'),
-            auth=(self.user_id, self.token),
+        self.api.uploaded_file().post(
             data=dict(
                 file_key=response['file_key'],
-                file_key_signed=response['file_key_signed']))
+                file_key_signed=response['file_key_signed']
+            )
+        )
 
     def start_dynamic(self, file_id: int):
         """
@@ -326,11 +323,15 @@ class ApiResource(object):
         return self
 
     def get(self, *args, **kwargs):
-        try:
-            resp = requests.get(
-                self.endpoint, headers=self.headers, auth=self.auth,
-                params=kwargs
-            )
-            return resp.json()
-        except Exception as e:
-            return {}
+        resp = requests.get(
+            self.endpoint, headers=self.headers, auth=self.auth,
+            params=kwargs
+        )
+        return resp.json()
+
+    def post(self, data, content_type=None, *args, **kwargs):
+        resp = requests.post(
+            self.endpoint, headers=self.headers, auth=self.auth,
+            params=kwargs, data=data
+        )
+        return resp.json()
