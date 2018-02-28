@@ -35,13 +35,14 @@ File = namedtuple(
 
 Analysis = namedtuple(
     'Analysis',
-    ['id', 'risk', 'status', 'cvss_base', 'findings', 'updated_on',
-     'vulnerability_id']
+    ['id', 'risk', 'status', 'cvss_base', 'cvss_vector', 'cvss_version',
+     'cvss_metrics_humanized', 'findings', 'updated_on', 'vulnerability_id']
 )
 
 Vulnerability = namedtuple(
     'Vulnerability',
-    ['name', 'description', 'intro', 'compliant', 'non_compliant', 'types']
+    ['name', 'description', 'intro', 'related_to',
+     'business_implication', 'compliant', 'non_compliant', 'types']
 )
 
 PersonalToken = namedtuple(
