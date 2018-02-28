@@ -228,7 +228,12 @@ def analyses(ctx, file_id):
     List analyses for file
     """
     client = ctx.obj['CLIENT']
-    echo(table(Analysis, client.get_analyses(file_id), ignore=['findings']))
+    echo(table(
+        Analysis, client.get_analyses(file_id),
+        ignore=[
+            'cvss_vector', 'cvss_version', 'cvss_metrics_humanized', 'findings'
+        ]
+    ))
 
 
 @cli.command()
@@ -239,7 +244,12 @@ def vulnerability(ctx, vulnerability_id):
     Get vulnerability
     """
     client = ctx.obj['CLIENT']
-    echo(table(Vulnerability, client.get_vulnerability(vulnerability_id)))
+    echo(table(
+        Vulnerability, client.get_vulnerability(vulnerability_id),
+        ignore=[
+            'related_to', 'business_implication', 'types'
+        ]
+    ))
 
 
 @cli.command()
