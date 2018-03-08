@@ -11,7 +11,7 @@ from urllib.parse import urljoin
 from appknox.exceptions import OneTimePasswordError, CredentialError, \
     AppknoxError, ReportError
 from appknox.mapper import mapper, Analysis, File, Project, User, \
-    Vulnerability, PersonalToken
+    Vulnerability, OWASP, PersonalToken
 
 DEFAULT_API_HOST = 'https://api.appknox.com'
 API_BASE = '/api'
@@ -246,6 +246,16 @@ class Appknox(object):
         vulnerability = self.api.vulnerabilities(vulnerability_id).get()
 
         return mapper(Vulnerability, vulnerability)
+
+    def get_owasp(self, owasp_id: str) -> OWASP:
+        """
+        Fetch OWASP by ID
+
+        :param owasp_id: OWASP ID
+        """
+        owasp = self.api.owasps(owasp_id).get()
+
+        return mapper(OWASP, owasp)
 
     def upload_file(self, file):
         """

@@ -36,13 +36,19 @@ File = namedtuple(
 Analysis = namedtuple(
     'Analysis',
     ['id', 'risk', 'status', 'cvss_base', 'cvss_vector', 'cvss_version',
-     'cvss_metrics_humanized', 'findings', 'updated_on', 'vulnerability_id']
+     'cvss_metrics_humanized', 'findings', 'updated_on', 'vulnerability_id',
+     'owasp']
 )
 
 Vulnerability = namedtuple(
     'Vulnerability',
     ['name', 'description', 'intro', 'related_to',
      'business_implication', 'compliant', 'non_compliant', 'types']
+)
+
+OWASP = namedtuple(
+    'OWASP',
+    ['code', 'title', 'description', 'year']
 )
 
 PersonalToken = namedtuple(

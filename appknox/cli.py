@@ -15,7 +15,7 @@ from click import echo, echo_via_pager
 from appknox.client import Appknox, DEFAULT_API_HOST
 from appknox.exceptions import AppknoxError, OneTimePasswordError, \
     CredentialError, ReportError
-from appknox.mapper import Analysis, File, Project, User, Vulnerability
+from appknox.mapper import Analysis, File, Project, User, Vulnerability, OWASP
 
 CONFIG_FILE = os.path.expanduser('~/.config/appknox.ini')
 DEFAULT_PROFILE = 'default'
@@ -250,6 +250,17 @@ def vulnerability(ctx, vulnerability_id):
             'related_to', 'business_implication', 'types'
         ]
     ))
+
+
+@cli.command()
+@click.argument('owasp_id')
+@click.pass_context
+def owasp(ctx, owasp_id):
+    """
+    Get owasp
+    """
+    client = ctx.obj['CLIENT']
+    echo(table(OWASP, client.get_owasp(owasp_id), ignore=['description']))
 
 
 @cli.command()
