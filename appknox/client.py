@@ -268,6 +268,8 @@ class Appknox(object):
             if not analysis:
                 analysis = self.api.analyses(analysis_id['id']).get()
                 Cache.add(analysis['data'])
+                for d in analysis.get('included', []):
+                    Cache.add(d)
 
             vuln_id = analysis[
                 'data']['relationships']['vulnerability']['data']['id']
@@ -292,7 +294,13 @@ class Appknox(object):
 
         :param owasp_id: OWASP ID
         """
+        cache_data = Cache.get('owasp', owasp_id)
+        if cache_data:
+            return mapper(OWASP, {
+                'data': cache_data
+            })
         owasp = self.api.owasps(owasp_id).get()
+        Cache.add(owasp.get('data', {}))
 
         return mapper(OWASP, owasp)
 
