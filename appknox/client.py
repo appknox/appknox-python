@@ -20,6 +20,38 @@ JSON_API_HEADERS = {
 }
 
 
+class Cache(object):
+    data = {}
+
+    @classmethod
+    def add(cls, data):
+        data_type = data.get('type')
+        data_id = data.get('id')
+        if not data_type or not data_id:
+            return
+
+        cache_data_type = cls.data.get(data_type, {})
+        cache_data_type[data_id] = data
+        cls.data[data_type] = cache_data_type
+
+    @classmethod
+    def get(cls, data_type, data_id):
+        cache_data_type = cls.data.get(data_type, {})
+        return cache_data_type.get(data_id)
+
+    @classmethod
+    def delete(cls, data_type, data_id=None):
+        if not data_id:
+            cls.data[data_type] = {}
+            return
+        cache_data_type = cls.data.get(data_type, {})
+        cache_data_type[data_id] = None
+
+    @classmethod
+    def clear(cls):
+        cls.data = {}
+
+
 class Appknox(object):
     """
     """
@@ -223,12 +255,19 @@ class Appknox(object):
         :param file_id: File ID
         """
         out = list()
+        file_ = file_ = self.api.files(file_id).get()
+        for d in file_.get('included', []):
+            Cache.add(d)
 
-        file_ = self.api.files(file_id).get()
         analyses = file_['data']['relationships']['analyses']['data']
-
         for analysis_id in analyses:
-            analysis = self.api.analyses(analysis_id['id']).get()
+            analysis = Cache.get('analyses', analysis_id['id'])
+            analysis = {
+                'data': analysis
+            }
+            if not analysis:
+                analysis = self.api.analyses(analysis_id['id']).get()
+                Cache.add(analysis['data'])
 
             vuln_id = analysis[
                 'data']['relationships']['vulnerability']['data']['id']
