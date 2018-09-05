@@ -82,14 +82,14 @@ class Appknox(object):
         self.access_token = access_token
 
         if self.access_token:
-            self.api = ApiResource(
+            self.json_api = ApiResource(
                 host=self.host,
                 headers={
                     'Authorization': 'Token {}'.format(self.access_token)
                 }
             )
         elif self.user_id and self.token:
-            self.api = ApiResource(
+            self.json_api = ApiResource(
                 host=self.host,
                 auth=(self.user_id, self.token)
             )
@@ -125,7 +125,7 @@ class Appknox(object):
         self.token = json['token']
         self.user_id = str(json['user_id'])
         self.access_token = self.generate_access_token().key
-        self.api = ApiResource(
+        self.json_api = ApiResource(
             host=self.host,
             headers={'Authorization': 'Token {}'.format(self.access_token)}
         )
@@ -170,7 +170,7 @@ class Appknox(object):
 
         :param user_id: User ID
         """
-        user = self.api.users(user_id).get()
+        user = self.json_api.users(user_id).get()
 
         return mapper(User, user)
 
@@ -180,7 +180,7 @@ class Appknox(object):
 
         :param project_id: Project ID
         """
-        project = self.api.projects(project_id).get()
+        project = self.json_api.projects(project_id).get()
 
         return mapper(Project, project)
 
@@ -213,7 +213,7 @@ class Appknox(object):
         """
         List projects for currently authenticated user
         """
-        projects = self.api.projects().get(
+        projects = self.json_api.projects().get(
             limit=-1, platform=platform, query=package_name
         )
 
@@ -225,7 +225,7 @@ class Appknox(object):
 
         :param file_id: File ID
         """
-        file_ = self.api.files(file_id).get()
+        file_ = self.json_api.files(file_id).get()
 
         return mapper(File, file_)
 
@@ -244,7 +244,7 @@ class Appknox(object):
         if version_code:
             filter_options['version_code'] = version_code
 
-        files = self.api.files().get(**filter_options)
+        files = self.json_api.files().get(**filter_options)
 
         return self.paginated_data(files, File)
 
@@ -255,7 +255,7 @@ class Appknox(object):
         :param file_id: File ID
         """
         out = list()
-        file_ = file_ = self.api.files(file_id).get()
+        file_ = file_ = self.json_api.files(file_id).get()
         for d in file_.get('included', []):
             Cache.add(d)
 
@@ -266,7 +266,7 @@ class Appknox(object):
                 'data': analysis
             }
             if not analysis:
-                analysis = self.api.analyses(analysis_id['id']).get()
+                analysis = self.json_api.analyses(analysis_id['id']).get()
                 Cache.add(analysis['data'])
                 for d in analysis.get('included', []):
                     Cache.add(d)
@@ -284,7 +284,7 @@ class Appknox(object):
 
         :param vulnerability_id: vulnerability ID
         """
-        vulnerability = self.api.vulnerabilities(vulnerability_id).get()
+        vulnerability = self.json_api.vulnerabilities(vulnerability_id).get()
 
         return mapper(Vulnerability, vulnerability)
 
@@ -299,7 +299,7 @@ class Appknox(object):
             return mapper(OWASP, {
                 'data': cache_data
             })
-        owasp = self.api.owasps(owasp_id).get()
+        owasp = self.json_api.owasps(owasp_id).get()
         Cache.add(owasp.get('data', {}))
 
         return mapper(OWASP, owasp)
@@ -310,12 +310,12 @@ class Appknox(object):
 
         :param file: Package file to be uploaded and scanned
         """
-        response = self.api.signed_url().get()
+        response = self.json_api.signed_url().get()
         url = response['url']
         data = file.read()
         requests.put(url, data=data)
 
-        self.api.uploaded_file().post(
+        self.json_api.uploaded_file().post(
             data=dict(
                 file_key=response['file_key'],
                 file_key_signed=response['file_key_signed']
@@ -328,7 +328,7 @@ class Appknox(object):
 
         :param file_id: File ID
         """
-        self.api.dynamic(file_id).get()
+        self.json_api.dynamic(file_id).get()
 
     def stop_dynamic(self, file_id: int):
         """
@@ -336,7 +336,7 @@ class Appknox(object):
 
         :param file_id: File ID
         """
-        self.api.dynamic_shutdown(file_id).get()
+        self.json_api.dynamic_shutdown(file_id).get()
 
     def get_report(
             self, file_id, format: str='json', language: str='en') -> str:
@@ -356,7 +356,7 @@ class Appknox(object):
         if language not in ['en', 'ja']:
             raise ReportError('Unsupported language')
 
-        return self.api.report(file_id).get(format=format, language=language)
+        return self.json_api.report(file_id).get(format=format, language=language)
 
 
 class ApiResource(object):
