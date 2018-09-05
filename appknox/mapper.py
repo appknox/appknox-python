@@ -5,7 +5,7 @@ from collections import namedtuple
 
 def mapper(model: type, resource: dict) -> object:
     """
-    Returns an object of type `model` from dictified JSON `resource`
+    Returns an obj of type `model` from dictified JSON `resource` for JSON APIs
     """
     attr = dict()
     for field in model._fields:
@@ -15,6 +15,14 @@ def mapper(model: type, resource: dict) -> object:
             attr[field] = resource['data']['attributes'][
                 field.replace('_', '-')]
     return model(**attr)
+
+
+def mapper_drf(model: type, resource: dict) -> object:
+    """
+    Returns an obj of type `model` from dictified JSON `resource` for DRF APIs
+    """
+    accepted_params = {k: resource[k] for k in model._fields}
+    return model(**accepted_params)
 
 
 User = namedtuple(

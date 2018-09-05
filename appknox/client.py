@@ -13,10 +13,14 @@ from appknox.exceptions import OneTimePasswordError, CredentialError, \
 from appknox.mapper import mapper, Analysis, File, Project, User, \
     Vulnerability, OWASP, PersonalToken
 
+
 DEFAULT_API_HOST = 'https://api.appknox.com'
 API_BASE = '/api'
 JSON_API_HEADERS = {
     'Accept': 'application/vnd.api+json'
+}
+DRF_API_HEADERS = {
+    'Accept': 'application/json'
 }
 
 
@@ -81,16 +85,28 @@ class Appknox(object):
         self.token = token
         self.access_token = access_token
 
+        token_header = {
+            'Authorization': 'Token {}'.format(self.access_token)
+        }
+
         if self.access_token:
             self.json_api = ApiResource(
                 host=self.host,
-                headers={
-                    'Authorization': 'Token {}'.format(self.access_token)
-                }
+                headers={**JSON_API_HEADERS, **token_header}
+            )
+            self.drf_api = ApiResource(
+                host=self.host,
+                headers={**DRF_API_HEADERS, **token_header}
             )
         elif self.user_id and self.token:
             self.json_api = ApiResource(
                 host=self.host,
+                headers={**JSON_API_HEADERS},
+                auth=(self.user_id, self.token)
+            )
+            self.drf_api = ApiResource(
+                host=self.host,
+                headers={**DRF_API_HEADERS},
                 auth=(self.user_id, self.token)
             )
 
@@ -127,7 +143,15 @@ class Appknox(object):
         self.access_token = self.generate_access_token().key
         self.json_api = ApiResource(
             host=self.host,
-            headers={'Authorization': 'Token {}'.format(self.access_token)}
+            headers={**JSON_API_HEADERS, **{
+                'Authorization': 'Token {}'.format(self.access_token)
+            }}
+        )
+        self.drf_api = ApiResource(
+            host=self.host,
+            headers={**DRF_API_HEADERS, **{
+                'Authorization': 'Token {}'.format(self.access_token)
+            }}
         )
 
     def generate_access_token(self):
@@ -204,6 +228,24 @@ class Appknox(object):
             initial_data += [mapper(
                 mapper_class, dict(data=value)
             ) for value in resp_json['data']]
+
+        return initial_data
+
+    def paginated_drf_data(self, response, mapper_class):
+        initial_data = [
+            mapper_drf(mapper_class, value) for value in response['results']
+        ]
+
+        if not response.get('next'):
+            return initial_data
+        next = response['next']
+        while next is not None:
+            resp = requests.get(next, auth=(self.user_id, self.token))
+            resp_json = resp.json()
+            next = resp_json['next']
+            initial_data += [mapper_drf(
+                mapper_class, dict(data=value)
+            ) for value in resp_json['results']]
 
         return initial_data
 
@@ -365,10 +407,13 @@ class ApiResource(object):
         headers: object=None, auth: Dict[str, str]=None
     ):
         self.host = host
-        self.headers = {**JSON_API_HEADERS, **headers}
+        self.headers = {**headers}
         self.auth = auth
 
         self.endpoint = urljoin(host, API_BASE)
+
+    def __getitem__(self, resource):
+        return partial(self.set_endpoint, resource)
 
     def __getattr__(self, resource):
         return partial(self.set_endpoint, resource)
