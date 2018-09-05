@@ -8,11 +8,13 @@ from functools import partial
 from typing import List, Dict
 from urllib.parse import urljoin
 
-from appknox.exceptions import OneTimePasswordError, CredentialError, \
-    AppknoxError, ReportError
-from appknox.mapper import mapper, Analysis, File, Project, User, \
+from appknox.exceptions import (
+    OneTimePasswordError, CredentialError, AppknoxError, ReportError
+)
+from appknox.mapper import (
+    mapper, mapper_drf, Analysis, File, Project, User, Organization,
     Vulnerability, OWASP, PersonalToken
-
+)
 
 DEFAULT_API_HOST = 'https://api.appknox.com'
 API_BASE = '/api'
@@ -249,17 +251,27 @@ class Appknox(object):
 
         return initial_data
 
+    def get_organizations(self) -> List[Organization]:
+        """
+        List organizations for currently authenticated user
+        """
+        organizations = self.drf_api.organizations().get(limit=-1)
+        return self.paginated_drf_data(organizations, Organization)
+
     def get_projects(
-        self, platform: int = -1, package_name: str = ''
+        self, organization_id: int, platform: int = None,
+        package_name: str = ''
     ) -> List[Project]:
         """
         List projects for currently authenticated user
-        """
-        projects = self.json_api.projects().get(
-            limit=-1, platform=platform, query=package_name
-        )
+        in the given organization
 
-        return self.paginated_data(projects, Project)
+        :param organization_id: Organization ID
+        """
+        projects = self.drf_api[
+            'organizations/{}/projects'.format(organization_id)
+        ]().get(platform=platform, q=package_name)
+        return self.paginated_drf_data(projects, Project)
 
     def get_file(self, file_id: int) -> File:
         """
@@ -398,7 +410,9 @@ class Appknox(object):
         if language not in ['en', 'ja']:
             raise ReportError('Unsupported language')
 
-        return self.json_api.report(file_id).get(format=format, language=language)
+        return self.json_api.report(file_id).get(
+            format=format, language=language
+        )
 
 
 class ApiResource(object):

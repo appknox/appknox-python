@@ -15,7 +15,9 @@ from click import echo, echo_via_pager
 from appknox.client import Appknox, DEFAULT_API_HOST
 from appknox.exceptions import AppknoxError, OneTimePasswordError, \
     CredentialError, ReportError
-from appknox.mapper import Analysis, File, Project, User, Vulnerability, OWASP
+from appknox.mapper import (
+    Analysis, File, Organization, Project, User, Vulnerability, OWASP
+)
 
 CONFIG_FILE = os.path.expanduser('~/.config/appknox.ini')
 DEFAULT_PROFILE = 'default'
@@ -185,12 +187,23 @@ def logout(ctx):
 
 @cli.command()
 @click.pass_context
-def projects(ctx):
+def organizations(ctx):
+    """
+    List organizations
+    """
+    client = ctx.obj['CLIENT']
+    echo_via_pager(table(Organization, client.get_organizations()))
+
+
+@cli.command()
+@click.argument('organization_id')
+@click.pass_context
+def projects(ctx, organization_id):
     """
     List projects
     """
     client = ctx.obj['CLIENT']
-    echo_via_pager(table(Project, client.get_projects()))
+    echo_via_pager(table(Project, client.get_projects(organization_id)))
 
 
 @cli.command()

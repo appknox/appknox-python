@@ -30,6 +30,11 @@ User = namedtuple(
     ['id', 'email', 'first_name', 'lang', 'last_name', 'username']
 )
 
+Organization = namedtuple(
+    'Organization',
+    ['id', 'name']
+)
+
 Project = namedtuple(
     'Project',
     ['id', 'created_on', 'file_count', 'package_name', 'platform',
