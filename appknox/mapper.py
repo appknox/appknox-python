@@ -3,7 +3,7 @@
 from collections import namedtuple
 
 
-def mapper(model: type, resource: dict) -> object:
+def mapper_json_api(model: type, resource: dict) -> object:
     """
     Returns an obj of type `model` from dictified JSON `resource` for JSON APIs
     """
@@ -17,7 +17,7 @@ def mapper(model: type, resource: dict) -> object:
     return model(**attr)
 
 
-def mapper_drf(model: type, resource: dict) -> object:
+def mapper_drf_api(model: type, resource: dict) -> object:
     """
     Returns an obj of type `model` from dictified JSON `resource` for DRF APIs
     """

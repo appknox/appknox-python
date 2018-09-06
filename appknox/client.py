@@ -12,8 +12,8 @@ from appknox.exceptions import (
     OneTimePasswordError, CredentialError, AppknoxError, ReportError
 )
 from appknox.mapper import (
-    mapper, mapper_drf, Analysis, File, Project, User, Organization,
-    Vulnerability, OWASP, PersonalToken
+    mapper_json_api, mapper_drf_api, Analysis, File, Project, User,
+    Organization, Vulnerability, OWASP, PersonalToken
 )
 
 DEFAULT_API_HOST = 'https://api.appknox.com'
@@ -169,7 +169,7 @@ class Appknox(object):
                 )
             }
         )
-        return mapper(PersonalToken, access_token.json())
+        return mapper_json_api(PersonalToken, access_token.json())
 
     def revoke_access_token(self):
         """
@@ -198,7 +198,7 @@ class Appknox(object):
         """
         user = self.json_api.users(user_id).get()
 
-        return mapper(User, user)
+        return mapper_json_api(User, user)
 
     def get_project(self, project_id: int) -> Project:
         """
@@ -208,10 +208,10 @@ class Appknox(object):
         """
         project = self.json_api.projects(project_id).get()
 
-        return mapper(Project, project)
+        return mapper_json_api(Project, project)
 
     def paginated_data(self, response, mapper_class):
-        initial_data = [mapper(
+        initial_data = [mapper_json_api(
             mapper_class, dict(data=value)
         ) for value in response['data']]
 
@@ -227,7 +227,7 @@ class Appknox(object):
             )
             resp_json = resp.json()
             link = resp_json['links']['next']
-            initial_data += [mapper(
+            initial_data += [mapper_json_api(
                 mapper_class, dict(data=value)
             ) for value in resp_json['data']]
 
@@ -235,17 +235,18 @@ class Appknox(object):
 
     def paginated_drf_data(self, response, mapper_class):
         initial_data = [
-            mapper_drf(mapper_class, value) for value in response['results']
+            mapper_drf_api(mapper_class, value)
+            for value in response['results']
         ]
 
         if not response.get('next'):
             return initial_data
-        next = response['next']
-        while next is not None:
+        nxt = response['next']
+        while nxt is not None:
             resp = requests.get(next, auth=(self.user_id, self.token))
             resp_json = resp.json()
-            next = resp_json['next']
-            initial_data += [mapper_drf(
+            nxt = resp_json['next']
+            initial_data += [mapper_drf_api(
                 mapper_class, dict(data=value)
             ) for value in resp_json['results']]
 
@@ -281,7 +282,7 @@ class Appknox(object):
         """
         file_ = self.json_api.files(file_id).get()
 
-        return mapper(File, file_)
+        return mapper_json_api(File, file_)
 
     def get_files(
         self, project_id: int, version_code: int = None
@@ -329,7 +330,7 @@ class Appknox(object):
                 'data']['relationships']['vulnerability']['data']['id']
             analysis['data']['attributes']['vulnerability-id'] = vuln_id
 
-            out.append(mapper(Analysis, analysis))
+            out.append(mapper_json_api(Analysis, analysis))
         return out
 
     def get_vulnerability(self, vulnerability_id: int) -> Vulnerability:
@@ -340,7 +341,7 @@ class Appknox(object):
         """
         vulnerability = self.json_api.vulnerabilities(vulnerability_id).get()
 
-        return mapper(Vulnerability, vulnerability)
+        return mapper_json_api(Vulnerability, vulnerability)
 
     def get_owasp(self, owasp_id: str) -> OWASP:
         """
@@ -350,13 +351,13 @@ class Appknox(object):
         """
         cache_data = Cache.get('owasp', owasp_id)
         if cache_data:
-            return mapper(OWASP, {
+            return mapper_json_api(OWASP, {
                 'data': cache_data
             })
         owasp = self.json_api.owasps(owasp_id).get()
         Cache.add(owasp.get('data', {}))
 
-        return mapper(OWASP, owasp)
+        return mapper_json_api(OWASP, owasp)
 
     def upload_file(self, file):
         """
