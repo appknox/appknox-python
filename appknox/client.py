@@ -359,21 +359,26 @@ class Appknox(object):
 
         return mapper_json_api(OWASP, owasp)
 
-    def upload_file(self, file):
+    def upload_file(self, file, organization_id):
         """
         Upload and scan a package
 
         :param file: Package file to be uploaded and scanned
+        :param organization_id: Organization ID
         """
-        response = self.json_api.signed_url().get()
+        response = self.drf_api[
+            'organizations/{}/upload_app'.format(organization_id)
+        ]().get()
         url = response['url']
         data = file.read()
         requests.put(url, data=data)
-
-        self.json_api.uploaded_file().post(
+        self.drf_api[
+            'organizations/{}/upload_app'.format(organization_id)
+        ]().post(
             data=dict(
                 file_key=response['file_key'],
-                file_key_signed=response['file_key_signed']
+                file_key_signed=response['file_key_signed'],
+                url=response['url']
             )
         )
 

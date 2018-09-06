@@ -219,8 +219,9 @@ def files(ctx, project_id):
 
 @cli.command()
 @click.argument('path')
+@click.argument('organization_id')
 @click.pass_context
-def upload(ctx, path):
+def upload(ctx, path, organization_id):
     """
     Upload and scan package
     """
@@ -230,7 +231,7 @@ def upload(ctx, path):
     except FileNotFoundError as e:
         echo(e)
         sys.exit(1)
-    client.upload_file(file_)
+    client.upload_file(file_, organization_id)
 
 
 @cli.command()
