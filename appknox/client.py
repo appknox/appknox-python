@@ -9,7 +9,8 @@ from typing import List, Dict
 from urllib.parse import urljoin
 
 from appknox.exceptions import (
-    OneTimePasswordError, CredentialError, AppknoxError, ReportError
+    OneTimePasswordError, CredentialError, AppknoxError, ReportError,
+    OrganizationError
 )
 from appknox.mapper import (
     mapper_json_api, mapper_drf_api, Analysis, File, Project, User,
@@ -62,9 +63,11 @@ class Appknox(object):
     """
     """
 
-    def __init__(self, username: str=None, password: str=None,
-                 user_id: int=None, token: str=None, access_token: str=None,
-                 host: str=DEFAULT_API_HOST, log_level: int=logging.INFO):
+    def __init__(
+        self, username: str=None, password: str=None, user_id: int=None,
+        organization_id: int=None, token: str=None, access_token: str=None,
+        host: str=DEFAULT_API_HOST, log_level: int=logging.INFO
+    ):
         """
         Initialise Appknox client
 
@@ -84,14 +87,14 @@ class Appknox(object):
         self.username = username
         self.password = password
         self.user_id = user_id
+        self.organization_id = organization_id
         self.token = token
         self.access_token = access_token
 
-        token_header = {
-            'Authorization': 'Token {}'.format(self.access_token)
-        }
-
         if self.access_token:
+            token_header = {
+                'Authorization': 'Token {}'.format(self.access_token)
+            }
             self.json_api = ApiResource(
                 host=self.host,
                 headers={**JSON_API_HEADERS, **token_header}
@@ -100,6 +103,8 @@ class Appknox(object):
                 host=self.host,
                 headers={**DRF_API_HEADERS, **token_header}
             )
+            self.organization_id = self.get_organization_id()
+
         elif self.user_id and self.token:
             self.json_api = ApiResource(
                 host=self.host,
@@ -111,6 +116,7 @@ class Appknox(object):
                 headers={**DRF_API_HEADERS},
                 auth=(self.user_id, self.token)
             )
+            self.organization_id = self.get_organization_id()
 
     def login(self, otp: int=None):
         """
@@ -143,6 +149,7 @@ class Appknox(object):
         self.token = json['token']
         self.user_id = str(json['user_id'])
         self.access_token = self.generate_access_token().key
+
         self.json_api = ApiResource(
             host=self.host,
             headers={**JSON_API_HEADERS, **{
@@ -155,6 +162,34 @@ class Appknox(object):
                 'Authorization': 'Token {}'.format(self.access_token)
             }}
         )
+        self.organization_id = self.get_organization_id()
+
+    def get_organization_id(self, organization_id: int = None) -> int:
+        """
+        Return organization id if exists otherwise first entry of organizations
+        """
+        orgs = self.get_organizations()
+        try:
+            if organization_id:
+                filtered_orgs = [o for o in orgs if o.id == organization_id]
+            else:
+                filtered_orgs = orgs
+            return filtered_orgs[0].id
+        except Exception:
+            raise OrganizationError(
+                'User doesn\'t have organization. Login Failed!'
+            )
+
+    def switch_organization(self, organization_id: int = None) -> bool:
+        """
+        Switch organization_id of client instance
+        """
+        org_id = int(organization_id)
+        orgs = [o.id for o in self.get_organizations()]
+        if len(orgs) and (org_id not in orgs):
+            return False
+        self.organization_id = organization_id
+        return True
 
     def generate_access_token(self):
         """
@@ -260,8 +295,7 @@ class Appknox(object):
         return self.paginated_drf_data(organizations, Organization)
 
     def get_projects(
-        self, organization_id: int, platform: int = None,
-        package_name: str = ''
+        self, platform: int = None, package_name: str = ''
     ) -> List[Project]:
         """
         List projects for currently authenticated user
@@ -270,8 +304,9 @@ class Appknox(object):
         :param organization_id: Organization ID
         """
         projects = self.drf_api[
-            'organizations/{}/projects'.format(organization_id)
+            'organizations/{}/projects'.format(self.organization_id)
         ]().get(platform=platform, q=package_name)
+
         return self.paginated_drf_data(projects, Project)
 
     def get_file(self, file_id: int) -> File:
@@ -359,7 +394,7 @@ class Appknox(object):
 
         return mapper_json_api(OWASP, owasp)
 
-    def upload_file(self, file, organization_id):
+    def upload_file(self, file):
         """
         Upload and scan a package
 
@@ -367,13 +402,13 @@ class Appknox(object):
         :param organization_id: Organization ID
         """
         response = self.drf_api[
-            'organizations/{}/upload_app'.format(organization_id)
+            'organizations/{}/upload_app'.format(self.organization_id)
         ]().get()
         url = response['url']
         data = file.read()
         requests.put(url, data=data)
         self.drf_api[
-            'organizations/{}/upload_app'.format(organization_id)
+            'organizations/{}/upload_app'.format(self.organization_id)
         ]().post(
             data=dict(
                 file_key=response['file_key'],
