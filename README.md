@@ -31,7 +31,7 @@ $ appknox organizations
 ----  -------
    2  MyOrganization
 
-$ appknox projects 2
+$ appknox projects
   id  created_on             file_count  package_name                     platform  updated_on
 ----  -------------------  ------------  -----------------------------  ----------  -------------------
    3  2017-06-23 07:19:26             3  org.owasp.goatdroid.fourgoats           0  2017-06-23 07:26:55
@@ -66,6 +66,7 @@ Commands:
   projects       List projects
   report         Download report for file
   upload         Upload and scan package
+  switch_organization  Switch organization in CLI instance
   vulnerability  Get vulnerability
   whoami         Show session info
 ```

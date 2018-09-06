@@ -25,6 +25,7 @@ Quickstart
 #. `Upload app`__
 #. `Get analysis list`__
 #. `Get vulnerability details`__
+#. `Switch organization`__
 #. `Complete Reference`__
 
 __
@@ -103,17 +104,17 @@ __
 Get projects list:
 ---------------------
 
-To list projects for which the authenticated user has access to in an organization
+To list projects for which the authenticated user has access to in default organization.
 
 .. code-block:: python
 
-    client.get_projects(<organization_id>)
+    client.get_projects()
 
 *Example:*
 
 .. code-block:: python
 
-    >>> client.get_projects(2)
+    >>> client.get_projects()
     [Project(id=3, created_on='2017-06-23 07:19:26.720829+00:00', file_count=3,
         package_name='org.owasp.goatdroid.fourgoats', platform=0,
         updated_on='2017-06-23 07:26:55.456744+00:00'),
@@ -151,7 +152,7 @@ To upload and scan a new package:
 
 .. code-block:: python
 
-    >>> client.upload_file(open(<filename>, <mode>), <organization_id>)
+    >>> client.upload_file(open(<filename>, <mode>))
 
 Here value of ``mode`` should be ``rb`` (*read-binary*).
 
@@ -159,7 +160,7 @@ Here value of ``mode`` should be ``rb`` (*read-binary*).
 
 .. code-block:: python
 
-    >>> client.upload_file(open('/home/username/apk/mfva_1.0.apk', 'rb'), 2)
+    >>> client.upload_file(open('/home/username/apk/mfva_1.0.apk', 'rb'))
     >>> client.get_files(4)
     [File(id=6, name='MFVA', version='1.0', version_code='6'),
         File(id=7, name='MFVA', version='1.0', version_code='6')]
@@ -211,6 +212,23 @@ Get vulnerability details:
             Content providers may contain sensitive information about an app and therefore should not be shared.',
         intro="The `ContentProvider` class provides a mechanism for managing and sharing data with other applications.
             When sharing a provider's data with other apps, access control should be carefully implemented to prohibit unauthorized access to sensitive data.")
+
+__
+
+Switch organization:
+----------------------------
+Change default organization for client instance.
+
+.. code-block:: python
+
+    >>> client.switch_organization(<organization_id>)
+
+*Example:*
+
+.. code-block:: python
+
+    >>> client.switch_organization(3)
+    True
 
 __
 

@@ -37,7 +37,7 @@
 <span id="appknox-client"></span><h1>appknox.client<a class="headerlink" href="#module-appknox.client" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="appknox.client.Appknox">
-<em class="property">class </em><code class="descclassname">appknox.client.</code><code class="descname">Appknox</code><span class="sig-paren">(</span><em>username: str = None</em>, <em>password: str = None</em>, <em>user_id: int = None</em>, <em>token: str = None</em>, <em>access_token: str = None</em>, <em>host: str = 'https://api.appknox.com'</em>, <em>log_level: int = 20</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/appknox/client.html#Appknox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">appknox.client.</code><code class="descname">Appknox</code><span class="sig-paren">(</span><em>username: str = None</em>, <em>password: str = None</em>, <em>user_id: int = None</em>, <em>organization_id: int = None</em>, <em>token: str = None</em>, <em>access_token: str = None</em>, <em>host: str = 'https://api.appknox.com'</em>, <em>log_level: int = 20</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/appknox/client.html#Appknox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="appknox.client.Appknox.generate_access_token">
 <code class="descname">generate_access_token</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/appknox/client.html#Appknox.generate_access_token"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.generate_access_token" title="Permalink to this definition">¶</a></dt>
@@ -87,6 +87,12 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="appknox.client.Appknox.get_organization_id">
+<code class="descname">get_organization_id</code><span class="sig-paren">(</span><em>organization_id: int = None</em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/appknox/client.html#Appknox.get_organization_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.get_organization_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return organization id if exists otherwise first entry of organizations</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="appknox.client.Appknox.get_organizations">
 <code class="descname">get_organizations</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List[appknox.mapper.Organization]<a class="reference internal" href="_modules/appknox/client.html#Appknox.get_organizations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.get_organizations" title="Permalink to this definition">¶</a></dt>
 <dd><p>List organizations for currently authenticated user</p>
@@ -122,7 +128,7 @@
 
 <dl class="method">
 <dt id="appknox.client.Appknox.get_projects">
-<code class="descname">get_projects</code><span class="sig-paren">(</span><em>organization_id: int</em>, <em>platform: int = None</em>, <em>package_name: str = ''</em><span class="sig-paren">)</span> &#x2192; List[appknox.mapper.Project]<a class="reference internal" href="_modules/appknox/client.html#Appknox.get_projects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.get_projects" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_projects</code><span class="sig-paren">(</span><em>platform: int = None</em>, <em>package_name: str = ''</em><span class="sig-paren">)</span> &#x2192; List[appknox.mapper.Project]<a class="reference internal" href="_modules/appknox/client.html#Appknox.get_projects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.get_projects" title="Permalink to this definition">¶</a></dt>
 <dd><p>List projects for currently authenticated user
 in the given organization</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -234,8 +240,14 @@ in the given organization</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="appknox.client.Appknox.switch_organization">
+<code class="descname">switch_organization</code><span class="sig-paren">(</span><em>organization_id: int = None</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/appknox/client.html#Appknox.switch_organization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.switch_organization" title="Permalink to this definition">¶</a></dt>
+<dd><p>Switch organization_id of client instance</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="appknox.client.Appknox.upload_file">
-<code class="descname">upload_file</code><span class="sig-paren">(</span><em>file</em>, <em>organization_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/appknox/client.html#Appknox.upload_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.upload_file" title="Permalink to this definition">¶</a></dt>
+<code class="descname">upload_file</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/appknox/client.html#Appknox.upload_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.upload_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Upload and scan a package</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

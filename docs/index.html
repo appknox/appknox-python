@@ -48,6 +48,7 @@ Appknox API.</p>
 <li><a class="reference internal" href="#upload-app">Upload app</a></li>
 <li><a class="reference internal" href="#get-analysis-list">Get analysis list</a></li>
 <li><a class="reference internal" href="#get-vulnerability-details">Get vulnerability details</a></li>
+<li><a class="reference internal" href="#switch-organization">Switch organization</a></li>
 <li><a class="reference internal" href="#complete-reference">Complete Reference</a></li>
 </ol>
 </div>
@@ -106,12 +107,12 @@ Appknox API.</p>
 </div>
 <div class="section" id="get-projects-list">
 <span id="id4"></span><h2>Get projects list:<a class="headerlink" href="#get-projects-list" title="Permalink to this headline">¶</a></h2>
-<p>To list projects for which the authenticated user has access to in an organization</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">get_projects</span><span class="p">(</span><span class="o">&lt;</span><span class="n">organization_id</span><span class="o">&gt;</span><span class="p">)</span>
+<p>To list projects for which the authenticated user has access to in default organization.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">get_projects</span><span class="p">()</span>
 </pre></div>
 </div>
 <p><em>Example:</em></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_projects</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_projects</span><span class="p">()</span>
 <span class="go">[Project(id=3, created_on=&#39;2017-06-23 07:19:26.720829+00:00&#39;, file_count=3,</span>
 <span class="go">    package_name=&#39;org.owasp.goatdroid.fourgoats&#39;, platform=0,</span>
 <span class="go">    updated_on=&#39;2017-06-23 07:26:55.456744+00:00&#39;),</span>
@@ -137,12 +138,12 @@ Appknox API.</p>
 <div class="section" id="upload-app">
 <span id="id6"></span><h2>Upload app:<a class="headerlink" href="#upload-app" title="Permalink to this headline">¶</a></h2>
 <p>To upload and scan a new package:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">mode</span><span class="o">&gt;</span><span class="p">),</span> <span class="o">&lt;</span><span class="n">organization_id</span><span class="o">&gt;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">mode</span><span class="o">&gt;</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>Here value of <code class="docutils literal notranslate"><span class="pre">mode</span></code> should be <code class="docutils literal notranslate"><span class="pre">rb</span></code> (<em>read-binary</em>).</p>
 <p><em>Example:</em></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/home/username/apk/mfva_1.0.apk&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/home/username/apk/mfva_1.0.apk&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_files</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 <span class="go">[File(id=6, name=&#39;MFVA&#39;, version=&#39;1.0&#39;, version_code=&#39;6&#39;),</span>
 <span class="go">    File(id=7, name=&#39;MFVA&#39;, version=&#39;1.0&#39;, version_code=&#39;6&#39;)]</span>
@@ -185,8 +186,20 @@ Appknox API.</p>
 </pre></div>
 </div>
 </div>
+<div class="section" id="switch-organization">
+<span id="id9"></span><h2>Switch organization:<a class="headerlink" href="#switch-organization" title="Permalink to this headline">¶</a></h2>
+<p>Change default organization for client instance.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">switch_organization</span><span class="p">(</span><span class="o">&lt;</span><span class="n">organization_id</span><span class="o">&gt;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>Example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">switch_organization</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="complete-reference">
-<span id="id9"></span><h2>Complete Reference<a class="headerlink" href="#complete-reference" title="Permalink to this headline">¶</a></h2>
+<span id="id10"></span><h2>Complete Reference<a class="headerlink" href="#complete-reference" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="client.html">appknox.client</a></li>

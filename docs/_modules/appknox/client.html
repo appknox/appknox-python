@@ -43,7 +43,8 @@
 <span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="k">import</span> <span class="n">urljoin</span>
 
 <span class="kn">from</span> <span class="nn">appknox.exceptions</span> <span class="k">import</span> <span class="p">(</span>
-    <span class="n">OneTimePasswordError</span><span class="p">,</span> <span class="n">CredentialError</span><span class="p">,</span> <span class="n">AppknoxError</span><span class="p">,</span> <span class="n">ReportError</span>
+    <span class="n">OneTimePasswordError</span><span class="p">,</span> <span class="n">CredentialError</span><span class="p">,</span> <span class="n">AppknoxError</span><span class="p">,</span> <span class="n">ReportError</span><span class="p">,</span>
+    <span class="n">OrganizationError</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">appknox.mapper</span> <span class="k">import</span> <span class="p">(</span>
     <span class="n">mapper_json_api</span><span class="p">,</span> <span class="n">mapper_drf_api</span><span class="p">,</span> <span class="n">Analysis</span><span class="p">,</span> <span class="n">File</span><span class="p">,</span> <span class="n">Project</span><span class="p">,</span> <span class="n">User</span><span class="p">,</span>
@@ -96,9 +97,11 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">access_token</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="n">DEFAULT_API_HOST</span><span class="p">,</span> <span class="n">log_level</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">organization_id</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">access_token</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="n">DEFAULT_API_HOST</span><span class="p">,</span> <span class="n">log_level</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialise Appknox client</span>
 
@@ -118,14 +121,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">password</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span> <span class="o">=</span> <span class="n">user_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">organization_id</span> <span class="o">=</span> <span class="n">organization_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="n">token</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">access_token</span> <span class="o">=</span> <span class="n">access_token</span>
 
-        <span class="n">token_header</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;Authorization&#39;</span><span class="p">:</span> <span class="s1">&#39;Token </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">access_token</span><span class="p">)</span>
-        <span class="p">}</span>
-
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">access_token</span><span class="p">:</span>
+            <span class="n">token_header</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;Authorization&#39;</span><span class="p">:</span> <span class="s1">&#39;Token </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">access_token</span><span class="p">)</span>
+            <span class="p">}</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">json_api</span> <span class="o">=</span> <span class="n">ApiResource</span><span class="p">(</span>
                 <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
                 <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="o">**</span><span class="n">JSON_API_HEADERS</span><span class="p">,</span> <span class="o">**</span><span class="n">token_header</span><span class="p">}</span>
@@ -134,6 +137,8 @@
                 <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
                 <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="o">**</span><span class="n">DRF_API_HEADERS</span><span class="p">,</span> <span class="o">**</span><span class="n">token_header</span><span class="p">}</span>
             <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">organization_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_organization_id</span><span class="p">()</span>
+
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">json_api</span> <span class="o">=</span> <span class="n">ApiResource</span><span class="p">(</span>
                 <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
@@ -145,6 +150,7 @@
                 <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="o">**</span><span class="n">DRF_API_HEADERS</span><span class="p">},</span>
                 <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">)</span>
             <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">organization_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_organization_id</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Appknox.login"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.login">[docs]</a>    <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">otp</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -177,6 +183,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="n">json</span><span class="p">[</span><span class="s1">&#39;token&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">access_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_access_token</span><span class="p">()</span><span class="o">.</span><span class="n">key</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">json_api</span> <span class="o">=</span> <span class="n">ApiResource</span><span class="p">(</span>
             <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
             <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="o">**</span><span class="n">JSON_API_HEADERS</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span>
@@ -188,7 +195,35 @@
             <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="o">**</span><span class="n">DRF_API_HEADERS</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span>
                 <span class="s1">&#39;Authorization&#39;</span><span class="p">:</span> <span class="s1">&#39;Token </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">access_token</span><span class="p">)</span>
             <span class="p">}}</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">organization_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_organization_id</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Appknox.get_organization_id"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.get_organization_id">[docs]</a>    <span class="k">def</span> <span class="nf">get_organization_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">organization_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return organization id if exists otherwise first entry of organizations</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">orgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_organizations</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">organization_id</span><span class="p">:</span>
+                <span class="n">filtered_orgs</span> <span class="o">=</span> <span class="p">[</span><span class="n">o</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">orgs</span> <span class="k">if</span> <span class="n">o</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">organization_id</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">filtered_orgs</span> <span class="o">=</span> <span class="n">orgs</span>
+            <span class="k">return</span> <span class="n">filtered_orgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">OrganizationError</span><span class="p">(</span>
+                <span class="s1">&#39;User doesn</span><span class="se">\&#39;</span><span class="s1">t have organization. Login Failed!&#39;</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Appknox.switch_organization"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.switch_organization">[docs]</a>    <span class="k">def</span> <span class="nf">switch_organization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">organization_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Switch organization_id of client instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">org_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">organization_id</span><span class="p">)</span>
+        <span class="n">orgs</span> <span class="o">=</span> <span class="p">[</span><span class="n">o</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_organizations</span><span class="p">()]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">orgs</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">org_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">orgs</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">organization_id</span> <span class="o">=</span> <span class="n">organization_id</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="Appknox.generate_access_token"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.generate_access_token">[docs]</a>    <span class="k">def</span> <span class="nf">generate_access_token</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -269,16 +304,17 @@
 
     <span class="k">def</span> <span class="nf">paginated_drf_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">mapper_class</span><span class="p">):</span>
         <span class="n">initial_data</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">mapper_drf_api</span><span class="p">(</span><span class="n">mapper_class</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">]</span>
+            <span class="n">mapper_drf_api</span><span class="p">(</span><span class="n">mapper_class</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">]</span>
         <span class="p">]</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;next&#39;</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">initial_data</span>
-        <span class="nb">next</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;next&#39;</span><span class="p">]</span>
-        <span class="k">while</span> <span class="nb">next</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">nxt</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;next&#39;</span><span class="p">]</span>
+        <span class="k">while</span> <span class="n">nxt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">next</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">))</span>
             <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-            <span class="nb">next</span> <span class="o">=</span> <span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;next&#39;</span><span class="p">]</span>
+            <span class="n">nxt</span> <span class="o">=</span> <span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;next&#39;</span><span class="p">]</span>
             <span class="n">initial_data</span> <span class="o">+=</span> <span class="p">[</span><span class="n">mapper_drf_api</span><span class="p">(</span>
                 <span class="n">mapper_class</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
             <span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">]]</span>
@@ -293,8 +329,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">paginated_drf_data</span><span class="p">(</span><span class="n">organizations</span><span class="p">,</span> <span class="n">Organization</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Appknox.get_projects"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.get_projects">[docs]</a>    <span class="k">def</span> <span class="nf">get_projects</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">organization_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">platform</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">package_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">platform</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">package_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Project</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        List projects for currently authenticated user</span>
@@ -303,8 +338,9 @@
 <span class="sd">        :param organization_id: Organization ID</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">projects</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drf_api</span><span class="p">[</span>
-            <span class="s1">&#39;organizations/</span><span class="si">{}</span><span class="s1">/projects&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">organization_id</span><span class="p">)</span>
+            <span class="s1">&#39;organizations/</span><span class="si">{}</span><span class="s1">/projects&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">organization_id</span><span class="p">)</span>
         <span class="p">]()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">platform</span><span class="o">=</span><span class="n">platform</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">package_name</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">paginated_drf_data</span><span class="p">(</span><span class="n">projects</span><span class="p">,</span> <span class="n">Project</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Appknox.get_file"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.get_file">[docs]</a>    <span class="k">def</span> <span class="nf">get_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">File</span><span class="p">:</span>
@@ -392,7 +428,7 @@
 
         <span class="k">return</span> <span class="n">mapper_json_api</span><span class="p">(</span><span class="n">OWASP</span><span class="p">,</span> <span class="n">owasp</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Appknox.upload_file"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.upload_file">[docs]</a>    <span class="k">def</span> <span class="nf">upload_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">organization_id</span><span class="p">):</span>
+<div class="viewcode-block" id="Appknox.upload_file"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.upload_file">[docs]</a>    <span class="k">def</span> <span class="nf">upload_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Upload and scan a package</span>
 
@@ -400,13 +436,13 @@
 <span class="sd">        :param organization_id: Organization ID</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drf_api</span><span class="p">[</span>
-            <span class="s1">&#39;organizations/</span><span class="si">{}</span><span class="s1">/upload_app&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">organization_id</span><span class="p">)</span>
+            <span class="s1">&#39;organizations/</span><span class="si">{}</span><span class="s1">/upload_app&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">organization_id</span><span class="p">)</span>
         <span class="p">]()</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="n">url</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
         <span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">drf_api</span><span class="p">[</span>
-            <span class="s1">&#39;organizations/</span><span class="si">{}</span><span class="s1">/upload_app&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">organization_id</span><span class="p">)</span>
+            <span class="s1">&#39;organizations/</span><span class="si">{}</span><span class="s1">/upload_app&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">organization_id</span><span class="p">)</span>
         <span class="p">]()</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
             <span class="n">data</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
                 <span class="n">file_key</span><span class="o">=</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;file_key&#39;</span><span class="p">],</span>
