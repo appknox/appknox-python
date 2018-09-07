@@ -3,9 +3,9 @@
 from collections import namedtuple
 
 
-def mapper(model: type, resource: dict) -> object:
+def mapper_json_api(model: type, resource: dict) -> object:
     """
-    Returns an object of type `model` from dictified JSON `resource`
+    Returns an obj of type `model` from dictified JSON `resource` for JSON APIs
     """
     attr = dict()
     for field in model._fields:
@@ -17,9 +17,22 @@ def mapper(model: type, resource: dict) -> object:
     return model(**attr)
 
 
+def mapper_drf_api(model: type, resource: dict) -> object:
+    """
+    Returns an obj of type `model` from dictified JSON `resource` for DRF APIs
+    """
+    accepted_params = {k: resource[k] for k in model._fields}
+    return model(**accepted_params)
+
+
 User = namedtuple(
     'User',
     ['id', 'email', 'first_name', 'lang', 'last_name', 'username']
+)
+
+Organization = namedtuple(
+    'Organization',
+    ['id', 'name']
 )
 
 Project = namedtuple(

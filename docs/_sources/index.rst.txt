@@ -4,22 +4,41 @@
    contain the root `toctree` directive.
 
 appknox-python
-==========================================
+###############
+
+**Documentation for Version 3.x.x**
 
 appknox-python provides command-line interface and Python wrapper for the
 Appknox API.
 
 
-Quickstart
-==========
 
+
+Quickstart
+----------
+
+#. `Install`__
 #. `Creating client instance`__
+#. `Get organizations list`__
 #. `Get projects list`__
 #. `Get files list`__
 #. `Upload app`__
 #. `Get analysis list`__
 #. `Get vulnerability details`__
+#. `Switch organization`__
 #. `Complete Reference`__
+
+__
+
+Install:
+----------------------------
+`appknox` is available via `PyPI <https://pypi.org/project/appknox/>`_. It is officially supported on python 3.5 & 3.6.
+
+**Install with pip:**
+
+.. code-block:: bash
+
+    pip install appknox
 
 __
 
@@ -38,11 +57,11 @@ An instance for Appknox class can be obtained in two ways:
         import appknox
         client = appknox.Appknox(
             access_token='PERSONAL_ACCESS_TOKEN',
-            host='HOST'
+            host='API_HOST'
         )
 
     *Personal access token can be generated from Appknox dashboard
-    (Settings --> Developer Settings --> Generate token)*
+    (Settings → Developer Settings → Generate token)*
 
     .. note: Personal access token is the recommended way than using creadentials.
 
@@ -54,7 +73,7 @@ An instance for Appknox class can be obtained in two ways:
         client = appknox.Appknox(
             username='USERNAME',
             password='PASSWORD',
-            host='HOST'
+            host='API_HOST'
         )
         client.login(otp=013370)
 
@@ -62,10 +81,30 @@ An instance for Appknox class can be obtained in two ways:
 
 __
 
+Get organizations list:
+---------------------
+
+To list organizations for an authenticated user
+
+.. code-block:: python
+
+    client.get_organizations()
+
+*Example:*
+
+.. code-block:: python
+
+    >>> client.get_organizations()
+    [Organization(id=2, name='MyOrganization')]
+
+All results are Python objects, with its respective attributes.
+
+__
+
 Get projects list:
 ---------------------
 
-To list projects for authenticated user
+To list projects for which the authenticated user has access to in default organization.
 
 .. code-block:: python
 
@@ -173,6 +212,23 @@ Get vulnerability details:
             Content providers may contain sensitive information about an app and therefore should not be shared.',
         intro="The `ContentProvider` class provides a mechanism for managing and sharing data with other applications.
             When sharing a provider's data with other apps, access control should be carefully implemented to prohibit unauthorized access to sensitive data.")
+
+__
+
+Switch organization:
+----------------------------
+Change default organization for client instance.
+
+.. code-block:: python
+
+    >>> client.switch_organization(<organization_id>)
+
+*Example:*
+
+.. code-block:: python
+
+    >>> client.switch_organization(3)
+    True
 
 __
 

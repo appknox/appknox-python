@@ -56,3 +56,5 @@ Session.vim
 .netrwhist
 *~
 tags
+
+.vscode/

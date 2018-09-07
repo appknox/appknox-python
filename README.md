@@ -6,15 +6,17 @@
 
 Command-line interface & Python wrapper for the Appknox API.
 
+
+Python API documentation is available [here](http://appknox.org/appknox-python/).
+
+
 ## Installation
 
-appknox-python is officially supported on python 3.5. pip is the recommended way to install appknox-python.
+appknox-python is officially supported on python 3.5 & 3.6. pip is the recommended way to install appknox-python.
 
 ```
 pip install appknox
 ```
-
-Python API documentation is available [here](http://appknox.org/appknox-python/).
 
 ## Quickstart
 
@@ -23,6 +25,11 @@ $ appknox login
 Username: viren
 Password:
 Logged in to https://api.appknox.com
+
+$ appknox organizations
+  id  name
+----  -------
+   2  MyOrganization
 
 $ appknox projects
   id  created_on             file_count  package_name                     platform  updated_on
@@ -55,9 +62,11 @@ Commands:
   files          List files for project
   login          Log in and save session credentials
   logout         Delete session credentials
+  organizations  List organizations
   projects       List projects
   report         Download report for file
   upload         Upload and scan package
+  switch_organization  Switch organization in CLI instance
   vulnerability  Get vulnerability
   whoami         Show session info
 ```

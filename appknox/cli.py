@@ -13,9 +13,13 @@ import click
 from click import echo, echo_via_pager
 
 from appknox.client import Appknox, DEFAULT_API_HOST
-from appknox.exceptions import AppknoxError, OneTimePasswordError, \
-    CredentialError, ReportError
-from appknox.mapper import Analysis, File, Project, User, Vulnerability, OWASP
+from appknox.exceptions import (
+    AppknoxError, OneTimePasswordError, CredentialError, ReportError,
+    OrganizationError
+)
+from appknox.mapper import (
+    Analysis, File, Organization, Project, User, Vulnerability, OWASP
+)
 
 CONFIG_FILE = os.path.expanduser('~/.config/appknox.ini')
 DEFAULT_PROFILE = 'default'
@@ -103,9 +107,9 @@ def cli(ctx, verbose, profile):
         sys.exit(1)
 
     ctx.obj['CLIENT'] = Appknox(
-        username=profile['username'], user_id=profile['user_id'],
+        username=profile['username'], host=profile['host'],
         token=profile['token'], access_token=profile['access_token'],
-        host=profile['host']
+        user_id=profile['user_id'], organization_id=profile['organization_id']
     )
 
 
@@ -145,6 +149,7 @@ def login(ctx, username, password, host):
     data = {
         'username': username,
         'user_id': client.user_id,
+        'organization_id': client.organization_id,
         'token': client.token,
         'access_token': client.access_token,
         'host': host,
@@ -181,6 +186,16 @@ def logout(ctx):
         echo('Logged out')
     else:
         echo('Not logged in')
+
+
+@cli.command()
+@click.pass_context
+def organizations(ctx):
+    """
+    List organizations
+    """
+    client = ctx.obj['CLIENT']
+    echo_via_pager(table(Organization, client.get_organizations()))
 
 
 @cli.command()
@@ -302,6 +317,32 @@ def dynamic_stop(ctx, file_id):
     """
     client = ctx.obj['CLIENT']
     client.stop_dynamic(file_id)
+
+
+@cli.command()
+@click.argument('organization_id')
+@click.pass_context
+def switch_organization(ctx, organization_id):
+    """
+    Switch organization in client instance
+    """
+
+    client = ctx.obj['CLIENT']
+    is_switched = client.switch_organization(organization_id)
+
+    if not is_switched:
+        echo(OrganizationError('Not found!'))
+        sys.exit(1)
+
+    profile_name = ctx.obj['PROFILE']
+    profile = get_profile(profile_name)
+    data = {item[0]: item[1] for item in profile.items()}
+    if organization_id == data['organization_id']:
+        return
+
+    data['organization_id'] = organization_id
+    save_profile(name=profile_name, data=data)
+    echo('Switched organization to {}'.format(organization_id))
 
 
 def main():

@@ -21,3 +21,7 @@ class OneTimePasswordError(AppknoxError):
 
 class ReportError(AppknoxError):
     pass
+
+
+class OrganizationError(AppknoxError):
+    pass
