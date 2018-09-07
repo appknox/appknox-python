@@ -230,10 +230,11 @@ def upload(ctx, path):
     client = ctx.obj['CLIENT']
     try:
         file_ = open(path, 'rb')
+        file_data = file_.read()
     except FileNotFoundError as e:
         echo(e)
         sys.exit(1)
-    client.upload_file(file_)
+    client.upload_file(file_data)
 
 
 @cli.command()
