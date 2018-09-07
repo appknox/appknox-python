@@ -82,7 +82,7 @@ An instance for Appknox class can be obtained in two ways:
 __
 
 Get organizations list:
----------------------
+--------------------------
 
 To list organizations for an authenticated user
 
