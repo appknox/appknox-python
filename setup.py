@@ -10,7 +10,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='appknox',
-    version='3.0.1',
+    version='3.0.2',
     description='Python wrapper for Appknox API',
     long_description='Python wrapper for Appknox API',
     url='https://github.com/appknox/appknox-python',
