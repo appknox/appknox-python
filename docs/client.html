@@ -130,15 +130,7 @@
 <dt id="appknox.client.Appknox.get_projects">
 <code class="descname">get_projects</code><span class="sig-paren">(</span><em>platform: int = None</em>, <em>package_name: str = ''</em><span class="sig-paren">)</span> &#x2192; List[appknox.mapper.Project]<a class="reference internal" href="_modules/appknox/client.html#Appknox.get_projects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.get_projects" title="Permalink to this definition">¶</a></dt>
 <dd><p>List projects for currently authenticated user
-in the given organization</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>organization_id</strong> – Organization ID</td>
-</tr>
-</tbody>
-</table>
+in the given organizations</p>
 </dd></dl>
 
 <dl class="method">
@@ -247,17 +239,13 @@ in the given organization</p>
 
 <dl class="method">
 <dt id="appknox.client.Appknox.upload_file">
-<code class="descname">upload_file</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/appknox/client.html#Appknox.upload_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.upload_file" title="Permalink to this definition">¶</a></dt>
+<code class="descname">upload_file</code><span class="sig-paren">(</span><em>file_data: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/appknox/client.html#Appknox.upload_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.upload_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Upload and scan a package</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>file</strong> – Package file to be uploaded and scanned</li>
-<li><strong>organization_id</strong> – Organization ID</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file</strong> – Package file content to be uploaded and scanned</td>
 </tr>
 </tbody>
 </table>

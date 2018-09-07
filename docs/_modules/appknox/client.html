@@ -333,9 +333,7 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Project</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        List projects for currently authenticated user</span>
-<span class="sd">        in the given organization</span>
-
-<span class="sd">        :param organization_id: Organization ID</span>
+<span class="sd">        in the given organizations</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">projects</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drf_api</span><span class="p">[</span>
             <span class="s1">&#39;organizations/</span><span class="si">{}</span><span class="s1">/projects&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">organization_id</span><span class="p">)</span>
@@ -428,19 +426,17 @@
 
         <span class="k">return</span> <span class="n">mapper_json_api</span><span class="p">(</span><span class="n">OWASP</span><span class="p">,</span> <span class="n">owasp</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Appknox.upload_file"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.upload_file">[docs]</a>    <span class="k">def</span> <span class="nf">upload_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
+<div class="viewcode-block" id="Appknox.upload_file"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.upload_file">[docs]</a>    <span class="k">def</span> <span class="nf">upload_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_data</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Upload and scan a package</span>
 
-<span class="sd">        :param file: Package file to be uploaded and scanned</span>
-<span class="sd">        :param organization_id: Organization ID</span>
+<span class="sd">        :param file: Package file content to be uploaded and scanned</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drf_api</span><span class="p">[</span>
             <span class="s1">&#39;organizations/</span><span class="si">{}</span><span class="s1">/upload_app&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">organization_id</span><span class="p">)</span>
         <span class="p">]()</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="n">url</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">file_data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">drf_api</span><span class="p">[</span>
             <span class="s1">&#39;organizations/</span><span class="si">{}</span><span class="s1">/upload_app&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">organization_id</span><span class="p">)</span>
         <span class="p">]()</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
