@@ -152,15 +152,17 @@ To upload and scan a new package:
 
 .. code-block:: python
 
-    >>> client.upload_file(open(<filename>, <mode>))
+    >>> client.upload_file(<binary_data>)
 
-Here value of ``mode`` should be ``rb`` (*read-binary*).
 
 *Example:*
 
 .. code-block:: python
 
-    >>> client.upload_file(open('/home/username/apk/mfva_1.0.apk', 'rb'))
+    >>> f = open('/home/username/apk/mfva_1.0.apk', 'rb')
+    >>> file_data = f.read()
+    >>> client.upload_file(file_data)
+
     >>> client.get_files(4)
     [File(id=6, name='MFVA', version='1.0', version_code='6'),
         File(id=7, name='MFVA', version='1.0', version_code='6')]

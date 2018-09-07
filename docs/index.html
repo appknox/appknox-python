@@ -138,12 +138,14 @@ Appknox API.</p>
 <div class="section" id="upload-app">
 <span id="id6"></span><h2>Upload app:<a class="headerlink" href="#upload-app" title="Permalink to this headline">¶</a></h2>
 <p>To upload and scan a new package:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">mode</span><span class="o">&gt;</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="o">&lt;</span><span class="n">binary_data</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Here value of <code class="docutils literal notranslate"><span class="pre">mode</span></code> should be <code class="docutils literal notranslate"><span class="pre">rb</span></code> (<em>read-binary</em>).</p>
 <p><em>Example:</em></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/home/username/apk/mfva_1.0.apk&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/home/username/apk/mfva_1.0.apk&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">file_data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="n">file_data</span><span class="p">)</span>
+
 <span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_files</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 <span class="go">[File(id=6, name=&#39;MFVA&#39;, version=&#39;1.0&#39;, version_code=&#39;6&#39;),</span>
 <span class="go">    File(id=7, name=&#39;MFVA&#39;, version=&#39;1.0&#39;, version_code=&#39;6&#39;)]</span>
