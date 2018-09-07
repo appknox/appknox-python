@@ -109,7 +109,8 @@ def cli(ctx, verbose, profile):
     ctx.obj['CLIENT'] = Appknox(
         username=profile['username'], host=profile['host'],
         token=profile['token'], access_token=profile['access_token'],
-        user_id=profile['user_id'], organization_id=profile['organization_id']
+        user_id=profile['user_id'],
+        organization_id=profile.get('organization_id')
     )
 
 
