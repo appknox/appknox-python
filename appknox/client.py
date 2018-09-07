@@ -299,9 +299,7 @@ class Appknox(object):
     ) -> List[Project]:
         """
         List projects for currently authenticated user
-        in the given organization
-
-        :param organization_id: Organization ID
+        in the given organizations
         """
         projects = self.drf_api[
             'organizations/{}/projects'.format(self.organization_id)
@@ -394,19 +392,17 @@ class Appknox(object):
 
         return mapper_json_api(OWASP, owasp)
 
-    def upload_file(self, file):
+    def upload_file(self, file_data: str):
         """
         Upload and scan a package
 
-        :param file: Package file to be uploaded and scanned
-        :param organization_id: Organization ID
+        :param file: Package file content to be uploaded and scanned
         """
         response = self.drf_api[
             'organizations/{}/upload_app'.format(self.organization_id)
         ]().get()
         url = response['url']
-        data = file.read()
-        requests.put(url, data=data)
+        requests.put(url, data=file_data)
         self.drf_api[
             'organizations/{}/upload_app'.format(self.organization_id)
         ]().post(
