@@ -13,6 +13,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -312,12 +313,15 @@
             <span class="k">return</span> <span class="n">initial_data</span>
         <span class="n">nxt</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;next&#39;</span><span class="p">]</span>
         <span class="k">while</span> <span class="n">nxt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">next</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">))</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">nxt</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">))</span>
             <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">resp</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="k">return</span>
             <span class="n">nxt</span> <span class="o">=</span> <span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;next&#39;</span><span class="p">]</span>
-            <span class="n">initial_data</span> <span class="o">+=</span> <span class="p">[</span><span class="n">mapper_drf_api</span><span class="p">(</span>
-                <span class="n">mapper_class</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
-            <span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">]]</span>
+            <span class="n">initial_data</span> <span class="o">+=</span> <span class="p">[</span>
+                <span class="n">mapper_drf_api</span><span class="p">(</span><span class="n">mapper_class</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">]</span>
+            <span class="p">]</span>
 
         <span class="k">return</span> <span class="n">initial_data</span>
 
@@ -463,6 +467,18 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">json_api</span><span class="o">.</span><span class="n">dynamic_shutdown</span><span class="p">(</span><span class="n">file_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span></div>
 
+<div class="viewcode-block" id="Appknox.rescan"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.rescan">[docs]</a>    <span class="k">def</span> <span class="nf">rescan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Start a rescan for a file id</span>
+
+<span class="sd">        :param filed_id: File ID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drf_api</span><span class="p">[</span><span class="s1">&#39;rescan&#39;</span><span class="p">]()</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+                <span class="n">file_id</span><span class="o">=</span><span class="n">file_id</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span></div>
+
 <div class="viewcode-block" id="Appknox.get_report"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.get_report">[docs]</a>    <span class="k">def</span> <span class="nf">get_report</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">file_id</span><span class="p">,</span> <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;en&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -556,7 +572,7 @@
     
 
 <p>
-<a href="https://travis-ci.org/appknox/appknox-python">
+<a class="badge" href="https://travis-ci.org/appknox/appknox-python">
     <img
         alt="https://secure.travis-ci.org/appknox/appknox-python.svg?branch=master"
         src="https://secure.travis-ci.org/appknox/appknox-python.svg?branch=master"
@@ -592,6 +608,14 @@
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -600,8 +624,8 @@
       &copy;2017, XYSec Labs Pte. Ltd..
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

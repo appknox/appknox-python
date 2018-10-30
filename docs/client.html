@@ -13,6 +13,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="appknox.mapper" href="mapper.html" />
@@ -198,6 +199,20 @@ in the given organizations</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="appknox.client.Appknox.rescan">
+<code class="descname">rescan</code><span class="sig-paren">(</span><em>file_id: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/appknox/client.html#Appknox.rescan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.rescan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start a rescan for a file id</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filed_id</strong> – File ID</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="appknox.client.Appknox.revoke_access_token">
 <code class="descname">revoke_access_token</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/appknox/client.html#Appknox.revoke_access_token"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.revoke_access_token" title="Permalink to this definition">¶</a></dt>
 <dd><p>Revokes existing personal access token</p>
@@ -288,7 +303,7 @@ in the given organizations</p>
     
 
 <p>
-<a href="https://travis-ci.org/appknox/appknox-python">
+<a class="badge" href="https://travis-ci.org/appknox/appknox-python">
     <img
         alt="https://secure.travis-ci.org/appknox/appknox-python.svg?branch=master"
         src="https://secure.travis-ci.org/appknox/appknox-python.svg?branch=master"
@@ -324,6 +339,14 @@ in the given organizations</p>
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -332,8 +355,8 @@ in the given organizations</p>
       &copy;2017, XYSec Labs Pte. Ltd..
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/client.rst.txt"

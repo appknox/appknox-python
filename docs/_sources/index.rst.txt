@@ -22,9 +22,10 @@ Quickstart
 #. `Get organizations list`__
 #. `Get projects list`__
 #. `Get files list`__
-#. `Upload app`__
 #. `Get analysis list`__
 #. `Get vulnerability details`__
+#. `Upload app`__
+#. `Rescan`__
 #. `Switch organization`__
 #. `Complete Reference`__
 
@@ -141,31 +142,7 @@ For listing files within a project:
 .. code-block:: python
 
     >>> client.get_files(4)
-    [File(id=6, name='MFVA', version='1.0', version_code='6')]
-
-__
-
-Upload app:
--------------------
-
-To upload and scan a new package:
-
-.. code-block:: python
-
-    >>> client.upload_file(<binary_data>)
-
-
-*Example:*
-
-.. code-block:: python
-
-    >>> f = open('/home/username/apk/mfva_1.0.apk', 'rb')
-    >>> file_data = f.read()
-    >>> client.upload_file(file_data)
-
-    >>> client.get_files(4)
-    [File(id=6, name='MFVA', version='1.0', version_code='6'),
-        File(id=7, name='MFVA', version='1.0', version_code='6')]
+    [File(id=6, name='MFVA', version='1.0', version_code='5', static_scan_progress=100),]
 
 __
 
@@ -214,6 +191,55 @@ Get vulnerability details:
             Content providers may contain sensitive information about an app and therefore should not be shared.',
         intro="The `ContentProvider` class provides a mechanism for managing and sharing data with other applications.
             When sharing a provider's data with other apps, access control should be carefully implemented to prohibit unauthorized access to sensitive data.")
+
+__
+
+Upload app:
+-------------------
+
+To upload and scan a new package:
+
+.. code-block:: python
+
+    >>> client.upload_file(<binary_data>)
+
+
+*Example:*
+
+.. code-block:: python
+
+    >>> f = open('/home/username/apk/mfva_1.0.apk', 'rb')
+    >>> file_data = f.read()
+    >>> client.upload_file(file_data)
+
+    >>> client.get_files(4)
+    [File(id=7, name='MFVA', version='1.0', version_code='6', static_scan_progress=100),,
+        File(id=6, name='MFVA', version='1.0', version_code='5', static_scan_progress=100),]
+
+__
+
+Rescan:
+-------------------
+
+To rescan a file:
+
+.. code-block:: python
+
+    >>> client.rescan(<file_id>)
+
+This will create a new file under the same project. Once the file has been started, list files to get the latest file id.
+
+
+*Example:*
+
+.. code-block:: python
+
+    >>> client.rescan(7)
+
+    >>> client.get_files(4)
+    [File(id=8, name='MFVA', version='1.0', version_code='6', static_scan_progress=100),
+        File(id=7, name='MFVA', version='1.0', version_code='6', static_scan_progress=100),,
+        File(id=6, name='MFVA', version='1.0', version_code='5', static_scan_progress=100),]
 
 __
 
