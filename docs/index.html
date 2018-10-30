@@ -13,6 +13,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="appknox.client" href="client.html" />
@@ -45,9 +46,10 @@ Appknox API.</p>
 <li><a class="reference internal" href="#get-organizations-list">Get organizations list</a></li>
 <li><a class="reference internal" href="#get-projects-list">Get projects list</a></li>
 <li><a class="reference internal" href="#get-files-list">Get files list</a></li>
-<li><a class="reference internal" href="#upload-app">Upload app</a></li>
 <li><a class="reference internal" href="#get-analysis-list">Get analysis list</a></li>
 <li><a class="reference internal" href="#get-vulnerability-details">Get vulnerability details</a></li>
+<li><a class="reference internal" href="#upload-app">Upload app</a></li>
+<li><a class="reference internal" href="#rescan">Rescan</a></li>
 <li><a class="reference internal" href="#switch-organization">Switch organization</a></li>
 <li><a class="reference internal" href="#complete-reference">Complete Reference</a></li>
 </ol>
@@ -131,29 +133,12 @@ Appknox API.</p>
 </div>
 <p><em>Example:</em></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_files</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-<span class="go">[File(id=6, name=&#39;MFVA&#39;, version=&#39;1.0&#39;, version_code=&#39;6&#39;)]</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="upload-app">
-<span id="id6"></span><h2>Upload app:<a class="headerlink" href="#upload-app" title="Permalink to this headline">¶</a></h2>
-<p>To upload and scan a new package:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="o">&lt;</span><span class="n">binary_data</span><span class="o">&gt;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><em>Example:</em></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/home/username/apk/mfva_1.0.apk&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">file_data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="n">file_data</span><span class="p">)</span>
-
-<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_files</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-<span class="go">[File(id=6, name=&#39;MFVA&#39;, version=&#39;1.0&#39;, version_code=&#39;6&#39;),</span>
-<span class="go">    File(id=7, name=&#39;MFVA&#39;, version=&#39;1.0&#39;, version_code=&#39;6&#39;)]</span>
+<span class="go">[File(id=6, name=&#39;MFVA&#39;, version=&#39;1.0&#39;, version_code=&#39;5&#39;, static_scan_progress=100),]</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="get-analysis-list">
-<span id="id7"></span><h2>Get analysis list:<a class="headerlink" href="#get-analysis-list" title="Permalink to this headline">¶</a></h2>
+<span id="id6"></span><h2>Get analysis list:<a class="headerlink" href="#get-analysis-list" title="Permalink to this headline">¶</a></h2>
 <p>Get the analyses for this new file:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">get_analyses</span><span class="p">(</span><span class="o">&lt;</span><span class="n">file_id</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
@@ -174,7 +159,7 @@ Appknox API.</p>
 <p>Note the <code class="docutils literal notranslate"><span class="pre">vulnerability_id</span></code> for <code class="docutils literal notranslate"><span class="pre">Analysis(id=235)</span></code>. To get details about this vulnerability:</p>
 </div>
 <div class="section" id="get-vulnerability-details">
-<span id="id8"></span><h2>Get vulnerability details:<a class="headerlink" href="#get-vulnerability-details" title="Permalink to this headline">¶</a></h2>
+<span id="id7"></span><h2>Get vulnerability details:<a class="headerlink" href="#get-vulnerability-details" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">get_vulnerability</span><span class="p">(</span><span class="o">&lt;</span><span class="n">vulnerability_id</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -188,8 +173,42 @@ Appknox API.</p>
 </pre></div>
 </div>
 </div>
+<div class="section" id="upload-app">
+<span id="id8"></span><h2>Upload app:<a class="headerlink" href="#upload-app" title="Permalink to this headline">¶</a></h2>
+<p>To upload and scan a new package:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="o">&lt;</span><span class="n">binary_data</span><span class="o">&gt;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>Example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/home/username/apk/mfva_1.0.apk&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">file_data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="n">file_data</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_files</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="go">[File(id=7, name=&#39;MFVA&#39;, version=&#39;1.0&#39;, version_code=&#39;6&#39;, static_scan_progress=100),,</span>
+<span class="go">    File(id=6, name=&#39;MFVA&#39;, version=&#39;1.0&#39;, version_code=&#39;5&#39;, static_scan_progress=100),]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="rescan">
+<span id="id9"></span><h2>Rescan:<a class="headerlink" href="#rescan" title="Permalink to this headline">¶</a></h2>
+<p>To rescan a file:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">rescan</span><span class="p">(</span><span class="o">&lt;</span><span class="n">file_id</span><span class="o">&gt;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will create a new file under the same project. Once the file has been started, list files to get the latest file id.</p>
+<p><em>Example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">rescan</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_files</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="go">[File(id=8, name=&#39;MFVA&#39;, version=&#39;1.0&#39;, version_code=&#39;6&#39;, static_scan_progress=100),</span>
+<span class="go">    File(id=7, name=&#39;MFVA&#39;, version=&#39;1.0&#39;, version_code=&#39;6&#39;, static_scan_progress=100),,</span>
+<span class="go">    File(id=6, name=&#39;MFVA&#39;, version=&#39;1.0&#39;, version_code=&#39;5&#39;, static_scan_progress=100),]</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="switch-organization">
-<span id="id9"></span><h2>Switch organization:<a class="headerlink" href="#switch-organization" title="Permalink to this headline">¶</a></h2>
+<span id="id10"></span><h2>Switch organization:<a class="headerlink" href="#switch-organization" title="Permalink to this headline">¶</a></h2>
 <p>Change default organization for client instance.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">switch_organization</span><span class="p">(</span><span class="o">&lt;</span><span class="n">organization_id</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
@@ -201,7 +220,7 @@ Appknox API.</p>
 </div>
 </div>
 <div class="section" id="complete-reference">
-<span id="id10"></span><h2>Complete Reference<a class="headerlink" href="#complete-reference" title="Permalink to this headline">¶</a></h2>
+<span id="id11"></span><h2>Complete Reference<a class="headerlink" href="#complete-reference" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="client.html">appknox.client</a></li>
@@ -253,7 +272,7 @@ Appknox API.</p>
     
 
 <p>
-<a href="https://travis-ci.org/appknox/appknox-python">
+<a class="badge" href="https://travis-ci.org/appknox/appknox-python">
     <img
         alt="https://secure.travis-ci.org/appknox/appknox-python.svg?branch=master"
         src="https://secure.travis-ci.org/appknox/appknox-python.svg?branch=master"
@@ -288,6 +307,14 @@ Appknox API.</p>
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -296,8 +323,8 @@ Appknox API.</p>
       &copy;2017, XYSec Labs Pte. Ltd..
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/index.rst.txt"

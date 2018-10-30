@@ -73,4 +73,18 @@ Commands:
 
 ---
 
+### Update docs
+
+Install [sphinx-autobuild](https://github.com/GaretJax/sphinx-autobuild):
+```
+pip install sphinx-autobuild
+```
+
+Build docs:
+```
+sphinx-autobuild -p 9009 -b html sphinx-docs docs
+```
+
+---
+
 License: MIT

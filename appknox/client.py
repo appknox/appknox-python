@@ -430,6 +430,18 @@ class Appknox(object):
         """
         self.json_api.dynamic_shutdown(file_id).get()
 
+    def rescan(self, file_id: int):
+        """
+        Start a rescan for a file id
+
+        :param filed_id: File ID
+        """
+        self.drf_api['rescan']().post(
+            data=dict(
+                file_id=file_id,
+            )
+        )
+
     def get_report(
             self, file_id, format: str='json', language: str='en') -> str:
         """

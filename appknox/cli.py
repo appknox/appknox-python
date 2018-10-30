@@ -322,6 +322,17 @@ def dynamic_stop(ctx, file_id):
 
 
 @cli.command()
+@click.argument('file_id')
+@click.pass_context
+def rescan(ctx, file_id):
+    """
+    Start rescanning a file
+    """
+    client = ctx.obj['CLIENT']
+    client.rescan(file_id)
+
+
+@cli.command()
 @click.argument('organization_id')
 @click.pass_context
 def switch_organization(ctx, organization_id):
