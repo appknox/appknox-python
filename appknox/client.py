@@ -278,12 +278,13 @@ class Appknox(object):
             return initial_data
         nxt = response['next']
         while nxt is not None:
-            resp = requests.get(next, auth=(self.user_id, self.token))
+            resp = requests.get(nxt, auth=(self.user_id, self.token))
             resp_json = resp.json()
             nxt = resp_json['next']
-            initial_data += [mapper_drf_api(
-                mapper_class, dict(data=value)
-            ) for value in resp_json['results']]
+            initial_data += [
+                mapper_drf_api(mapper_class, value)
+                for value in resp_json['results']
+            ]
 
         return initial_data
 
