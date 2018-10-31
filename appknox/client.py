@@ -414,22 +414,6 @@ class Appknox(object):
             )
         )
 
-    def start_dynamic(self, file_id: int):
-        """
-        Start dynamic scan for a file
-
-        :param file_id: File ID
-        """
-        self.json_api.dynamic(file_id).get()
-
-    def stop_dynamic(self, file_id: int):
-        """
-        Terminate dynamic scan for a file
-
-        :param file_id: File ID
-        """
-        self.json_api.dynamic_shutdown(file_id).get()
-
     def rescan(self, file_id: int):
         """
         Start a rescan for a file id

@@ -302,28 +302,6 @@ def report(ctx, file_id, format, language):
 @cli.command()
 @click.argument('file_id')
 @click.pass_context
-def dynamic_start(ctx, file_id):
-    """
-    Start dynamic scan for file
-    """
-    client = ctx.obj['CLIENT']
-    client.start_dynamic(file_id)
-
-
-@cli.command()
-@click.argument('file_id')
-@click.pass_context
-def dynamic_stop(ctx, file_id):
-    """
-    Stop dynamic scan for file
-    """
-    client = ctx.obj['CLIENT']
-    client.stop_dynamic(file_id)
-
-
-@cli.command()
-@click.argument('file_id')
-@click.pass_context
 def rescan(ctx, file_id):
     """
     Start rescanning a file
