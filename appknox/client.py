@@ -64,9 +64,10 @@ class Appknox(object):
     """
 
     def __init__(
-        self, username: str=None, password: str=None, user_id: int=None,
-        organization_id: int=None, token: str=None, access_token: str=None,
-        host: str=DEFAULT_API_HOST, log_level: int=logging.INFO
+        self, username: str = None, password: str = None, user_id: int = None,
+        organization_id: int = None, token: str = None,
+        access_token: str = None, host: str = DEFAULT_API_HOST,
+        log_level: int = logging.INFO
     ):
         """
         Initialise Appknox client
@@ -118,7 +119,7 @@ class Appknox(object):
             )
             self.organization_id = self.get_organization_id()
 
-    def login(self, otp: int=None):
+    def login(self, otp: int = None):
         """
         Authenticate with server and create session
 
@@ -422,7 +423,7 @@ class Appknox(object):
         )
 
     def get_report(
-            self, file_id, format: str='json', language: str='en') -> str:
+            self, file_id, format: str = 'json', language: str = 'en') -> str:
         """
         Fetch analyses report for a file
 
@@ -446,8 +447,8 @@ class Appknox(object):
 
 class ApiResource(object):
     def __init__(
-        self, host: str=DEFAULT_API_HOST,
-        headers: object=None, auth: Dict[str, str]=None
+        self, host: str = DEFAULT_API_HOST, headers: object = None,
+        auth: Dict[str, str] = None
     ):
         self.host = host
         self.headers = {**headers}

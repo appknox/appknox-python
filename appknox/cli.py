@@ -136,7 +136,7 @@ def login(ctx, username, password, host):
         echo(e)
         echo('Perhaps your network is down?')
         sys.exit(1)
-    except OneTimePasswordError as e:
+    except OneTimePasswordError:
         otp = click.prompt('OTP', type=int)
         try:
             client.login(otp=otp)
