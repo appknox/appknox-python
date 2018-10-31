@@ -57,8 +57,6 @@ Options:
 
 Commands:
   analyses       List analyses for file
-  dynamic_start  Start dynamic scan for file
-  dynamic_stop   Stop dynamic scan for file
   files          List files for project
   login          Log in and save session credentials
   logout         Delete session credentials
