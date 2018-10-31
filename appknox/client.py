@@ -256,15 +256,11 @@ class Appknox(object):
         link = response['links']['next']
 
         while link is not None:
-            resp = requests.get(
-                urljoin(self.host, link),
-                auth=(self.user_id, self.token)
-            )
-            resp_json = resp.json()
-            link = resp_json['links']['next']
+            resp = self.drf_api.direct_get(urljoin(self.host, link))
+            link = resp['links']['next']
             initial_data += [mapper_json_api(
                 mapper_class, dict(data=value)
-            ) for value in resp_json['data']]
+            ) for value in resp['data']]
 
         return initial_data
 
@@ -278,12 +274,11 @@ class Appknox(object):
             return initial_data
         nxt = response['next']
         while nxt is not None:
-            resp = requests.get(nxt, auth=(self.user_id, self.token))
-            resp_json = resp.json()
-            nxt = resp_json['next']
+            resp = self.drf_api.direct_get(nxt)
+            nxt = resp['next']
             initial_data += [
                 mapper_drf_api(mapper_class, value)
-                for value in resp_json['results']
+                for value in resp['results']
             ]
 
         return initial_data
@@ -472,16 +467,22 @@ class ApiResource(object):
             self.endpoint += '/{}'.format(str(resource_id))
         return self
 
-    def get(self, *args, **kwargs):
+    def get(self, **kwargs):
         resp = requests.get(
             self.endpoint, headers=self.headers, auth=self.auth,
             params=kwargs
         )
         return resp.json()
 
-    def post(self, data, content_type=None, *args, **kwargs):
+    def post(self, data, content_type=None, **kwargs):
         resp = requests.post(
             self.endpoint, headers=self.headers, auth=self.auth,
             params=kwargs, data=data
+        )
+        return resp.json()
+
+    def direct_get(self, url, **kwargs):
+        resp = requests.get(
+            url, headers=self.headers, auth=self.auth, params=kwargs
         )
         return resp.json()
