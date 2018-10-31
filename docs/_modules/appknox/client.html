@@ -291,15 +291,11 @@
         <span class="n">link</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;links&#39;</span><span class="p">][</span><span class="s1">&#39;next&#39;</span><span class="p">]</span>
 
         <span class="k">while</span> <span class="n">link</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-                <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">link</span><span class="p">),</span>
-                <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">)</span>
-            <span class="p">)</span>
-            <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-            <span class="n">link</span> <span class="o">=</span> <span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;links&#39;</span><span class="p">][</span><span class="s1">&#39;next&#39;</span><span class="p">]</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drf_api</span><span class="o">.</span><span class="n">direct_get</span><span class="p">(</span><span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">link</span><span class="p">))</span>
+            <span class="n">link</span> <span class="o">=</span> <span class="n">resp</span><span class="p">[</span><span class="s1">&#39;links&#39;</span><span class="p">][</span><span class="s1">&#39;next&#39;</span><span class="p">]</span>
             <span class="n">initial_data</span> <span class="o">+=</span> <span class="p">[</span><span class="n">mapper_json_api</span><span class="p">(</span>
                 <span class="n">mapper_class</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
-            <span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]]</span>
+            <span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">resp</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]]</span>
 
         <span class="k">return</span> <span class="n">initial_data</span>
 
@@ -313,14 +309,11 @@
             <span class="k">return</span> <span class="n">initial_data</span>
         <span class="n">nxt</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;next&#39;</span><span class="p">]</span>
         <span class="k">while</span> <span class="n">nxt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">nxt</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">))</span>
-            <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">resp</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
-                <span class="k">return</span>
-            <span class="n">nxt</span> <span class="o">=</span> <span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;next&#39;</span><span class="p">]</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drf_api</span><span class="o">.</span><span class="n">direct_get</span><span class="p">(</span><span class="n">nxt</span><span class="p">)</span>
+            <span class="n">nxt</span> <span class="o">=</span> <span class="n">resp</span><span class="p">[</span><span class="s1">&#39;next&#39;</span><span class="p">]</span>
             <span class="n">initial_data</span> <span class="o">+=</span> <span class="p">[</span>
                 <span class="n">mapper_drf_api</span><span class="p">(</span><span class="n">mapper_class</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">resp</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">]</span>
             <span class="p">]</span>
 
         <span class="k">return</span> <span class="n">initial_data</span>
@@ -451,22 +444,6 @@
             <span class="p">)</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Appknox.start_dynamic"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.start_dynamic">[docs]</a>    <span class="k">def</span> <span class="nf">start_dynamic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Start dynamic scan for a file</span>
-
-<span class="sd">        :param file_id: File ID</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">json_api</span><span class="o">.</span><span class="n">dynamic</span><span class="p">(</span><span class="n">file_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span></div>
-
-<div class="viewcode-block" id="Appknox.stop_dynamic"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.stop_dynamic">[docs]</a>    <span class="k">def</span> <span class="nf">stop_dynamic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Terminate dynamic scan for a file</span>
-
-<span class="sd">        :param file_id: File ID</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">json_api</span><span class="o">.</span><span class="n">dynamic_shutdown</span><span class="p">(</span><span class="n">file_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span></div>
-
 <div class="viewcode-block" id="Appknox.rescan"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.rescan">[docs]</a>    <span class="k">def</span> <span class="nf">rescan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Start a rescan for a file id</span>
@@ -536,6 +513,12 @@
         <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span>
             <span class="n">params</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">direct_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">kwargs</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 </pre></div>

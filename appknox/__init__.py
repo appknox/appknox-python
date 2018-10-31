@@ -1,9 +1,14 @@
-from .client import Appknox  # noqa
-from .exceptions import AppknoxError, CredentialError, ReportError, \
-    OneTimePasswordError  # noqa
-from .mapper import Analysis, File, Project, User, Vulnerability  # noqa
+from .client import Appknox
+from .mapper import (
+    Analysis, File, Organization, OWASP, PersonalToken, Project, User,
+    Vulnerability
+)
+from .exceptions import (
+    AppknoxError, CredentialError, ReportError, OneTimePasswordError
+)
 
-__all__ = ['AppknoxClient',
-           'Analysis', 'File', 'Project', 'User', 'Vulnerability',
-           'AppknoxError', 'CredentialError', 'OneTimePasswordError',
-           'ReportError']
+__all__ = [
+    'Appknox', 'Analysis', 'File', 'Organization', 'OWASP', 'PersonalToken',
+    'Project', 'User', 'Vulnerability', 'AppknoxError', 'CredentialError',
+    'OneTimePasswordError', 'ReportError'
+]

@@ -64,9 +64,10 @@ class Appknox(object):
     """
 
     def __init__(
-        self, username: str=None, password: str=None, user_id: int=None,
-        organization_id: int=None, token: str=None, access_token: str=None,
-        host: str=DEFAULT_API_HOST, log_level: int=logging.INFO
+        self, username: str = None, password: str = None, user_id: int = None,
+        organization_id: int = None, token: str = None,
+        access_token: str = None, host: str = DEFAULT_API_HOST,
+        log_level: int = logging.INFO
     ):
         """
         Initialise Appknox client
@@ -118,7 +119,7 @@ class Appknox(object):
             )
             self.organization_id = self.get_organization_id()
 
-    def login(self, otp: int=None):
+    def login(self, otp: int = None):
         """
         Authenticate with server and create session
 
@@ -256,15 +257,11 @@ class Appknox(object):
         link = response['links']['next']
 
         while link is not None:
-            resp = requests.get(
-                urljoin(self.host, link),
-                auth=(self.user_id, self.token)
-            )
-            resp_json = resp.json()
-            link = resp_json['links']['next']
+            resp = self.drf_api.direct_get(urljoin(self.host, link))
+            link = resp['links']['next']
             initial_data += [mapper_json_api(
                 mapper_class, dict(data=value)
-            ) for value in resp_json['data']]
+            ) for value in resp['data']]
 
         return initial_data
 
@@ -278,12 +275,11 @@ class Appknox(object):
             return initial_data
         nxt = response['next']
         while nxt is not None:
-            resp = requests.get(nxt, auth=(self.user_id, self.token))
-            resp_json = resp.json()
-            nxt = resp_json['next']
+            resp = self.drf_api.direct_get(nxt)
+            nxt = resp['next']
             initial_data += [
                 mapper_drf_api(mapper_class, value)
-                for value in resp_json['results']
+                for value in resp['results']
             ]
 
         return initial_data
@@ -414,22 +410,6 @@ class Appknox(object):
             )
         )
 
-    def start_dynamic(self, file_id: int):
-        """
-        Start dynamic scan for a file
-
-        :param file_id: File ID
-        """
-        self.json_api.dynamic(file_id).get()
-
-    def stop_dynamic(self, file_id: int):
-        """
-        Terminate dynamic scan for a file
-
-        :param file_id: File ID
-        """
-        self.json_api.dynamic_shutdown(file_id).get()
-
     def rescan(self, file_id: int):
         """
         Start a rescan for a file id
@@ -443,7 +423,7 @@ class Appknox(object):
         )
 
     def get_report(
-            self, file_id, format: str='json', language: str='en') -> str:
+            self, file_id, format: str = 'json', language: str = 'en') -> str:
         """
         Fetch analyses report for a file
 
@@ -467,8 +447,8 @@ class Appknox(object):
 
 class ApiResource(object):
     def __init__(
-        self, host: str=DEFAULT_API_HOST,
-        headers: object=None, auth: Dict[str, str]=None
+        self, host: str = DEFAULT_API_HOST, headers: object = None,
+        auth: Dict[str, str] = None
     ):
         self.host = host
         self.headers = {**headers}
@@ -488,16 +468,22 @@ class ApiResource(object):
             self.endpoint += '/{}'.format(str(resource_id))
         return self
 
-    def get(self, *args, **kwargs):
+    def get(self, **kwargs):
         resp = requests.get(
             self.endpoint, headers=self.headers, auth=self.auth,
             params=kwargs
         )
         return resp.json()
 
-    def post(self, data, content_type=None, *args, **kwargs):
+    def post(self, data, content_type=None, **kwargs):
         resp = requests.post(
             self.endpoint, headers=self.headers, auth=self.auth,
             params=kwargs, data=data
+        )
+        return resp.json()
+
+    def direct_get(self, url, **kwargs):
+        resp = requests.get(
+            url, headers=self.headers, auth=self.auth, params=kwargs
         )
         return resp.json()
