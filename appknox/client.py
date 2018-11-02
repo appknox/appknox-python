@@ -92,6 +92,9 @@ class Appknox(object):
         self.token = token
         self.access_token = access_token
 
+        if self.host is None:
+            self.host = DEFAULT_API_HOST
+
         if self.access_token:
             token_header = {
                 'Authorization': 'Token {}'.format(self.access_token)
