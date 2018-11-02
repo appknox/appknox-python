@@ -69,6 +69,15 @@ Commands:
   whoami         Show session info
 ```
 
+## Using Environment Variables
+
+We can use Environment Variables instead of passing sensitive information via arguments for CI/CD setup
+
+```
+export APPKNOX_ACCESS_TOKEN=aaaabbbbbcccddeeeffgghhh
+export APPKNOX_HOST=https://api.appknox.com
+export APPKNOX_ORGANIZATION_ID=1
+```
 ---
 
 ### Update docs

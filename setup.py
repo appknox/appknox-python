@@ -8,12 +8,16 @@ here = path.abspath(path.dirname(__file__))
 with open('requirements.txt') as f:
     install_requires = f.read().splitlines()
 
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
 setup(
     name='appknox',
     version='3.0.4',
-    description='Python wrapper for Appknox API',
-    long_description='Python wrapper for Appknox API',
+    description='Command-line interface & Python wrapper for the Appknox API',
+    long_description=long_description,
     url='https://github.com/appknox/appknox-python',
+    long_description_content_type="text/markdown",
     author='Appknox',
     author_email='engineering@appknox.com',
     license='MIT',
