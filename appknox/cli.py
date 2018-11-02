@@ -172,6 +172,7 @@ def login(ctx, username, password, host):
 @cli.command()
 @click.pass_context
 def whoami(ctx):
+    # FIXME: This won't work, we need a /me api for this to work
     """
     Show session info
     """
