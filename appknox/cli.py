@@ -91,12 +91,21 @@ def cli(ctx, verbose, profile):
 
     ctx.obj['PROFILE'] = profile
 
+    ctx.obj['USING_ENV_TOKEN'] = False
+
     logging.basicConfig(level=ctx.obj['LOG_LEVEL'])
 
     if ctx.invoked_subcommand in ['login']:
         return
 
     profile = get_profile(profile)
+
+    if os.environ.get('APPKNOX_ACCESS_TOKEN'):
+        profile = dict()
+        profile['access_token'] = os.environ.get('APPKNOX_ACCESS_TOKEN')
+        profile['host'] = os.environ.get('APPKNOX_HOST')
+        profile['organization_id'] = os.environ.get('APPKNOX_ORGANIZATION_ID')
+        ctx.obj['USING_ENV_TOKEN'] = True
 
     if not profile:
         echo('Not logged in')
@@ -107,9 +116,9 @@ def cli(ctx, verbose, profile):
         sys.exit(1)
 
     ctx.obj['CLIENT'] = Appknox(
-        username=profile['username'], host=profile['host'],
-        token=profile['token'], access_token=profile['access_token'],
-        user_id=profile['user_id'],
+        username=profile.get('username'), host=profile.get('host'),
+        token=profile.get('token'), access_token=profile.get('access_token'),
+        user_id=profile.get('user_id'),
         organization_id=profile.get('organization_id')
     )
 
@@ -117,7 +126,7 @@ def cli(ctx, verbose, profile):
 @cli.command()
 @click.option('-u', '--username', prompt=True)
 @click.option('-p', '--password', prompt=True, hide_input=True)
-@click.option('-h', '--host', default=DEFAULT_API_HOST)
+@click.option('-h', '--host', envvar='APPKNOX_HOST', default=DEFAULT_API_HOST)
 @click.pass_context
 def login(ctx, username, password, host):
     """
@@ -318,6 +327,12 @@ def switch_organization(ctx, organization_id):
     Switch organization in client instance
     """
 
+    if ctx.obj['USING_ENV_TOKEN']:
+        logging.error(
+            'switch_organization is not supported when using access token in '
+            'environment variables'
+        )
+        sys.exit(1)
     client = ctx.obj['CLIENT']
     is_switched = client.switch_organization(organization_id)
 
