@@ -231,7 +231,7 @@ def files(ctx, project_id):
 
 
 @cli.command()
-@click.argument('path')
+@click.argument('path', type=click.Path(exists=True))
 @click.pass_context
 def upload(ctx, path):
     """
