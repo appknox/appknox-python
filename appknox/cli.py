@@ -95,6 +95,16 @@ def cli(ctx, verbose, profile):
 
     logging.basicConfig(level=ctx.obj['LOG_LEVEL'])
 
+    if (
+        os.environ.get('APPKNOX_ACCESS_TOKEN') and
+        ctx.invoked_subcommand in ['login', 'logout']
+    ):
+        logging.error(
+            'this command is not supported when using access token in '
+            'environment variables'
+        )
+        sys.exit(1)
+
     if ctx.invoked_subcommand in ['login']:
         return
 
