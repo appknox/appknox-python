@@ -7,7 +7,9 @@
 Command-line interface & Python wrapper for the Appknox API.
 
 
-Python API documentation is available [here](http://appknox.org/appknox-python/).
+>
+> Python API documentation is available [here](http://appknox.org/appknox-python/).
+>
 
 
 ## Installation
@@ -18,35 +20,10 @@ appknox-python is officially supported on python 3.5 & 3.6. pip is the recommend
 pip install appknox
 ```
 
-## Quickstart
-
-```
-$ appknox login
-Username: viren
-Password:
-Logged in to https://api.appknox.com
-
-$ appknox organizations
-  id  name
-----  -------
-   2  MyOrganization
-
-$ appknox projects
-  id  created_on             file_count  package_name                     platform  updated_on
-----  -------------------  ------------  -----------------------------  ----------  -------------------
-   3  2017-06-23 07:19:26             3  org.owasp.goatdroid.fourgoats           0  2017-06-23 07:26:55
-   4  2017-06-27 08:27:54             2  com.appknox.mfva                        0  2017-06-27 08:30:04
-
-$ appknox files 4
-  id  name      version    version_code
-----  ------  ---------  --------------
-   6  MFVA            1               6
-   7  MFVA            1               6
-```
-
 ## Usage
 
 ```
+$ appknox
 Usage: appknox [OPTIONS] COMMAND [ARGS]...
 
   Command line wrapper for the Appknox API
@@ -69,17 +46,73 @@ Commands:
   whoami         Show session info
 ```
 
-## Using Environment Variables
+### Authentication
 
-We can use Environment Variables instead of passing sensitive information via arguments for CI/CD setup
+Log in to appknox CLI using your [secure.appknox.com](https://secure.appknox.com/) credentials.
 
 ```
-export APPKNOX_ACCESS_TOKEN=aaaabbbbbcccddeeeffgghhh
-export APPKNOX_HOST=https://api.appknox.com
-export APPKNOX_ORGANIZATION_ID=1
+$ appknox login
+Username: viren
+Password:
+Logged in to https://api.appknox.com
 ```
+
+#### Using Environment Variables
+
+Instead of `login` we can use environment variables for authentication. This will be useful for scenarios such as CI/CD setup.
+
+```
+$ export APPKNOX_ACCESS_TOKEN=aaaabbbbbcccddeeeffgghhh
+$ export APPKNOX_ORGANIZATION_ID=2
+```
+
+Supported variables are:
+
+| Environment variable | Value |
+|----|-----|
+| `APPKNOX_ACCESS_TOKEN` | Access token can be generated from Appknox dashboard _(Settings → Developer Settings → Generate token)_. |
+| `APPKNOX_HOST` | Defaults to `https://api.appknox.com` |
+| `APPKNOX_ORGANIZATION_ID` | Your Appknox organization id |
+
+
+### Data fetch & actions
+
+| Available commands | Use |
+|--------------------|-----|
+| `organizations` | List organizations of user |
+| `projects` | List projects user has access to |
+| `files <project_id>` | List files for a project |
+| `analyses <file_id>` | List analyses for a file |
+| `vulnerability <vulnerability_id>` | Get vulnerability detail |
+| `owasp <owasp_id>` | Get OWASP detail |
+| `upload <path_to_app_package>` | Upload app file from given path |
+| `rescan <file_id>` | Rescan a file (this will create a new file under the same project.) |
+
+
+Example:
+
+```
+$ appknox organizations
+  id  name
+----  -------
+   2  MyOrganization
+
+$ appknox projects
+  id  created_on             file_count  package_name                     platform  updated_on
+----  -------------------  ------------  -----------------------------  ----------  -------------------
+   3  2017-06-23 07:19:26             3  org.owasp.goatdroid.fourgoats           0  2017-06-23 07:26:55
+   4  2017-06-27 08:27:54             2  com.appknox.mfva                        0  2017-06-27 08:30:04
+
+$ appknox files 4
+  id  name      version    version_code
+----  ------  ---------  --------------
+   6  MFVA            1               6
+   7  MFVA            1               6
+```
+
 ---
 
+## Development
 ### Update docs
 
 Install [sphinx-autobuild](https://github.com/GaretJax/sphinx-autobuild):
