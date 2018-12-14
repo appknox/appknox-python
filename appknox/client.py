@@ -295,7 +295,7 @@ class Appknox(object):
         return self.paginated_drf_data(organizations, Organization)
 
     def get_projects(
-        self, platform: int = None, package_name: str = ''
+        self, platform: int = None, package_name: str = '', search: str = ''
     ) -> List[Project]:
         """
         List projects for currently authenticated user
@@ -303,7 +303,7 @@ class Appknox(object):
         """
         projects = self.drf_api[
             'organizations/{}/projects'.format(self.organization_id)
-        ]().get(platform=platform, q=package_name)
+        ]().get(platform=platform, package_name=package_name, q=search)
 
         return self.paginated_drf_data(projects, Project)
 
