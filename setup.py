@@ -13,7 +13,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='appknox',
-    version='3.1.1',
+    version='3.1.2',
     description='Command-line interface & Python wrapper for the Appknox API',
     long_description=long_description,
     url='https://github.com/appknox/appknox-python',
