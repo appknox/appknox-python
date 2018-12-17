@@ -220,13 +220,18 @@ def organizations(ctx):
 
 
 @cli.command()
+@click.option('--platform', type=int, help='Project Platform')
+@click.option('--package_name', default='', type=str, help='Package Name')
+@click.option('-q', '--query', default='', type=str, help='Search Query')
 @click.pass_context
-def projects(ctx):
+def projects(ctx, platform, package_name, query):
     """
     List projects
     """
     client = ctx.obj['CLIENT']
-    echo_via_pager(table(Project, client.get_projects()))
+    echo_via_pager(table(
+        Project, client.get_projects(platform, package_name, query)
+    ))
 
 
 @cli.command()
