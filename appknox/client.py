@@ -239,16 +239,6 @@ class Appknox(object):
 
         return mapper_json_api(User, user)
 
-    def get_project(self, project_id: int) -> Project:
-        """
-        Fetch project by project ID
-
-        :param project_id: Project ID
-        """
-        project = self.json_api.projects(project_id).get()
-
-        return mapper_json_api(Project, project)
-
     def paginated_data(self, response, mapper_class):
         initial_data = [mapper_json_api(
             mapper_class, dict(data=value)
@@ -294,6 +284,16 @@ class Appknox(object):
         organizations = self.drf_api.organizations().get(limit=-1)
         return self.paginated_drf_data(organizations, Organization)
 
+    def get_project(self, project_id: int) -> Project:
+        """
+        Fetch project by project ID
+
+        :param project_id: Project ID
+        """
+        project = self.json_api.projects(project_id).get()
+
+        return mapper_json_api(Project, project)
+
     def get_projects(
         self, platform: int = None, package_name: str = '', search: str = ''
     ) -> List[Project]:
@@ -306,6 +306,20 @@ class Appknox(object):
         ]().get(platform=platform, package_name=package_name, q=search)
 
         return self.paginated_drf_data(projects, Project)
+
+    def get_last_file(self, project_id: int) -> File:
+        """
+        Fetch latest file for the project
+
+        :param project_id: Project ID
+        """
+        filter_options = {
+            'projectId': project_id,
+            'limit': -1,
+            'lastFileOnly': 'true'
+        }
+        last_file = self.json_api.files().get(**filter_options)
+        return mapper_json_api(File, last_file)
 
     def get_file(self, file_id: int) -> File:
         """
