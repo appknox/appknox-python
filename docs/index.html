@@ -4,26 +4,16 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>appknox-python &#8212; appknox-python 3.0.0 documentation</title>
-    
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '3.0.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="appknox.client" href="client.html" />
@@ -33,8 +23,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
@@ -69,7 +58,7 @@ Appknox API.</p>
 <span id="id1"></span><h2>Install:<a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h2>
 <p><cite>appknox</cite> is available via <a class="reference external" href="https://pypi.org/project/appknox/">PyPI</a>. It is officially supported on python 3.5 &amp; 3.6.</p>
 <p><strong>Install with pip:</strong></p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>pip install appknox
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install appknox
 </pre></div>
 </div>
 </div>
@@ -80,7 +69,7 @@ Appknox API.</p>
 <p>An instance for Appknox class can be obtained in two ways:</p>
 <dl class="docutils">
 <dt><strong>1. Using personal access tokens:</strong></dt>
-<dd><div class="first highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">appknox</span>
+<dd><div class="first highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">appknox</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">appknox</span><span class="o">.</span><span class="n">Appknox</span><span class="p">(</span>
     <span class="n">access_token</span><span class="o">=</span><span class="s1">&#39;PERSONAL_ACCESS_TOKEN&#39;</span><span class="p">,</span>
     <span class="n">host</span><span class="o">=</span><span class="s1">&#39;API_HOST&#39;</span>
@@ -93,7 +82,7 @@ Appknox API.</p>
 </dl>
 <p><strong>2. Using login credentials: (This is not recommended)</strong></p>
 <blockquote>
-<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">appknox</span>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">appknox</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">appknox</span><span class="o">.</span><span class="n">Appknox</span><span class="p">(</span>
     <span class="n">username</span><span class="o">=</span><span class="s1">&#39;USERNAME&#39;</span><span class="p">,</span>
     <span class="n">password</span><span class="o">=</span><span class="s1">&#39;PASSWORD&#39;</span><span class="p">,</span>
@@ -102,17 +91,17 @@ Appknox API.</p>
 <span class="n">client</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">otp</span><span class="o">=</span><span class="mo">013370</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><code class="docutils literal"><span class="pre">otp</span></code> is required only for accounts with multi-factor authentication.</p>
+<p><code class="docutils literal notranslate"><span class="pre">otp</span></code> is required only for accounts with multi-factor authentication.</p>
 </div></blockquote>
 </div>
 <div class="section" id="get-organizations-list">
 <span id="id3"></span><h2>Get organizations list:<a class="headerlink" href="#get-organizations-list" title="Permalink to this headline">¶</a></h2>
 <p>To list organizations for an authenticated user</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">get_organizations</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">get_organizations</span><span class="p">()</span>
 </pre></div>
 </div>
 <p><em>Example:</em></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_organizations</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_organizations</span><span class="p">()</span>
 <span class="go">[Organization(id=2, name=&#39;MyOrganization&#39;)]</span>
 </pre></div>
 </div>
@@ -121,11 +110,11 @@ Appknox API.</p>
 <div class="section" id="get-projects-list">
 <span id="id4"></span><h2>Get projects list:<a class="headerlink" href="#get-projects-list" title="Permalink to this headline">¶</a></h2>
 <p>To list projects for which the authenticated user has access to in default organization.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">get_projects</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">get_projects</span><span class="p">()</span>
 </pre></div>
 </div>
 <p><em>Example:</em></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_projects</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_projects</span><span class="p">()</span>
 <span class="go">[Project(id=3, created_on=&#39;2017-06-23 07:19:26.720829+00:00&#39;, file_count=3,</span>
 <span class="go">    package_name=&#39;org.owasp.goatdroid.fourgoats&#39;, platform=0,</span>
 <span class="go">    updated_on=&#39;2017-06-23 07:26:55.456744+00:00&#39;),</span>
@@ -139,11 +128,11 @@ Appknox API.</p>
 <div class="section" id="get-files-list">
 <span id="id5"></span><h2>Get files list:<a class="headerlink" href="#get-files-list" title="Permalink to this headline">¶</a></h2>
 <p>For listing files within a project:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">get_files</span><span class="p">(</span><span class="o">&lt;</span><span class="n">project_id</span><span class="o">&gt;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">get_files</span><span class="p">(</span><span class="o">&lt;</span><span class="n">project_id</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><em>Example:</em></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_files</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_files</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 <span class="go">[File(id=6, name=&#39;MFVA&#39;, version=&#39;1.0&#39;, version_code=&#39;5&#39;, static_scan_progress=100),]</span>
 </pre></div>
 </div>
@@ -151,11 +140,11 @@ Appknox API.</p>
 <div class="section" id="get-analysis-list">
 <span id="id6"></span><h2>Get analysis list:<a class="headerlink" href="#get-analysis-list" title="Permalink to this headline">¶</a></h2>
 <p>Get the analyses for this new file:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">get_analyses</span><span class="p">(</span><span class="o">&lt;</span><span class="n">file_id</span><span class="o">&gt;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">get_analyses</span><span class="p">(</span><span class="o">&lt;</span><span class="n">file_id</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><em>Example:</em></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_analyses</span><span class="p">(</span><span class="mi">6</span><span class="p">)[:</span><span class="mi">3</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_analyses</span><span class="p">(</span><span class="mi">6</span><span class="p">)[:</span><span class="mi">3</span><span class="p">]</span>
 <span class="go">[Analysis(id=267, risk=2, status=3, cvss_base=6.8,</span>
 <span class="go">    findings=[{&#39;title&#39;: None, &#39;description&#39;: &#39;Unprotected service: com.appknox.mfva.ExportedService&#39;}],</span>
 <span class="go">    updated_on=&#39;2017-06-27 08:28:35.166608+00:00&#39;, vulnerability_id=1),</span>
@@ -167,15 +156,15 @@ Appknox API.</p>
 <span class="go">    updated_on=&#39;2017-06-27 08:28:35.296126+00:00&#39;, vulnerability_id=3)]</span>
 </pre></div>
 </div>
-<p>Note the <code class="docutils literal"><span class="pre">vulnerability_id</span></code> for <code class="docutils literal"><span class="pre">Analysis(id=235)</span></code>. To get details about this vulnerability:</p>
+<p>Note the <code class="docutils literal notranslate"><span class="pre">vulnerability_id</span></code> for <code class="docutils literal notranslate"><span class="pre">Analysis(id=235)</span></code>. To get details about this vulnerability:</p>
 </div>
 <div class="section" id="get-vulnerability-details">
 <span id="id7"></span><h2>Get vulnerability details:<a class="headerlink" href="#get-vulnerability-details" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">get_vulnerability</span><span class="p">(</span><span class="o">&lt;</span><span class="n">vulnerability_id</span><span class="o">&gt;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">get_vulnerability</span><span class="p">(</span><span class="o">&lt;</span><span class="n">vulnerability_id</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><em>Example:</em></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_vulnerability</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_vulnerability</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="go">Vulnerability(name=&#39;Improper Content Provider Permissions&#39;,</span>
 <span class="go">    description=&#39;A content provider permission was set to allow access from any other app on the device.</span>
 <span class="go">        Content providers may contain sensitive information about an app and therefore should not be shared.&#39;,</span>
@@ -187,11 +176,11 @@ Appknox API.</p>
 <div class="section" id="upload-app">
 <span id="id8"></span><h2>Upload app:<a class="headerlink" href="#upload-app" title="Permalink to this headline">¶</a></h2>
 <p>To upload and scan a new package:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="o">&lt;</span><span class="n">binary_data</span><span class="o">&gt;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="o">&lt;</span><span class="n">binary_data</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><em>Example:</em></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/home/username/apk/mfva_1.0.apk&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/home/username/apk/mfva_1.0.apk&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">file_data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="n">file_data</span><span class="p">)</span>
 
@@ -204,12 +193,12 @@ Appknox API.</p>
 <div class="section" id="rescan">
 <span id="id9"></span><h2>Rescan:<a class="headerlink" href="#rescan" title="Permalink to this headline">¶</a></h2>
 <p>To rescan a file:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">rescan</span><span class="p">(</span><span class="o">&lt;</span><span class="n">file_id</span><span class="o">&gt;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">rescan</span><span class="p">(</span><span class="o">&lt;</span><span class="n">file_id</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This will create a new file under the same project. Once the file has been started, list files to get the latest file id.</p>
 <p><em>Example:</em></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">rescan</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">rescan</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_files</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 <span class="go">[File(id=8, name=&#39;MFVA&#39;, version=&#39;1.0&#39;, version_code=&#39;6&#39;, static_scan_progress=100),</span>
@@ -221,11 +210,11 @@ Appknox API.</p>
 <div class="section" id="switch-organization">
 <span id="id10"></span><h2>Switch organization:<a class="headerlink" href="#switch-organization" title="Permalink to this headline">¶</a></h2>
 <p>Change default organization for client instance.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">switch_organization</span><span class="p">(</span><span class="o">&lt;</span><span class="n">organization_id</span><span class="o">&gt;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">switch_organization</span><span class="p">(</span><span class="o">&lt;</span><span class="n">organization_id</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><em>Example:</em></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">switch_organization</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">switch_organization</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 <span class="go">True</span>
 </pre></div>
 </div>
@@ -308,12 +297,14 @@ Appknox API.</p>
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
 
@@ -332,7 +323,7 @@ Appknox API.</p>
       &copy;2017, XYSec Labs Pte. Ltd..
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
