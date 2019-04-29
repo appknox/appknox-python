@@ -25,3 +25,7 @@ class ReportError(AppknoxError):
 
 class OrganizationError(AppknoxError):
     pass
+
+
+class UploadError(AppknoxError):
+    pass

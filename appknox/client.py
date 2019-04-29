@@ -10,11 +10,11 @@ from urllib.parse import urljoin
 
 from appknox.exceptions import (
     OneTimePasswordError, CredentialError, AppknoxError, ReportError,
-    OrganizationError
+    OrganizationError, UploadError
 )
 from appknox.mapper import (
     mapper_json_api, mapper_drf_api, Analysis, File, Project, User,
-    Organization, Vulnerability, OWASP, PersonalToken
+    Organization, Vulnerability, OWASP, PersonalToken, Submission
 )
 
 DEFAULT_API_HOST = 'https://api.appknox.com'
@@ -328,7 +328,6 @@ class Appknox(object):
         :param file_id: File ID
         """
         file_ = self.json_api.files(file_id).get()
-
         return mapper_json_api(File, file_)
 
     def get_files(
@@ -408,7 +407,7 @@ class Appknox(object):
 
     def upload_file(self, file_data: str):
         """
-        Upload and scan a package
+        Upload and scan a package and returns the file_id
 
         :param file: Package file content to be uploaded and scanned
         """
@@ -417,7 +416,7 @@ class Appknox(object):
         ]().get()
         url = response['url']
         requests.put(url, data=file_data)
-        self.drf_api[
+        response2 = self.drf_api[
             'organizations/{}/upload_app'.format(self.organization_id)
         ]().post(
             data=dict(
@@ -426,6 +425,30 @@ class Appknox(object):
                 url=response['url']
             )
         )
+        file = None
+        timeout = time.time() + 10
+        submission_id = response2['submission_id']
+        while (file is None):
+            submission = self.drf_api.submissions(submission_id).get()
+            if submission.get('detail') == 'Not found.':
+                raise UploadError(
+                    'Something went wrong, try uploading the file again.')
+            submission_obj = mapper_drf_api(Submission, submission)
+            file = submission_obj.file
+            if submission_obj.reason:
+                raise UploadError(submission_obj.reason)
+            if time.time() > timeout:
+                raise RuntimeError(
+                    'Request timed out, try uploading the file again.')
+        return file
+
+    def recent_uploads(self) -> List[Submission]:
+        """
+        List details of recent file uploads
+        """
+        submissions = self.drf_api.submissions().get()
+
+        return self.paginated_drf_data(submissions, Submission)[0:10]
 
     def rescan(self, file_id: int):
         """

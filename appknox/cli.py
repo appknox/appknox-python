@@ -15,10 +15,11 @@ from click import echo, echo_via_pager
 from appknox.client import Appknox, DEFAULT_API_HOST
 from appknox.exceptions import (
     AppknoxError, OneTimePasswordError, CredentialError, ReportError,
-    OrganizationError
+    OrganizationError, UploadError
 )
 from appknox.mapper import (
-    Analysis, File, Organization, Project, User, Vulnerability, OWASP
+    Analysis, File, Organization, Project, User, Vulnerability, OWASP,
+    Submission
 )
 
 CONFIG_FILE = os.path.expanduser('~/.config/appknox.ini')
@@ -259,7 +260,12 @@ def upload(ctx, path):
     except FileNotFoundError as e:
         echo(e)
         sys.exit(1)
-    client.upload_file(file_data)
+    try:
+        file_id = client.upload_file(file_data)
+        echo("Upload Successful, file_id: {}".format(file_id))
+    except UploadError as e:
+        echo(e)
+        sys.exit(1)
 
 
 @cli.command()
@@ -275,6 +281,18 @@ def analyses(ctx, file_id):
         ignore=[
             'cvss_vector', 'cvss_version', 'cvss_metrics_humanized', 'findings'
         ]
+    ))
+
+
+@cli.command()
+@click.pass_context
+def recent_uploads(ctx):
+    """
+    List recent file uploads by the user
+    """
+    client = ctx.obj['CLIENT']
+    echo(table(
+        Submission, client.recent_uploads()
     ))
 
 

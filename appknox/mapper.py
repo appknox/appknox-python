@@ -46,6 +46,11 @@ File = namedtuple(
     ['id', 'name', 'version', 'version_code', 'static_scan_progress']
 )
 
+Submission = namedtuple(
+    'Submission',
+    ['id', 'status', 'file', 'package_name', 'created_on', 'reason']
+)
+
 Analysis = namedtuple(
     'Analysis',
     ['id', 'risk', 'status', 'cvss_base', 'cvss_vector', 'cvss_version',
