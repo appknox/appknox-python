@@ -39,6 +39,7 @@ Commands:
   logout         Delete session credentials
   organizations  List organizations
   projects       List projects
+  recent_uploads List recent file uploads by the user
   report         Download report for file
   upload         Upload and scan package
   switch_organization  Switch organization in CLI instance
@@ -85,7 +86,7 @@ Supported variables are:
 | `analyses <file_id>` | List analyses for a file |
 | `vulnerability <vulnerability_id>` | Get vulnerability detail |
 | `owasp <owasp_id>` | Get OWASP detail |
-| `upload <path_to_app_package>` | Upload app file from given path |
+| `upload <path_to_app_package>` | Upload app file from given path and get the file_id |
 | `rescan <file_id>` | Rescan a file (this will create a new file under the same project.) |
 
 

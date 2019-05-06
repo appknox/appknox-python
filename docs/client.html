@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>appknox.client &#8212; appknox-python 3.0.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -49,56 +47,44 @@
 <dt id="appknox.client.Appknox.get_analyses">
 <code class="descname">get_analyses</code><span class="sig-paren">(</span><em>file_id: int</em><span class="sig-paren">)</span> &#x2192; List[appknox.mapper.Analysis]<a class="reference internal" href="_modules/appknox/client.html#Appknox.get_analyses"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.get_analyses" title="Permalink to this definition">¶</a></dt>
 <dd><p>List analyses for file</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_id</strong> – File ID</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file_id</strong> – File ID</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="appknox.client.Appknox.get_file">
 <code class="descname">get_file</code><span class="sig-paren">(</span><em>file_id: int</em><span class="sig-paren">)</span> &#x2192; appknox.mapper.File<a class="reference internal" href="_modules/appknox/client.html#Appknox.get_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.get_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetch file by file ID</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_id</strong> – File ID</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file_id</strong> – File ID</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="appknox.client.Appknox.get_files">
 <code class="descname">get_files</code><span class="sig-paren">(</span><em>project_id: int</em>, <em>version_code: int = None</em><span class="sig-paren">)</span> &#x2192; List[appknox.mapper.File]<a class="reference internal" href="_modules/appknox/client.html#Appknox.get_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.get_files" title="Permalink to this definition">¶</a></dt>
 <dd><p>List files in project</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>project_id</strong> – Project ID</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>project_id</strong> – Project ID</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="appknox.client.Appknox.get_last_file">
 <code class="descname">get_last_file</code><span class="sig-paren">(</span><em>project_id: int</em><span class="sig-paren">)</span> &#x2192; appknox.mapper.File<a class="reference internal" href="_modules/appknox/client.html#Appknox.get_last_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.get_last_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetch latest file for the project</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>project_id</strong> – Project ID</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>project_id</strong> – Project ID</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -117,28 +103,22 @@
 <dt id="appknox.client.Appknox.get_owasp">
 <code class="descname">get_owasp</code><span class="sig-paren">(</span><em>owasp_id: str</em><span class="sig-paren">)</span> &#x2192; appknox.mapper.OWASP<a class="reference internal" href="_modules/appknox/client.html#Appknox.get_owasp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.get_owasp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetch OWASP by ID</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>owasp_id</strong> – OWASP ID</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>owasp_id</strong> – OWASP ID</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="appknox.client.Appknox.get_project">
 <code class="descname">get_project</code><span class="sig-paren">(</span><em>project_id: int</em><span class="sig-paren">)</span> &#x2192; appknox.mapper.Project<a class="reference internal" href="_modules/appknox/client.html#Appknox.get_project"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.get_project" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetch project by project ID</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>project_id</strong> – Project ID</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>project_id</strong> – Project ID</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -152,78 +132,68 @@ in the given organizations</p>
 <dt id="appknox.client.Appknox.get_report">
 <code class="descname">get_report</code><span class="sig-paren">(</span><em>file_id</em>, <em>format: str = 'json'</em>, <em>language: str = 'en'</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/appknox/client.html#Appknox.get_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.get_report" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetch analyses report for a file</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>file_id</strong> (<em>int</em>) – File ID</li>
-<li><strong>format</strong> (<em>str</em>) – Report format (supported ‘json’, ‘pdf’). Default ‘json’</li>
-<li><strong>language</strong> (<em>str</em>) – Report language (supported ‘en’, ‘ja’). Default ‘en’</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_id</strong> (<em>int</em>) – File ID</p></li>
+<li><p><strong>format</strong> (<em>str</em>) – Report format (supported ‘json’, ‘pdf’). Default ‘json’</p></li>
+<li><p><strong>language</strong> (<em>str</em>) – Report language (supported ‘en’, ‘ja’). Default ‘en’</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="appknox.client.Appknox.get_user">
 <code class="descname">get_user</code><span class="sig-paren">(</span><em>user_id: int</em><span class="sig-paren">)</span> &#x2192; appknox.mapper.User<a class="reference internal" href="_modules/appknox/client.html#Appknox.get_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.get_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetch user by user ID</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_id</strong> – User ID</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>user_id</strong> – User ID</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="appknox.client.Appknox.get_vulnerability">
 <code class="descname">get_vulnerability</code><span class="sig-paren">(</span><em>vulnerability_id: int</em><span class="sig-paren">)</span> &#x2192; appknox.mapper.Vulnerability<a class="reference internal" href="_modules/appknox/client.html#Appknox.get_vulnerability"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.get_vulnerability" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetch vulnerability by vulnerability ID</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>vulnerability_id</strong> – vulnerability ID</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>vulnerability_id</strong> – vulnerability ID</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="appknox.client.Appknox.login">
 <code class="descname">login</code><span class="sig-paren">(</span><em>otp: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/appknox/client.html#Appknox.login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.login" title="Permalink to this definition">¶</a></dt>
 <dd><p>Authenticate with server and create session</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>otp</strong> – One-time password, if account has MFA enabled</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>otp</strong> – One-time password, if account has MFA enabled</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="appknox.client.Appknox.recent_uploads">
+<code class="descname">recent_uploads</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List[appknox.mapper.Submission]<a class="reference internal" href="_modules/appknox/client.html#Appknox.recent_uploads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.recent_uploads" title="Permalink to this definition">¶</a></dt>
+<dd><p>List details of recent file uploads</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="appknox.client.Appknox.rescan">
 <code class="descname">rescan</code><span class="sig-paren">(</span><em>file_id: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/appknox/client.html#Appknox.rescan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.rescan" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start a rescan for a file id</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filed_id</strong> – File ID</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filed_id</strong> – File ID</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -241,15 +211,12 @@ in the given organizations</p>
 <dl class="method">
 <dt id="appknox.client.Appknox.upload_file">
 <code class="descname">upload_file</code><span class="sig-paren">(</span><em>file_data: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/appknox/client.html#Appknox.upload_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appknox.client.Appknox.upload_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Upload and scan a package</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file</strong> – Package file content to be uploaded and scanned</td>
-</tr>
-</tbody>
-</table>
+<dd><p>Upload and scan a package and returns the file_id</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file</strong> – Package file content to be uploaded and scanned</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -319,8 +286,6 @@ in the given organizations</p>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -341,7 +306,7 @@ in the given organizations</p>
       &copy;2017, XYSec Labs Pte. Ltd..
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.3</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
