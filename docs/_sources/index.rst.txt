@@ -25,6 +25,7 @@ Quickstart
 #. `Get analysis list`__
 #. `Get vulnerability details`__
 #. `Upload app`__
+#. `Recent Uploads`__
 #. `Rescan`__
 #. `Switch organization`__
 #. `Complete Reference`__
@@ -201,7 +202,7 @@ To upload and scan a new package:
 
 .. code-block:: python
 
-    >>> client.upload_file(<binary_data>)
+    >>> file_id = client.upload_file(<binary_data>)
 
 
 *Example:*
@@ -210,11 +211,31 @@ To upload and scan a new package:
 
     >>> f = open('/home/username/apk/mfva_1.0.apk', 'rb')
     >>> file_data = f.read()
-    >>> client.upload_file(file_data)
+    >>> file_id = client.upload_file(file_data)
+    >>> client.get_file(file_id)
+    File(id=11469, name='MFVA', version='1.0', version_code='6', static_scan_progress=100)
 
-    >>> client.get_files(4)
-    [File(id=7, name='MFVA', version='1.0', version_code='6', static_scan_progress=100),,
-        File(id=6, name='MFVA', version='1.0', version_code='5', static_scan_progress=100),]
+__
+
+Recent Uploads:
+-------------------
+
+Get recent file uploads by the user:
+
+.. code-block:: python
+
+    >>> client.recent_uploads()
+
+
+*Example:*
+
+.. code-block:: python
+
+    >>> client.recent_uploads()
+    [Submission(id=15506, status=7, file=11469, package_name='com.appknox.mfva', created_on='2019-05-06T16:04:50.094503Z', reason=''),
+     Submission(id=15438, status=7, file=11405, package_name='com.appknox.mfva', created_on='2019-05-02T17:36:38.374191Z', reason=''),
+     Submission(id=15437, status=7, file=11404, package_name='com.appknox.mfva', created_on='2019-05-02T17:35:29.245553Z', reason=''),
+     Submission(id=15436, status=7, file=11403, package_name='com.appknox.mfva', created_on='2019-05-02T17:33:36.399803Z', reason=''),]
 
 __
 
