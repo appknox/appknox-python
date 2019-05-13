@@ -18,8 +18,8 @@ from appknox.exceptions import (
     OrganizationError, UploadError
 )
 from appknox.mapper import (
-    Analysis, File, Organization, Project, User, Vulnerability, OWASP,
-    Submission
+    Analysis, File, Organization, Project, Vulnerability, OWASP,
+    Submission, Whoami
 )
 
 CONFIG_FILE = os.path.expanduser('~/.config/appknox.ini')
@@ -183,13 +183,12 @@ def login(ctx, username, password, host):
 @cli.command()
 @click.pass_context
 def whoami(ctx):
-    # FIXME: This won't work, we need a /me api for this to work
     """
     Show session info
     """
     client = ctx.obj['CLIENT']
-    data = client.get_user(client.user_id)
-    echo(table(User, data))
+    data = client.get_whoami()
+    echo(table(Whoami, data))
 
 
 @cli.command()
