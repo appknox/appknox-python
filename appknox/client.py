@@ -14,7 +14,8 @@ from appknox.exceptions import (
 )
 from appknox.mapper import (
     mapper_json_api, mapper_drf_api, Analysis, File, Project, User,
-    Organization, Vulnerability, OWASP, PersonalToken, Submission
+    Organization, Vulnerability, OWASP, PersonalToken, Submission,
+    Whoami
 )
 
 DEFAULT_API_HOST = 'https://api.appknox.com'
@@ -238,6 +239,13 @@ class Appknox(object):
         user = self.json_api.users(user_id).get()
 
         return mapper_json_api(User, user)
+
+    def get_whoami(self) -> Whoami:
+        """
+        Show session info
+        """
+        whoami = self.drf_api.me().get()
+        return mapper_drf_api(Whoami, whoami)
 
     def paginated_data(self, response, mapper_class):
         initial_data = [mapper_json_api(

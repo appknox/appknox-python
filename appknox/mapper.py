@@ -30,6 +30,11 @@ User = namedtuple(
     ['id', 'email', 'first_name', 'lang', 'last_name', 'username']
 )
 
+Whoami = namedtuple(
+    'Whoami',
+    ['id', 'email', 'username', 'default_organization']
+)
+
 Organization = namedtuple(
     'Organization',
     ['id', 'name']
