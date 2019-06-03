@@ -325,17 +325,15 @@ def owasp(ctx, owasp_id):
 @cli.command()
 @click.argument('file_id')
 @click.option(
-    '-f', '--format', default='json', help='Report format: json, pdf')
-@click.option(
     '-l', '--language', default='en', help='Report language: en, ja')
 @click.pass_context
-def report(ctx, file_id, format, language):
+def report(ctx, file_id, language):
     """
     Download report for file
     """
     client = ctx.obj['CLIENT']
     try:
-        echo(client.get_report(file_id, format=format, language=language))
+        echo(client.get_report(file_id, language=language))
     except ReportError as e:
         echo(e)
         sys.exit(1)

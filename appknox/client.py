@@ -354,7 +354,6 @@ class Appknox(object):
             filter_options['version_code'] = version_code
 
         files = self.json_api.files().get(**filter_options)
-
         return self.paginated_data(files, File)
 
     def get_analyses(self, file_id: int) -> List[Analysis]:
@@ -471,26 +470,24 @@ class Appknox(object):
         )
 
     def get_report(
-            self, file_id, format: str = 'json', language: str = 'en') -> str:
+            self, file_id, language: str = 'en') -> str:
         """
         Fetch analyses report for a file
 
         :param file_id: File ID
-        :param format: Report format (supported 'json', 'pdf'). Default 'json'
         :param language: Report language (supported 'en', 'ja'). Default 'en'
         :type file_id: int
-        :type format: str
         :type language: str
         :return:
         """
-        if format not in ['json', 'pdf']:
-            raise ReportError('Unsupported format')
         if language not in ['en', 'ja']:
             raise ReportError('Unsupported language')
-
-        return self.json_api.report(file_id).get(
-            format=format, language=language
-        )
+        response = self.json_api.signed_pdf_url(file_id).get(language=language)
+        report_response = requests.get(response['url'])
+        file_key = response['file_key']
+        file = open(file_key, "w")
+        file.write(report_response.text)
+        return {'file_name': file_key}
 
 
 class ApiResource(object):
