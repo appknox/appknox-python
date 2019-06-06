@@ -9,7 +9,7 @@ from typing import List, Dict
 from urllib.parse import urljoin
 
 from appknox.exceptions import (
-    OneTimePasswordError, CredentialError, AppknoxError, ReportError,
+    OneTimePasswordError, CredentialError, AppknoxError,
     OrganizationError, UploadError
 )
 from appknox.mapper import (
@@ -332,7 +332,7 @@ class Appknox(object):
         return mapper_drf_api(File, file)
 
     def get_files(
-        self, project_id: int
+        self, project_id: int, version_code: int = None
     ) -> List[File]:
         """
         List files in project
@@ -341,7 +341,7 @@ class Appknox(object):
         """
         files = self.drf_api[
             'projects/{}/files'.format(project_id)
-        ]().get()
+        ]().get(version_code=version_code)
         return self.paginated_drf_data(files, File)
 
     def get_analyses(self, file_id: int) -> List[Analysis]:
@@ -436,26 +436,28 @@ class Appknox(object):
             )
         )
 
-    def get_report(
-            self, file_id, format: str = 'json', language: str = 'en') -> str:
-        """
-        Fetch analyses report for a file
-        :param file_id: File ID
-        :param format: Report format (supported 'json', 'pdf'). Default 'json'
-        :param language: Report language (supported 'en', 'ja'). Default 'en'
-        :type file_id: int
-        :type format: str
-        :type language: str
-        :return:
-        """
-        if format not in ['json', 'pdf']:
-            raise ReportError('Unsupported format')
-        if language not in ['en', 'ja']:
-            raise ReportError('Unsupported language')
+    # def get_report(
+    #         self, file_id, format: str = 'json', language: str = 'en') ->
+    #         str:
+    #     """
+    #     Fetch analyses report for a file
+    #     :param file_id: File ID
+    #     :param format: Report format (supported 'json', 'pdf'). Default
+    #                    'json'
+    #     :param language: Report language (supported 'en', 'ja'). Default 'en'
+    #     :type file_id: int
+    #     :type format: str
+    #     :type language: str
+    #     :return:
+    #     """
+    #     if format not in ['json', 'pdf']:
+    #         raise ReportError('Unsupported format')
+    #     if language not in ['en', 'ja']:
+    #         raise ReportError('Unsupported language')
 
-        return self.json_api.report(file_id).get(
-            format=format, language=language
-        )
+    #     return self.json_api.report(file_id).get(
+    #         format=format, language=language
+    #     )
 
 
 class ApiResource(object):
