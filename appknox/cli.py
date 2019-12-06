@@ -14,7 +14,7 @@ from click import echo, echo_via_pager
 
 from appknox.client import Appknox, DEFAULT_API_HOST
 from appknox.exceptions import (
-    AppknoxError, OneTimePasswordError, CredentialError, ReportError,
+    AppknoxError, OneTimePasswordError, CredentialError,
     OrganizationError, UploadError
 )
 from appknox.mapper import (
@@ -322,23 +322,23 @@ def owasp(ctx, owasp_id):
     echo(table(OWASP, client.get_owasp(owasp_id), ignore=['description']))
 
 
-@cli.command()
-@click.argument('file_id')
-@click.option(
-    '-f', '--format', default='json', help='Report format: json, pdf')
-@click.option(
-    '-l', '--language', default='en', help='Report language: en, ja')
-@click.pass_context
-def report(ctx, file_id, format, language):
-    """
-    Download report for file
-    """
-    client = ctx.obj['CLIENT']
-    try:
-        echo(client.get_report(file_id, format=format, language=language))
-    except ReportError as e:
-        echo(e)
-        sys.exit(1)
+# @cli.command()
+# @click.argument('file_id')
+# @click.option(
+#     '-f', '--format', default='json', help='Report format: json, pdf')
+# @click.option(
+#     '-l', '--language', default='en', help='Report language: en, ja')
+# @click.pass_context
+# def report(ctx, file_id, format, language):
+#     """
+#     Download report for file
+#     """
+#     client = ctx.obj['CLIENT']
+#     try:
+#         echo(client.get_report(file_id, format=format, language=language))
+#     except ReportError as e:
+#         echo(e)
+#         sys.exit(1)
 
 
 @cli.command()

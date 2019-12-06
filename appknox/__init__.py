@@ -4,11 +4,11 @@ from .mapper import (
     Vulnerability
 )
 from .exceptions import (
-    AppknoxError, CredentialError, ReportError, OneTimePasswordError
+    AppknoxError, CredentialError, OneTimePasswordError
 )
 
 __all__ = [
     'Appknox', 'Analysis', 'File', 'Organization', 'OWASP', 'PersonalToken',
     'Project', 'User', 'Vulnerability', 'AppknoxError', 'CredentialError',
-    'OneTimePasswordError', 'ReportError'
+    'OneTimePasswordError',
 ]

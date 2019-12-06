@@ -9,7 +9,7 @@ from typing import List, Dict
 from urllib.parse import urljoin
 
 from appknox.exceptions import (
-    OneTimePasswordError, CredentialError, AppknoxError, ReportError,
+    OneTimePasswordError, CredentialError, AppknoxError,
     OrganizationError, UploadError
 )
 from appknox.mapper import (
@@ -233,7 +233,6 @@ class Appknox(object):
     def get_user(self, user_id: int) -> User:
         """
         Fetch user by user ID
-
         :param user_id: User ID
         """
         user = self.json_api.users(user_id).get()
@@ -282,7 +281,6 @@ class Appknox(object):
                 mapper_drf_api(mapper_class, value)
                 for value in resp['results']
             ]
-
         return initial_data
 
     def get_organizations(self) -> List[Organization]:
@@ -298,9 +296,10 @@ class Appknox(object):
 
         :param project_id: Project ID
         """
-        project = self.json_api.projects(project_id).get()
-
-        return mapper_json_api(Project, project)
+        project = self.drf_api[
+            'v2/projects/{}'.format(project_id)
+        ]().get()
+        return mapper_drf_api(Project, project)
 
     def get_projects(
         self, platform: int = None, package_name: str = '', search: str = ''
@@ -312,7 +311,6 @@ class Appknox(object):
         projects = self.drf_api[
             'organizations/{}/projects'.format(self.organization_id)
         ]().get(platform=platform, package_name=package_name, q=search)
-
         return self.paginated_drf_data(projects, Project)
 
     def get_last_file(self, project_id: int) -> File:
@@ -321,22 +319,17 @@ class Appknox(object):
 
         :param project_id: Project ID
         """
-        filter_options = {
-            'projectId': project_id,
-            'limit': -1,
-            'lastFileOnly': 'true'
-        }
-        last_file = self.json_api.files().get(**filter_options)
-        return mapper_json_api(File, last_file)
+        return self.get_files(project_id)[0]
 
     def get_file(self, file_id: int) -> File:
         """
         Fetch file by file ID
-
         :param file_id: File ID
         """
-        file_ = self.json_api.files(file_id).get()
-        return mapper_json_api(File, file_)
+        file = self.drf_api[
+            'v2/files/{}'.format(file_id)
+        ]().get()
+        return mapper_drf_api(File, file)
 
     def get_files(
         self, project_id: int, version_code: int = None
@@ -346,16 +339,10 @@ class Appknox(object):
 
         :param project_id: Project ID
         """
-        filter_options = {
-            'projectId': project_id,
-            'limit': -1
-        }
-        if version_code:
-            filter_options['version_code'] = version_code
-
-        files = self.json_api.files().get(**filter_options)
-
-        return self.paginated_data(files, File)
+        files = self.drf_api[
+            'projects/{}/files'.format(project_id)
+        ]().get(version_code=version_code)
+        return self.paginated_drf_data(files, File)
 
     def get_analyses(self, file_id: int) -> List[Analysis]:
         """
@@ -363,29 +350,10 @@ class Appknox(object):
 
         :param file_id: File ID
         """
-        out = list()
-        file_ = file_ = self.json_api.files(file_id).get()
-        for d in file_.get('included', []):
-            Cache.add(d)
-
-        analyses = file_['data']['relationships']['analyses']['data']
-        for analysis_id in analyses:
-            analysis = Cache.get('analyses', analysis_id['id'])
-            analysis = {
-                'data': analysis
-            }
-            if not analysis:
-                analysis = self.json_api.analyses(analysis_id['id']).get()
-                Cache.add(analysis['data'])
-                for d in analysis.get('included', []):
-                    Cache.add(d)
-
-            vuln_id = analysis[
-                'data']['relationships']['vulnerability']['data']['id']
-            analysis['data']['attributes']['vulnerability-id'] = vuln_id
-
-            out.append(mapper_json_api(Analysis, analysis))
-        return out
+        analyses = self.drf_api[
+            'v2/files/{}/analyses'.format(file_id)
+        ]().get()
+        return self.paginated_drf_data(analyses, Analysis)
 
     def get_vulnerability(self, vulnerability_id: int) -> Vulnerability:
         """
@@ -394,7 +362,6 @@ class Appknox(object):
         :param vulnerability_id: vulnerability ID
         """
         vulnerability = self.json_api.vulnerabilities(vulnerability_id).get()
-
         return mapper_json_api(Vulnerability, vulnerability)
 
     def get_owasp(self, owasp_id: str) -> OWASP:
@@ -410,7 +377,6 @@ class Appknox(object):
             })
         owasp = self.json_api.owasps(owasp_id).get()
         Cache.add(owasp.get('data', {}))
-
         return mapper_json_api(OWASP, owasp)
 
     def upload_file(self, file_data: str):
@@ -470,27 +436,28 @@ class Appknox(object):
             )
         )
 
-    def get_report(
-            self, file_id, format: str = 'json', language: str = 'en') -> str:
-        """
-        Fetch analyses report for a file
+    # def get_report(
+    #         self, file_id, format: str = 'json', language: str = 'en') ->
+    #         str:
+    #     """
+    #     Fetch analyses report for a file
+    #     :param file_id: File ID
+    #     :param format: Report format (supported 'json', 'pdf'). Default
+    #                    'json'
+    #     :param language: Report language (supported 'en', 'ja'). Default 'en'
+    #     :type file_id: int
+    #     :type format: str
+    #     :type language: str
+    #     :return:
+    #     """
+    #     if format not in ['json', 'pdf']:
+    #         raise ReportError('Unsupported format')
+    #     if language not in ['en', 'ja']:
+    #         raise ReportError('Unsupported language')
 
-        :param file_id: File ID
-        :param format: Report format (supported 'json', 'pdf'). Default 'json'
-        :param language: Report language (supported 'en', 'ja'). Default 'en'
-        :type file_id: int
-        :type format: str
-        :type language: str
-        :return:
-        """
-        if format not in ['json', 'pdf']:
-            raise ReportError('Unsupported format')
-        if language not in ['en', 'ja']:
-            raise ReportError('Unsupported language')
-
-        return self.json_api.report(file_id).get(
-            format=format, language=language
-        )
+    #     return self.json_api.report(file_id).get(
+    #         format=format, language=language
+    #     )
 
 
 class ApiResource(object):
