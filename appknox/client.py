@@ -4,7 +4,7 @@ import logging
 import requests
 import time
 
-from functools import partial
+from functools import partial, lru_cache
 from typing import List, Dict
 from urllib.parse import urljoin
 
@@ -14,7 +14,7 @@ from appknox.exceptions import (
 )
 from appknox.mapper import (
     mapper_json_api, mapper_drf_api, Analysis, File, Project, User,
-    Organization, Vulnerability, OWASP, PersonalToken, Submission,
+    Organization, Vulnerability, OWASP, PCIDSS, PersonalToken, Submission,
     Whoami
 )
 
@@ -26,38 +26,6 @@ JSON_API_HEADERS = {
 DRF_API_HEADERS = {
     'Accept': 'application/json'
 }
-
-
-class Cache(object):
-    data = {}
-
-    @classmethod
-    def add(cls, data):
-        data_type = data.get('type')
-        data_id = data.get('id')
-        if not data_type or not data_id:
-            return
-
-        cache_data_type = cls.data.get(data_type, {})
-        cache_data_type[data_id] = data
-        cls.data[data_type] = cache_data_type
-
-    @classmethod
-    def get(cls, data_type, data_id):
-        cache_data_type = cls.data.get(data_type, {})
-        return cache_data_type.get(data_id)
-
-    @classmethod
-    def delete(cls, data_type, data_id=None):
-        if not data_id:
-            cls.data[data_type] = {}
-            return
-        cache_data_type = cls.data.get(data_type, {})
-        cache_data_type[data_id] = None
-
-    @classmethod
-    def clear(cls):
-        cls.data = {}
 
 
 class Appknox(object):
@@ -355,14 +323,45 @@ class Appknox(object):
         ]().get()
         return self.paginated_drf_data(analyses, Analysis)
 
+    @lru_cache(maxsize=1)
+    def get_vulnerabilities(self) -> List[Vulnerability]:
+        total_vulnerabilities = self.drf_api[
+            'v2/vulnerabilities'
+        ]().get(limit=1)['count']  # limit is 1 just to get total count
+        vulnerabilities_raw = self.drf_api['v2/vulnerabilities']().get(
+            limit=total_vulnerabilities+1
+        )
+        vulnerabilities = self.paginated_drf_data(
+            vulnerabilities_raw, Vulnerability
+        )
+        return vulnerabilities
+
     def get_vulnerability(self, vulnerability_id: int) -> Vulnerability:
         """
         Fetch vulnerability by vulnerability ID
 
         :param vulnerability_id: vulnerability ID
         """
-        vulnerability = self.json_api.vulnerabilities(vulnerability_id).get()
-        return mapper_json_api(Vulnerability, vulnerability)
+        vulnerabilities = self.get_vulnerabilities()
+        vulnerability = next(
+            (x for x in vulnerabilities if x.id == vulnerability_id),
+            None
+        )
+        if vulnerability:
+            return vulnerability
+
+        vulnerability = self.drf_api[
+            'v2/vulnerabilities'
+        ](vulnerability_id).get()
+        return mapper_drf_api(Vulnerability, vulnerability)
+
+    @lru_cache(maxsize=1)
+    def get_owasps(self) -> List[OWASP]:
+        owasps_raw = self.drf_api['v2/owasps']().get()
+        owasps = self.paginated_drf_data(
+            owasps_raw, OWASP
+        )
+        return owasps
 
     def get_owasp(self, owasp_id: str) -> OWASP:
         """
@@ -370,14 +369,41 @@ class Appknox(object):
 
         :param owasp_id: OWASP ID
         """
-        cache_data = Cache.get('owasp', owasp_id)
-        if cache_data:
-            return mapper_json_api(OWASP, {
-                'data': cache_data
-            })
-        owasp = self.json_api.owasps(owasp_id).get()
-        Cache.add(owasp.get('data', {}))
-        return mapper_json_api(OWASP, owasp)
+        owasps = self.get_owasps()
+        owasp = next(
+            (x for x in owasps if x.id == owasp_id),
+            None
+        )
+        if owasp:
+            return owasp
+
+        owasp = self.drf_api['v2/owasps'](owasp_id).get()
+        return mapper_drf_api(OWASP, owasp)
+
+    @lru_cache(maxsize=1)
+    def get_pcidsses(self) -> List[PCIDSS]:
+        pcidsss_raw = self.drf_api['v2/pcidsses']().get()
+        pcidsss = self.paginated_drf_data(
+            pcidsss_raw, PCIDSS
+        )
+        return pcidsss
+
+    def get_pcidss(self, pcidss_id: str) -> PCIDSS:
+        """
+        Fetch pcidss by ID
+
+        :param pcidss_id: pcidss ID
+        """
+        pcidsses = self.get_pcidsses()
+        pcidss = next(
+            (x for x in pcidsses if x.id == pcidss_id),
+            None
+        )
+        if pcidss:
+            return pcidss
+
+        pcidss = self.drf_api['v2/pcidsses'](pcidss_id).get()
+        return mapper_drf_api(PCIDSS, pcidss)
 
     def upload_file(self, file_data: str):
         """

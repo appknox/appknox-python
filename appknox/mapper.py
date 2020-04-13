@@ -65,13 +65,18 @@ Analysis = namedtuple(
 
 Vulnerability = namedtuple(
     'Vulnerability',
-    ['name', 'description', 'intro', 'related_to',
+    ['id', 'name', 'description', 'intro', 'related_to',
      'business_implication', 'compliant', 'non_compliant', 'types']
 )
 
 OWASP = namedtuple(
     'OWASP',
-    ['code', 'title', 'description', 'year']
+    ['id', 'code', 'title', 'description', 'year']
+)
+
+PCIDSS = namedtuple(
+    'PCIDSS',
+    ['id', 'code', 'title', 'description']
 )
 
 PersonalToken = namedtuple(
