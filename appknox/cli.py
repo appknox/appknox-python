@@ -283,7 +283,7 @@ def analyses(ctx, file_id):
     ))
 
 
-@cli.command()
+@cli.command('recent_uploads')
 @click.pass_context
 def recent_uploads(ctx):
     """
@@ -352,7 +352,7 @@ def rescan(ctx, file_id):
     client.rescan(file_id)
 
 
-@cli.command()
+@cli.command('switch_organization')
 @click.argument('organization_id')
 @click.pass_context
 def switch_organization(ctx, organization_id):
