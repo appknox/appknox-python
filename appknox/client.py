@@ -281,13 +281,18 @@ class Appknox(object):
         ]().get(platform=platform, package_name=package_name, q=search)
         return self.paginated_drf_data(projects, Project)
 
-    def get_last_file(self, project_id: int) -> File:
+    def get_last_file(self, project_id: int, version_code: int = None) -> File:
         """
         Fetch latest file for the project
 
         :param project_id: Project ID
         """
-        return self.get_files(project_id)[0]
+        files = self.drf_api[
+            'projects/{}/files'.format(project_id)
+        ]().get(version_code=version_code, limit=1).get('results', [])
+        if not files:
+            return None
+        return mapper_drf_api(File, files[0])
 
     def get_file(self, file_id: int) -> File:
         """
