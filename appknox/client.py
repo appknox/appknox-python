@@ -461,11 +461,12 @@ class Appknox(object):
 
         :param filed_id: File ID
         """
-        self.drf_api['rescan']().post(
-            data=dict(
-                file_id=file_id,
-            )
+        endpoint = 'v2/files/{}/rescan'.format(file_id)
+        response = self.drf_api[endpoint]().post(
+            data=dict()
+
         )
+        return response
 
     # def get_report(
     #         self, file_id, format: str = 'json', language: str = 'en') ->
