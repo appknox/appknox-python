@@ -430,9 +430,21 @@ class Appknox(object):
                 url=response['url']
             )
         )
-        file = None
-        timeout = time.time() + 10
         submission_id = response2['submission_id']
+        return self.get_file_from_submission_id(submission_id)
+
+    def get_file_from_submission_id(self, submission_id: int):
+        """
+        Using the submission id, keep checking its status.
+        Returns file instance when it's available
+
+        :param submission_id: The ID of the submission object
+         created for the scan
+
+         :return: The File ID
+        """
+        file = None
+        timeout= time.time() + 10
         while (file is None):
             submission = self.drf_api.submissions(submission_id).get()
             if submission.get('detail') == 'Not found.':
@@ -460,13 +472,16 @@ class Appknox(object):
         Start a rescan for a file id
 
         :param filed_id: File ID
+
+        :return: The file IF
         """
         endpoint = 'v2/files/{}/rescan'.format(file_id)
         response = self.drf_api[endpoint]().post(
             data=dict()
 
         )
-        return response
+        submission_id = response['submission_id']
+        return self.get_file_from_submission_id(submission_id)
 
     # def get_report(
     #         self, file_id, format: str = 'json', language: str = 'en') ->
