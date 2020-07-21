@@ -444,7 +444,7 @@ class Appknox(object):
          :return: The File ID
         """
         file = None
-        timeout= time.time() + 10
+        timeout = time.time() + 10
         while (file is None):
             submission = self.drf_api.submissions(submission_id).get()
             if submission.get('detail') == 'Not found.':
