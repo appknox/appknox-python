@@ -29,3 +29,19 @@ class OrganizationError(AppknoxError):
 
 class UploadError(AppknoxError):
     pass
+
+
+class SubmissionNotFound(AppknoxError):
+    pass
+
+
+class SubmissionError(AppknoxError):
+    pass
+
+
+class SubmissionFileTimeoutError(AppknoxError):
+    pass
+
+
+class RescanError(AppknoxError):
+    pass
