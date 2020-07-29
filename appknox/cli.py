@@ -341,17 +341,6 @@ def owasp(ctx, owasp_id):
 #         sys.exit(1)
 
 
-@cli.command()
-@click.argument('file_id')
-@click.pass_context
-def rescan(ctx, file_id):
-    """
-    Start rescanning a file
-    """
-    client = ctx.obj['CLIENT']
-    client.rescan(file_id)
-
-
 @cli.command('switch_organization')
 @click.argument('organization_id')
 @click.pass_context

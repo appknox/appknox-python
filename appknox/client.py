@@ -10,7 +10,8 @@ from urllib.parse import urljoin
 
 from appknox.exceptions import (
     OneTimePasswordError, CredentialError, AppknoxError,
-    OrganizationError, UploadError
+    OrganizationError, UploadError, SubmissionNotFound,
+    SubmissionError, SubmissionFileTimeoutError, RescanError
 )
 from appknox.mapper import (
     mapper_json_api, mapper_drf_api, Analysis, File, Project, User,
@@ -410,7 +411,7 @@ class Appknox(object):
         pcidss = self.drf_api['v2/pcidsses'](pcidss_id).get()
         return mapper_drf_api(PCIDSS, pcidss)
 
-    def upload_file(self, file_data: str):
+    def upload_file(self, file_data: str) -> int:
         """
         Upload and scan a package and returns the file_id
 
@@ -430,21 +431,36 @@ class Appknox(object):
                 url=response['url']
             )
         )
+        submission_id = response2['submission_id']
+        try:
+            file_id = self.poll_for_file_from_submission_id(submission_id)
+        except (SubmissionNotFound, SubmissionError):
+            raise UploadError('Something went wrong, try uploading the\
+             file again.')
+        return file_id
+
+    def poll_for_file_from_submission_id(self, submission_id: int) -> int:
+        """
+        Using the submission id, keep checking its status.
+        Returns file instance when it's available
+
+        :param submission_id: The ID of the submission object
+         created for the scan
+
+         :return: The File ID
+        """
         file = None
         timeout = time.time() + 10
-        submission_id = response2['submission_id']
         while (file is None):
             submission = self.drf_api.submissions(submission_id).get()
             if submission.get('detail') == 'Not found.':
-                raise UploadError(
-                    'Something went wrong, try uploading the file again.')
+                raise SubmissionNotFound()
             submission_obj = mapper_drf_api(Submission, submission)
             file = submission_obj.file
             if submission_obj.reason:
-                raise UploadError(submission_obj.reason)
+                raise SubmissionError(submission_obj.reason)
             if time.time() > timeout:
-                raise RuntimeError(
-                    'Request timed out, try uploading the file again.')
+                raise SubmissionFileTimeoutError()
         return file
 
     def recent_uploads(self) -> List[Submission]:
@@ -455,17 +471,25 @@ class Appknox(object):
 
         return self.paginated_drf_data(submissions, Submission)[0:10]
 
-    def rescan(self, file_id: int):
+    def rescan(self, file_id: int) -> int:
         """
         Start a rescan for a file id
 
         :param filed_id: File ID
+
+        :return: The ID of the File created in rescan
         """
-        self.drf_api['rescan']().post(
-            data=dict(
-                file_id=file_id,
-            )
+        endpoint = 'v2/files/{}/rescan'.format(file_id)
+        response = self.drf_api[endpoint]().post(
+            data=dict()
+
         )
+        submission_id = response['submission_id']
+        try:
+            file = self.poll_for_file_from_submission_id(submission_id)
+        except (SubmissionNotFound, SubmissionError):
+            raise RescanError('Something went wrong, retry rescan')
+        return file
 
     # def get_report(
     #         self, file_id, format: str = 'json', language: str = 'en') ->
