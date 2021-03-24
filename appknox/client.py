@@ -38,7 +38,7 @@ class Appknox(object):
         organization_id: int = None, token: str = None,
         access_token: str = None, host: str = DEFAULT_API_HOST,
         log_level: int = logging.INFO, http_proxy: str = None,
-        https_proxy: str = none
+        https_proxy: str = None
     ):
         """
         Initialise Appknox client

@@ -130,7 +130,9 @@ def cli(ctx, verbose, profile):
         username=profile.get('username'), host=profile.get('host'),
         token=profile.get('token'), access_token=profile.get('access_token'),
         user_id=profile.get('user_id'),
-        organization_id=profile.get('organization_id')
+        organization_id=profile.get('organization_id'),
+        http_proxy=os.environ.get('HTTP_PROXY'),
+        https_proxy=os.environ.get('HTTPS_PROXY'),
     )
 
 
@@ -145,7 +147,10 @@ def login(ctx, username, password, host):
     """
     ctx.obj['CLIENT'] = client = Appknox(
         username=username, password=password, host=host,
-        log_level=ctx.obj['LOG_LEVEL'])
+        log_level=ctx.obj['LOG_LEVEL'],
+        http_proxy=os.environ.get('HTTP_PROXY'),
+        https_proxy=os.environ.get('HTTPS_PROXY')
+        )
     try:
         client.login()
     except requests.exceptions.InvalidSchema as e:
