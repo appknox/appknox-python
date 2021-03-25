@@ -545,6 +545,9 @@ class ApiResource(object):
         self.headers = {**headers}
         self.auth = auth
         self.proxies = proxies
+        self.session = requests.Session()
+        if proxies:
+            self.session.proxies.update(proxies)
 
         self.endpoint = urljoin(host, API_BASE)
 
@@ -561,22 +564,20 @@ class ApiResource(object):
         return self
 
     def get(self, **kwargs):
-        resp = requests.get(
-            self.endpoint, headers=self.headers, auth=self.auth,
-            proxies=self.proxies, params=kwargs
+        resp = self.session.get(
+            self.endpoint, headers=self.headers, auth=self.auth, params=kwargs,
         )
         return resp.json()
 
     def post(self, data, content_type=None, **kwargs):
-        resp = requests.post(
+        resp = self.session.post(
             self.endpoint, headers=self.headers, auth=self.auth,
-            proxies=self.proxies, params=kwargs, data=data
+            params=kwargs, data=data,
         )
         return resp.json()
 
     def direct_get(self, url, **kwargs):
-        resp = requests.get(
+        resp = self.session.get(
             url, headers=self.headers, auth=self.auth, params=kwargs,
-            proxies=self.proxies,
         )
         return resp.json()
