@@ -30,6 +30,7 @@ Usage: appknox [OPTIONS] COMMAND [ARGS]...
 
 Options:
   -v, --verbose  Specify log verbosity.
+  -k, --insecure      Allow Insecure Connection
   --help         Show this message and exit.
 
 Commands:
