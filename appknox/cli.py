@@ -78,8 +78,9 @@ def remove_profile(name):
 @click.group()
 @click.option('-v', '--verbose', count=True, help='Specify log verbosity.')
 @click.option('-n', '--profile', default=DEFAULT_PROFILE)
+@click.option('-k', '--insecure', is_flag=True, help="Allow Insecure Connection")
 @click.pass_context
-def cli(ctx, verbose, profile):
+def cli(ctx, verbose, profile, insecure):
     """
     Command line wrapper for the Appknox API
     """
@@ -89,6 +90,8 @@ def cli(ctx, verbose, profile):
         ctx.obj['LOG_LEVEL'] = logging.DEBUG
     else:
         ctx.obj['LOG_LEVEL'] = logging.WARNING
+
+    ctx.obj['INSECURE'] = insecure  # use opposite value
 
     ctx.obj['PROFILE'] = profile
 
@@ -133,6 +136,7 @@ def cli(ctx, verbose, profile):
         organization_id=profile.get('organization_id'),
         http_proxy=os.environ.get('HTTP_PROXY'),
         https_proxy=os.environ.get('HTTPS_PROXY'),
+        insecure=ctx.obj['INSECURE']
     )
 
 
@@ -149,7 +153,8 @@ def login(ctx, username, password, host):
         username=username, password=password, host=host,
         log_level=ctx.obj['LOG_LEVEL'],
         http_proxy=os.environ.get('HTTP_PROXY'),
-        https_proxy=os.environ.get('HTTPS_PROXY')
+        https_proxy=os.environ.get('HTTPS_PROXY'),
+        insecure=ctx.obj['INSECURE'],
         )
     try:
         client.login()

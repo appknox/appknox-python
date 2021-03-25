@@ -38,7 +38,7 @@ class Appknox(object):
         organization_id: int = None, token: str = None,
         access_token: str = None, host: str = DEFAULT_API_HOST,
         log_level: int = logging.INFO, http_proxy: str = None,
-        https_proxy: str = None
+        https_proxy: str = None, insecure: bool = False,
     ):
         """
         Initialise Appknox client
@@ -63,6 +63,7 @@ class Appknox(object):
         self.token = token
         self.access_token = access_token
         self.proxies = {}
+        self.verify = not insecure  # if inseure then don't verify
 
         if http_proxy:
             self.proxies['http'] = http_proxy
@@ -84,11 +85,13 @@ class Appknox(object):
                 host=self.host,
                 headers={**JSON_API_HEADERS, **token_header},
                 proxies=self.proxies,
+                verify=self.verify,
             )
             self.drf_api = ApiResource(
                 host=self.host,
                 headers={**DRF_API_HEADERS, **token_header},
                 proxies=self.proxies,
+                verify=self.verify,
             )
             self.organization_id = self.get_organization_id()
 
@@ -98,12 +101,14 @@ class Appknox(object):
                 headers={**JSON_API_HEADERS},
                 auth=(self.user_id, self.token),
                 proxies=self.proxies,
+                verify=self.verify,
             )
             self.drf_api = ApiResource(
                 host=self.host,
                 headers={**DRF_API_HEADERS},
                 auth=(self.user_id, self.token),
                 proxies=self.proxies,
+                verify=self.verify,
             )
             self.organization_id = self.get_organization_id()
 
@@ -126,7 +131,9 @@ class Appknox(object):
             data['otp'] = str(otp)
 
         response = requests.post(
-            urljoin(self.host, 'api/login'), data=data, proxies=self.proxies)
+            urljoin(self.host, 'api/login'), data=data,
+            proxies=self.proxies, verify=self.verify
+        )
 
         if response.status_code == 401:
             raise OneTimePasswordError(response.json()['message'])
@@ -146,6 +153,7 @@ class Appknox(object):
                 'Authorization': 'Token {}'.format(self.access_token)
             }},
             proxies=self.proxies,
+            verify=self.verify,
         )
         self.drf_api = ApiResource(
             host=self.host,
@@ -153,6 +161,7 @@ class Appknox(object):
                 'Authorization': 'Token {}'.format(self.access_token)
             }},
             proxies=self.proxies,
+            verify=self.verify,
         )
         self.organization_id = self.get_organization_id()
 
@@ -196,6 +205,7 @@ class Appknox(object):
                 )
             },
             proxies=self.proxies,
+            verify=self.verify,
         )
         return mapper_json_api(PersonalToken, access_token.json())
 
@@ -207,6 +217,7 @@ class Appknox(object):
             urljoin(self.host, 'api/personaltokens?key=' + self.access_token),
             auth=(self.user_id, self.token),
             proxies=self.proxies,
+            verify=self.verify,
         )
         resp_json = resp.json()
         personal_token = next((p for p in resp_json.get('data')), None)
@@ -217,7 +228,8 @@ class Appknox(object):
         return requests.delete(
             urljoin(self.host, 'api/personaltokens/' + token_id),
             auth=(self.user_id, self.token),
-            proxies=self.proxies
+            proxies=self.proxies,
+            verify=self.verify,
         )
 
     def get_user(self, user_id: int) -> User:
@@ -442,7 +454,9 @@ class Appknox(object):
             'organizations/{}/upload_app'.format(self.organization_id)
         ]().get()
         url = response['url']
-        requests.put(url, data=file_data, proxies=self.proxies)
+        requests.put(
+            url, data=file_data, proxies=self.proxies, verify=self.verify
+        )
         response2 = self.drf_api[
             'organizations/{}/upload_app'.format(self.organization_id)
         ]().post(
@@ -539,7 +553,8 @@ class Appknox(object):
 class ApiResource(object):
     def __init__(
         self, host: str = DEFAULT_API_HOST, headers: object = None,
-        auth: Dict[str, str] = None, proxies: object = None
+        auth: Dict[str, str] = None, proxies: object = None,
+        verify: bool = True
     ):
         self.host = host
         self.headers = {**headers}
@@ -548,6 +563,7 @@ class ApiResource(object):
         self.session = requests.Session()
         if proxies:
             self.session.proxies.update(proxies)
+        self.session.verify = verify  # Use flipped value
 
         self.endpoint = urljoin(host, API_BASE)
 
