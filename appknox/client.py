@@ -70,7 +70,7 @@ class Appknox(object):
         if https_proxy:
             self.proxies['https'] = https_proxy
 
-        if not proxies:
+        if not self.proxies:
             self.proxies = None
 
         if self.host is None:
