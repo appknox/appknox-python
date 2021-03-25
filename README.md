@@ -128,7 +128,7 @@ pip install sphinx-autobuild
 
 Build docs:
 ```
-sphinx-autobuild -p 9009 -b html sphinx-docs docs
+sphinx-autobuild -b html sphinx-docs docs
 ```
 
 ---
