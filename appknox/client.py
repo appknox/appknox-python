@@ -144,13 +144,15 @@ class Appknox(object):
             host=self.host,
             headers={**JSON_API_HEADERS, **{
                 'Authorization': 'Token {}'.format(self.access_token)
-            }}
+            }},
+            proxies=self.proxies,
         )
         self.drf_api = ApiResource(
             host=self.host,
             headers={**DRF_API_HEADERS, **{
                 'Authorization': 'Token {}'.format(self.access_token)
-            }}
+            }},
+            proxies=self.proxies,
         )
         self.organization_id = self.get_organization_id()
 
