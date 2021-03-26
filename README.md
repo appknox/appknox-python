@@ -124,10 +124,10 @@ Appknox client and CLI both supports HTTP and HTTPS proxy. While using the clien
 from appknox.client import Appknox
 
 client = Appknox(
-        access_token="<Your Access Token",  #  This is your access token which you can get from developer setting
-        https_proxy="http://proxy.local",   # Use https_proxy by default since cloud server connects to https service
-        insecure=True,                      # Use insecure connections, because proxies might have their own set of certificates which maynot be trusted
-    )                                       # Insecure connections are not reccomended though
+        access_token="Your-Access-Token",  #  This is your access token which you can get from developer setting
+        https_proxy="http://proxy.local",  # Use https_proxy by default since cloud server connects to https service
+        insecure=True,                     # Use insecure connections, because proxies might have their own set of certificates which maynot be trusted
+    )                                      # Insecure connections are not reccomended though
 ```
 
 To use it in CLI example:

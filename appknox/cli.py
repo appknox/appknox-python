@@ -91,7 +91,7 @@ def cli(ctx, verbose, profile, insecure):
     else:
         ctx.obj['LOG_LEVEL'] = logging.WARNING
 
-    ctx.obj['INSECURE'] = insecure  # use opposite value
+    ctx.obj['INSECURE'] = insecure
 
     ctx.obj['PROFILE'] = profile
 
