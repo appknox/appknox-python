@@ -37,7 +37,8 @@ class Appknox(object):
         self, username: str = None, password: str = None, user_id: int = None,
         organization_id: int = None, token: str = None,
         access_token: str = None, host: str = DEFAULT_API_HOST,
-        log_level: int = logging.INFO
+        log_level: int = logging.INFO, http_proxy: str = None,
+        https_proxy: str = None, insecure: bool = False,
     ):
         """
         Initialise Appknox client
@@ -61,6 +62,18 @@ class Appknox(object):
         self.organization_id = organization_id
         self.token = token
         self.access_token = access_token
+        self.request_session = requests.session()
+        self.request_session.verify = not insecure  # if insecure don't verify
+        self.proxies = {}
+
+        if http_proxy:
+            self.proxies['http'] = http_proxy
+
+        if https_proxy:
+            self.proxies['https'] = https_proxy
+
+        if self.proxies:
+            self.request_session.proxies.update(self.proxies)
 
         if self.host is None:
             self.host = DEFAULT_API_HOST
@@ -70,25 +83,29 @@ class Appknox(object):
                 'Authorization': 'Token {}'.format(self.access_token)
             }
             self.json_api = ApiResource(
+                self.request_session,
                 host=self.host,
-                headers={**JSON_API_HEADERS, **token_header}
+                headers={**JSON_API_HEADERS, **token_header},
             )
             self.drf_api = ApiResource(
+                self.request_session,
                 host=self.host,
-                headers={**DRF_API_HEADERS, **token_header}
+                headers={**DRF_API_HEADERS, **token_header},
             )
             self.organization_id = self.get_organization_id()
 
         elif self.user_id and self.token:
             self.json_api = ApiResource(
+                self.request_session,
                 host=self.host,
                 headers={**JSON_API_HEADERS},
-                auth=(self.user_id, self.token)
+                auth=(self.user_id, self.token),
             )
             self.drf_api = ApiResource(
+                self.request_session,
                 host=self.host,
                 headers={**DRF_API_HEADERS},
-                auth=(self.user_id, self.token)
+                auth=(self.user_id, self.token),
             )
             self.organization_id = self.get_organization_id()
 
@@ -110,7 +127,8 @@ class Appknox(object):
         if otp:
             data['otp'] = str(otp)
 
-        response = requests.post(urljoin(self.host, 'api/login'), data=data)
+        response = self.request_session.post(
+            urljoin(self.host, 'api/login'), data=data)
 
         if response.status_code == 401:
             raise OneTimePasswordError(response.json()['message'])
@@ -125,16 +143,18 @@ class Appknox(object):
         self.access_token = self.generate_access_token().key
 
         self.json_api = ApiResource(
+            self.request_session,
             host=self.host,
             headers={**JSON_API_HEADERS, **{
                 'Authorization': 'Token {}'.format(self.access_token)
-            }}
+            }},
         )
         self.drf_api = ApiResource(
+            self.request_session,
             host=self.host,
             headers={**DRF_API_HEADERS, **{
                 'Authorization': 'Token {}'.format(self.access_token)
-            }}
+            }},
         )
         self.organization_id = self.get_organization_id()
 
@@ -169,14 +189,14 @@ class Appknox(object):
         """
         Generates personal access token
         """
-        access_token = requests.post(
+        access_token = self.request_session.post(
             urljoin(self.host, 'api/personaltokens'),
             auth=(self.user_id, self.token),
             data={
                 'name': 'appknox-python for {} @{}'.format(
                     self.username, str(int(time.time()))
                 )
-            }
+            },
         )
         return mapper_json_api(PersonalToken, access_token.json())
 
@@ -184,9 +204,9 @@ class Appknox(object):
         """
         Revokes existing personal access token
         """
-        resp = requests.get(
+        resp = self.request_session.get(
             urljoin(self.host, 'api/personaltokens?key=' + self.access_token),
-            auth=(self.user_id, self.token)
+            auth=(self.user_id, self.token),
         )
         resp_json = resp.json()
         personal_token = next((p for p in resp_json.get('data')), None)
@@ -194,9 +214,9 @@ class Appknox(object):
             return
 
         token_id = personal_token['id']
-        return requests.delete(
+        return self.request_session.delete(
             urljoin(self.host, 'api/personaltokens/' + token_id),
-            auth=(self.user_id, self.token)
+            auth=(self.user_id, self.token),
         )
 
     def get_user(self, user_id: int) -> User:
@@ -421,7 +441,7 @@ class Appknox(object):
             'organizations/{}/upload_app'.format(self.organization_id)
         ]().get()
         url = response['url']
-        requests.put(url, data=file_data)
+        self.request_session.put(url, data=file_data)
         response2 = self.drf_api[
             'organizations/{}/upload_app'.format(self.organization_id)
         ]().post(
@@ -517,12 +537,13 @@ class Appknox(object):
 
 class ApiResource(object):
     def __init__(
-        self, host: str = DEFAULT_API_HOST, headers: object = None,
-        auth: Dict[str, str] = None
+        self, request_session: object, host: str = DEFAULT_API_HOST,
+        headers: object = None, auth: Dict[str, str] = None
     ):
         self.host = host
         self.headers = {**headers}
         self.auth = auth
+        self.request_session = request_session
 
         self.endpoint = urljoin(host, API_BASE)
 
@@ -539,21 +560,20 @@ class ApiResource(object):
         return self
 
     def get(self, **kwargs):
-        resp = requests.get(
-            self.endpoint, headers=self.headers, auth=self.auth,
-            params=kwargs
+        resp = self.request_session.get(
+            self.endpoint, headers=self.headers, auth=self.auth, params=kwargs,
         )
         return resp.json()
 
     def post(self, data, content_type=None, **kwargs):
-        resp = requests.post(
+        resp = self.request_session.post(
             self.endpoint, headers=self.headers, auth=self.auth,
-            params=kwargs, data=data
+            params=kwargs, data=data,
         )
         return resp.json()
 
     def direct_get(self, url, **kwargs):
-        resp = requests.get(
-            url, headers=self.headers, auth=self.auth, params=kwargs
+        resp = self.request_session.get(
+            url, headers=self.headers, auth=self.auth, params=kwargs,
         )
         return resp.json()
