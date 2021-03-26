@@ -78,7 +78,9 @@ def remove_profile(name):
 @click.group()
 @click.option('-v', '--verbose', count=True, help='Specify log verbosity.')
 @click.option('-n', '--profile', default=DEFAULT_PROFILE)
-@click.option('-k', '--insecure', is_flag=True, help="Allow Insecure Connection")
+@click.option(
+    '-k', '--insecure', is_flag=True, help="Allow Insecure Connection"
+)
 @click.pass_context
 def cli(ctx, verbose, profile, insecure):
     """
