@@ -116,6 +116,30 @@ $ appknox files 4
    7  MFVA            1               6
 ```
 
+### Using Proxy
+
+Appknox client and CLI both supports HTTP and HTTPS proxy. While using the client, if you need to set-up a proxy then please follow the example below
+
+```
+from appknox.client import Appknox
+
+client = Appknox(
+        access_token="<Your Access Token",  #  This is your access token which you can get from developer setting
+        https_proxy="http://proxy.local",   # Use https_proxy by default since cloud server connects to https service
+        insecure=True,                      # Use insecure connections, because proxies might have their own set of certificates which maynot be trusted
+    )                                       # Insecure connections are not reccomended though
+```
+
+To use it in CLI example:
+
+```
+$ export HTTPS_PROXY=http://127.0.0.1:8080 
+$ appknox --insecure login
+Username:
+```
+
+*Note*: Please avoid using `--insecure` flag or setting `insecure=True` in client, this will allow an attacker to perform MITM attack, but this might be required for proxies to work alongside.
+
 ---
 
 ## Development
