@@ -287,11 +287,13 @@ def analyses(ctx, file_id):
     List analyses for file
     """
     client = ctx.obj['CLIENT']
+    unselected_report_pref = client.get_unselected_report_preference_by_org()
+    columns_to_ignore = [
+            'cvss_vector', 'cvss_version', 'cvss_metrics_humanized', 'findings'
+        ] + unselected_report_pref
     echo(table(
         Analysis, client.get_analyses(file_id),
-        ignore=[
-            'cvss_vector', 'cvss_version', 'cvss_metrics_humanized', 'findings'
-        ]
+        ignore=columns_to_ignore
     ))
 
 

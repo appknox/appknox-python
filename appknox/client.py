@@ -11,7 +11,7 @@ from urllib.parse import urljoin
 from appknox.exceptions import (
     OneTimePasswordError, CredentialError, AppknoxError,
     OrganizationError, UploadError, SubmissionNotFound,
-    SubmissionError, SubmissionFileTimeoutError, RescanError
+    SubmissionError, SubmissionFileTimeoutError, RescanError, OrganizationPreferenceError
 )
 from appknox.mapper import (
     mapper_json_api, mapper_drf_api, Analysis, File, Project, User,
@@ -510,6 +510,30 @@ class Appknox(object):
         except (SubmissionNotFound, SubmissionError):
             raise RescanError('Something went wrong, retry rescan')
         return file
+
+    @lru_cache(maxsize=1)
+    def get_organization_preference(self) -> object:
+        """
+        Fetch organization preference for current organization
+        """
+        try:
+            org_preference = self.drf_api['organizations/{}/preference'.format(self.organization_id)]().get()
+        except:
+            raise OrganizationPreferenceError('Could not fetch organization preference')
+        return org_preference
+
+    def get_unselected_report_preference_by_org(self) -> List:
+        """
+        Get a list of unselected report preference items from the organization preference
+        """
+
+        org_pref = self.get_organization_preference()
+        report_pref = org_pref['report_preference']
+        unselected_report_pref = list()
+        for key in report_pref:
+            if (not report_pref[key]):
+                unselected_report_pref.append(key[5:])  # extract string by eliminating "show_"
+        return unselected_report_pref
 
     # def get_report(
     #         self, file_id, format: str = 'json', language: str = 'en') ->
