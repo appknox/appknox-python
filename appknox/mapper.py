@@ -83,3 +83,8 @@ PersonalToken = namedtuple(
     'AccessToken',
     ['name', 'key']
 )
+
+ReportPreference = {
+    'show_pcidss': 'pcidss',
+    'show_hipaa': 'hipaa',
+    'show_gdpr': 'gdpr'}

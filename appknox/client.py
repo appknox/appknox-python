@@ -16,7 +16,7 @@ from appknox.exceptions import (
 from appknox.mapper import (
     mapper_json_api, mapper_drf_api, Analysis, File, Project, User,
     Organization, Vulnerability, OWASP, PCIDSS, PersonalToken, Submission,
-    Whoami
+    Whoami, ReportPreference
 )
 
 DEFAULT_API_HOST = 'https://api.appknox.com'
@@ -512,7 +512,7 @@ class Appknox(object):
         return file
 
     @lru_cache(maxsize=1)
-    def get_organization_preference(self) -> object:
+    def get_organization_preference(self) -> dict:
         """
         Fetch organization preference for current organization
         """
@@ -520,19 +520,24 @@ class Appknox(object):
             org_preference = self.drf_api['organizations/{}/preference'.format(self.organization_id)]().get()
         except:
             raise OrganizationPreferenceError('Could not fetch organization preference')
-        return org_preference
+        return dict(org_preference)
 
-    def get_unselected_report_preference_by_org(self) -> List:
+    def get_organization_report_preference(self) -> dict:
         """
-        Get a list of unselected report preference items from the organization preference
+        Read report preferences configured at organization level
         """
+        org_preference = self.get_organization_preference()
+        return dict(org_preference['report_preference'])
 
-        org_pref = self.get_organization_preference()
-        report_pref = org_pref['report_preference']
+    def get_unselected_report_preference(self) -> list:
+        """
+        Get a list of unselected report preference items
+        """
+        org_report_pref = self.get_organization_report_preference()
         unselected_report_pref = list()
-        for key in report_pref:
-            if (not report_pref[key]):
-                unselected_report_pref.append(key[5:])  # extract string by eliminating "show_"
+        for key in org_report_pref:
+            if (not org_report_pref[key]):  # Check, is given pref is not selected
+                unselected_report_pref.append(ReportPreference[key])  # Read repoort pref value by key and append
         return unselected_report_pref
 
     # def get_report(
