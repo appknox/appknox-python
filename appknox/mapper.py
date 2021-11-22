@@ -2,6 +2,23 @@
 
 from collections import namedtuple
 
+class DictObj:
+    def __init__(self, resource:dict):
+        assert isinstance(resource, dict)
+        for key, val in resource.items():
+            if isinstance(val, (list, tuple)):
+                setattr(self, key, [DictObj(x) if isinstance(x, dict) else x for x in val])
+            else:
+                setattr(self, key, DictObj(val) if isinstance(val, dict) else val)
+
+    def __getitem__(self, key):
+        return getattr(self, key)
+    def __setitem__(self, key, value):
+        return setattr(self, key, value)
+    def __delitem__(self, key):
+        return delattr(self, key)
+    def __contains__(self, key):
+        return hasattr(self, key)
 
 def mapper_json_api(model: type, resource: dict) -> object:
     """
@@ -60,7 +77,7 @@ Analysis = namedtuple(
     'Analysis',
     ['id', 'risk', 'status', 'cvss_base', 'cvss_vector', 'cvss_version',
      'cvss_metrics_humanized', 'findings', 'updated_on', 'vulnerability',
-     'owasp', 'pcidss', 'hipaa', 'cwe', 'mstg', 'asvs']
+     'owasp', 'pcidss', 'hipaa', 'cwe', 'mstg', 'asvs', 'gdpr']
 )
 
 Vulnerability = namedtuple(
