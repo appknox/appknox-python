@@ -1,24 +1,7 @@
 # (c) 2017, XYSec Labs
 
 from collections import namedtuple
-
-class DictObj:
-    def __init__(self, resource:dict):
-        assert isinstance(resource, dict)
-        for key, val in resource.items():
-            if isinstance(val, (list, tuple)):
-                setattr(self, key, [DictObj(x) if isinstance(x, dict) else x for x in val])
-            else:
-                setattr(self, key, DictObj(val) if isinstance(val, dict) else val)
-
-    def __getitem__(self, key):
-        return getattr(self, key)
-    def __setitem__(self, key, value):
-        return setattr(self, key, value)
-    def __delitem__(self, key):
-        return delattr(self, key)
-    def __contains__(self, key):
-        return hasattr(self, key)
+from dataclasses import dataclass
 
 def mapper_json_api(model: type, resource: dict) -> object:
     """
@@ -101,7 +84,18 @@ PersonalToken = namedtuple(
     ['name', 'key']
 )
 
-ReportPreference = {
+ReportPreferenceMapper = {
     'show_pcidss': 'pcidss',
     'show_hipaa': 'hipaa',
     'show_gdpr': 'gdpr'}
+
+@dataclass
+class OrganizationReportPreference:
+    show_gdpr: bool
+    show_hipaa: bool
+    show_pcidss: bool
+
+@dataclass
+class OrganizationPreference:
+    organization_id: int
+    report_preference: OrganizationReportPreference
