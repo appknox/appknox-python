@@ -1,7 +1,7 @@
 # (c) 2017, XYSec Labs
 
 from collections import namedtuple
-
+from dataclasses import dataclass
 
 def mapper_json_api(model: type, resource: dict) -> object:
     """
@@ -60,7 +60,7 @@ Analysis = namedtuple(
     'Analysis',
     ['id', 'risk', 'status', 'cvss_base', 'cvss_vector', 'cvss_version',
      'cvss_metrics_humanized', 'findings', 'updated_on', 'vulnerability',
-     'owasp', 'cwe', 'mstg', 'asvs']
+     'owasp', 'pcidss', 'hipaa', 'cwe', 'mstg', 'asvs', 'gdpr']
 )
 
 Vulnerability = namedtuple(
@@ -83,3 +83,19 @@ PersonalToken = namedtuple(
     'AccessToken',
     ['name', 'key']
 )
+
+ReportPreferenceMapper = {
+    'show_pcidss': 'pcidss',
+    'show_hipaa': 'hipaa',
+    'show_gdpr': 'gdpr'}
+
+@dataclass
+class OrganizationReportPreference:
+    show_gdpr: bool
+    show_hipaa: bool
+    show_pcidss: bool
+
+@dataclass
+class OrganizationPreference:
+    organization_id: int
+    report_preference: OrganizationReportPreference
