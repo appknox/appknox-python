@@ -11,12 +11,12 @@ from urllib.parse import urljoin
 from appknox.exceptions import (
     OneTimePasswordError, CredentialError, AppknoxError,
     OrganizationError, UploadError, SubmissionNotFound,
-    SubmissionError, SubmissionFileTimeoutError, RescanError, OrganizationPreferenceError
+    SubmissionError, SubmissionFileTimeoutError, RescanError, ProfileReportPreferenceError
 )
 from appknox.mapper import (
     mapper_json_api, mapper_drf_api, Analysis, File, Project, User,
     Organization, Vulnerability, OWASP, PCIDSS, PersonalToken, Submission,
-    Whoami, OrganizationPreference, OrganizationReportPreference, ReportPreferenceMapper
+    Whoami, ProfileReportPreference, ReportPreferenceMapper
 )
 
 DEFAULT_API_HOST = 'https://api.appknox.com'
@@ -511,37 +511,28 @@ class Appknox(object):
             raise RescanError('Something went wrong, retry rescan')
         return file
 
-    @lru_cache(maxsize=1)
-    def get_organization_preference(self) -> OrganizationPreference:
+    def get_profile_report_preference(self, profile_id: int) -> ProfileReportPreference:
         """
-        Fetch organization preference for current organization
+        Fetch profile report preference
         """
         try:
-            org_preference = self.drf_api['organizations/{}/preference'.format(self.organization_id)]().get()
+            profile_report_preference = self.drf_api['profiles/{}/report_preference'.format(profile_id)]().get()
         except:
-            raise OrganizationPreferenceError('Could not fetch organization preference')
-        report_pref = org_preference['report_preference']
-        org_report_pref = OrganizationReportPreference(report_pref['show_gdpr'], report_pref['show_hipaa'], report_pref['show_pcidss'])
-        return OrganizationPreference(org_preference['id'], org_report_pref)
+            raise ProfileReportPreferenceError('Could not fetch profile report preference')
+        return ProfileReportPreference.from_json(profile_report_preference)
 
-    def get_organization_report_preference(self) -> OrganizationReportPreference:
-        """
-        Read report preferences configured at organization level
-        """
-        org_report_pref = self.get_organization_preference().report_preference
-        return org_report_pref
-
-    def get_unselected_report_preference(self) -> list:
+    def get_unselected_report_preference(self, file_id: int) -> list:
         """
         Get a list of unselected report preference items
         """
-        org_report_pref = self.get_organization_report_preference()
+        file = self.get_file(file_id)
+        profile_report_preference = self.get_profile_report_preference(file.profile)
         unselected_report_pref = list()
-        if (not org_report_pref.show_gdpr):
+        if (not profile_report_preference.show_gdpr.value):
             unselected_report_pref.append(ReportPreferenceMapper['show_gdpr'])
-        if (not org_report_pref.show_hipaa):
+        if (not profile_report_preference.show_hipaa.value):
             unselected_report_pref.append(ReportPreferenceMapper['show_hipaa'])
-        if (not org_report_pref.show_pcidss):
+        if (not profile_report_preference.show_pcidss.value):
             unselected_report_pref.append(ReportPreferenceMapper['show_pcidss'])
         return unselected_report_pref
 

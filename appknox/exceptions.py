@@ -46,5 +46,5 @@ class SubmissionFileTimeoutError(AppknoxError):
 class RescanError(AppknoxError):
     pass
 
-class OrganizationPreferenceError(AppknoxError):
+class ProfileReportPreferenceError(AppknoxError):
     pass
