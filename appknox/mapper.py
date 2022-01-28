@@ -48,7 +48,7 @@ Project = namedtuple(
 
 File = namedtuple(
     'File',
-    ['id', 'name', 'version', 'version_code', 'static_scan_progress']
+    ['id', 'name', 'version', 'version_code', 'static_scan_progress', 'profile']
 )
 
 Submission = namedtuple(
@@ -90,12 +90,19 @@ ReportPreferenceMapper = {
     'show_gdpr': 'gdpr'}
 
 @dataclass
-class OrganizationReportPreference:
-    show_gdpr: bool
-    show_hipaa: bool
-    show_pcidss: bool
+class ProfileReportPreferenceConfig:
+    value: bool
 
 @dataclass
-class OrganizationPreference:
-    organization_id: int
-    report_preference: OrganizationReportPreference
+class ProfileReportPreference:
+    show_gdpr: ProfileReportPreferenceConfig
+    show_hipaa: ProfileReportPreferenceConfig
+    show_pcidss: ProfileReportPreferenceConfig
+
+    @classmethod
+    def from_json(cls, data):
+        return cls(
+            show_gdpr=ProfileReportPreferenceConfig(value=data['show_gdpr']['value']),
+            show_hipaa=ProfileReportPreferenceConfig(value=data['show_hipaa']['value']),
+            show_pcidss=ProfileReportPreferenceConfig(value=data['show_pcidss']['value'])
+        )
