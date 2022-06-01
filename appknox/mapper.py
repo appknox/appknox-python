@@ -60,7 +60,7 @@ Analysis = namedtuple(
     'Analysis',
     ['id', 'risk', 'status', 'cvss_base', 'cvss_vector', 'cvss_version',
      'cvss_metrics_humanized', 'findings', 'updated_on', 'vulnerability',
-     'owasp', 'pcidss', 'hipaa', 'cwe', 'mstg', 'asvs', 'gdpr']
+     'owasp', 'pcidss', 'hipaa', 'cwe', 'mstg', 'asvs', 'gdpr', 'computed_risk', 'overridden_risk']
 )
 
 Vulnerability = namedtuple(
