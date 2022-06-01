@@ -320,7 +320,7 @@ def vulnerability(ctx, vulnerability_id):
     echo(table(
         Vulnerability, client.get_vulnerability(vulnerability_id),
         ignore=[
-            'related_to', 'business_implication', 'types'
+            'related_to', 'business_implication', 'types', 'computed_risk', 'overridden_risk'
         ]
     ))
 
