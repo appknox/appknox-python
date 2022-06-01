@@ -1,17 +1,29 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>appknox.client &#8212; appknox-python 3.0.0 documentation</title>
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '3.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -20,7 +32,8 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head><body>
+  </head>
+  <body>
   
 
     <div class="document">
@@ -44,12 +57,12 @@
 <span class="kn">from</span> <span class="nn">appknox.exceptions</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">OneTimePasswordError</span><span class="p">,</span> <span class="n">CredentialError</span><span class="p">,</span> <span class="n">AppknoxError</span><span class="p">,</span>
     <span class="n">OrganizationError</span><span class="p">,</span> <span class="n">UploadError</span><span class="p">,</span> <span class="n">SubmissionNotFound</span><span class="p">,</span>
-    <span class="n">SubmissionError</span><span class="p">,</span> <span class="n">SubmissionFileTimeoutError</span><span class="p">,</span> <span class="n">RescanError</span>
+    <span class="n">SubmissionError</span><span class="p">,</span> <span class="n">SubmissionFileTimeoutError</span><span class="p">,</span> <span class="n">RescanError</span><span class="p">,</span> <span class="n">ProfileReportPreferenceError</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">appknox.mapper</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">mapper_json_api</span><span class="p">,</span> <span class="n">mapper_drf_api</span><span class="p">,</span> <span class="n">Analysis</span><span class="p">,</span> <span class="n">File</span><span class="p">,</span> <span class="n">Project</span><span class="p">,</span> <span class="n">User</span><span class="p">,</span>
     <span class="n">Organization</span><span class="p">,</span> <span class="n">Vulnerability</span><span class="p">,</span> <span class="n">OWASP</span><span class="p">,</span> <span class="n">PCIDSS</span><span class="p">,</span> <span class="n">PersonalToken</span><span class="p">,</span> <span class="n">Submission</span><span class="p">,</span>
-    <span class="n">Whoami</span>
+    <span class="n">Whoami</span><span class="p">,</span> <span class="n">ProfileReportPreference</span><span class="p">,</span> <span class="n">ReportPreferenceMapper</span>
 <span class="p">)</span>
 
 <span class="n">DEFAULT_API_HOST</span> <span class="o">=</span> <span class="s1">&#39;https://api.appknox.com&#39;</span>
@@ -542,7 +555,32 @@
             <span class="n">file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">poll_for_file_from_submission_id</span><span class="p">(</span><span class="n">submission_id</span><span class="p">)</span>
         <span class="k">except</span> <span class="p">(</span><span class="n">SubmissionNotFound</span><span class="p">,</span> <span class="n">SubmissionError</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">RescanError</span><span class="p">(</span><span class="s1">&#39;Something went wrong, retry rescan&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">file</span></div></div>
+        <span class="k">return</span> <span class="n">file</span></div>
+
+<div class="viewcode-block" id="Appknox.get_profile_report_preference"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.get_profile_report_preference">[docs]</a>    <span class="k">def</span> <span class="nf">get_profile_report_preference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">profile_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProfileReportPreference</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch profile report preference</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">profile_report_preference</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drf_api</span><span class="p">[</span><span class="s1">&#39;profiles/</span><span class="si">{}</span><span class="s1">/report_preference&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">profile_id</span><span class="p">)]()</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ProfileReportPreferenceError</span><span class="p">(</span><span class="s1">&#39;Could not fetch profile report preference&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ProfileReportPreference</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">profile_report_preference</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Appknox.get_unselected_report_preference"><a class="viewcode-back" href="../../client.html#appknox.client.Appknox.get_unselected_report_preference">[docs]</a>    <span class="k">def</span> <span class="nf">get_unselected_report_preference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a list of unselected report preference items</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_file</span><span class="p">(</span><span class="n">file_id</span><span class="p">)</span>
+        <span class="n">profile_report_preference</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_profile_report_preference</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">profile</span><span class="p">)</span>
+        <span class="n">unselected_report_pref</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">profile_report_preference</span><span class="o">.</span><span class="n">show_gdpr</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">unselected_report_pref</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ReportPreferenceMapper</span><span class="p">[</span><span class="s1">&#39;show_gdpr&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">profile_report_preference</span><span class="o">.</span><span class="n">show_hipaa</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">unselected_report_pref</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ReportPreferenceMapper</span><span class="p">[</span><span class="s1">&#39;show_hipaa&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">profile_report_preference</span><span class="o">.</span><span class="n">show_pcidss</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">unselected_report_pref</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ReportPreferenceMapper</span><span class="p">[</span><span class="s1">&#39;show_pcidss&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">unselected_report_pref</span></div></div>
 
     <span class="c1"># def get_report(</span>
     <span class="c1">#         self, file_id, format: str = &#39;json&#39;, language: str = &#39;en&#39;) -&gt;</span>
@@ -669,15 +707,15 @@
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
+  <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 
 
 
@@ -694,7 +732,7 @@
       &copy;2017, XYSec Labs Pte. Ltd..
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.3</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

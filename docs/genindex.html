@@ -1,16 +1,17 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Index &#8212; appknox-python 3.0.0 documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
@@ -80,6 +81,8 @@
         <li><a href="mapper.html#module-appknox.mapper">module</a>
 </li>
       </ul></li>
+      <li><a href="mapper.html#appknox.mapper.Analysis.asvs">asvs (appknox.mapper.Analysis attribute)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -102,6 +105,8 @@
       </ul></li>
       <li><a href="mapper.html#appknox.mapper.Vulnerability.compliant">compliant (appknox.mapper.Vulnerability attribute)</a>
 </li>
+      <li><a href="mapper.html#appknox.mapper.Analysis.computed_risk">computed_risk (appknox.mapper.Analysis attribute)</a>
+</li>
       <li><a href="mapper.html#appknox.mapper.Project.created_on">created_on (appknox.mapper.Project attribute)</a>
 
       <ul>
@@ -117,6 +122,8 @@
       <li><a href="mapper.html#appknox.mapper.Analysis.cvss_vector">cvss_vector (appknox.mapper.Analysis attribute)</a>
 </li>
       <li><a href="mapper.html#appknox.mapper.Analysis.cvss_version">cvss_version (appknox.mapper.Analysis attribute)</a>
+</li>
+      <li><a href="mapper.html#appknox.mapper.Analysis.cwe">cwe (appknox.mapper.Analysis attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -170,6 +177,8 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="mapper.html#appknox.mapper.Analysis.gdpr">gdpr (appknox.mapper.Analysis attribute)</a>
+</li>
       <li><a href="client.html#appknox.client.Appknox.generate_access_token">generate_access_token() (appknox.client.Appknox method)</a>
 </li>
       <li><a href="client.html#appknox.client.Appknox.get_analyses">get_analyses() (appknox.client.Appknox method)</a>
@@ -190,9 +199,13 @@
 </li>
       <li><a href="client.html#appknox.client.Appknox.get_pcidss">get_pcidss() (appknox.client.Appknox method)</a>
 </li>
+      <li><a href="client.html#appknox.client.Appknox.get_profile_report_preference">get_profile_report_preference() (appknox.client.Appknox method)</a>
+</li>
       <li><a href="client.html#appknox.client.Appknox.get_project">get_project() (appknox.client.Appknox method)</a>
 </li>
       <li><a href="client.html#appknox.client.Appknox.get_projects">get_projects() (appknox.client.Appknox method)</a>
+</li>
+      <li><a href="client.html#appknox.client.Appknox.get_unselected_report_preference">get_unselected_report_preference() (appknox.client.Appknox method)</a>
 </li>
       <li><a href="client.html#appknox.client.Appknox.get_user">get_user() (appknox.client.Appknox method)</a>
 </li>
@@ -264,8 +277,6 @@
 </li>
       <li><a href="mapper.html#appknox.mapper.mapper_json_api">mapper_json_api() (in module appknox.mapper)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     module
 
@@ -275,6 +286,10 @@
         <li><a href="mapper.html#module-appknox.mapper">appknox.mapper</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="mapper.html#appknox.mapper.Analysis.mstg">mstg (appknox.mapper.Analysis attribute)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -301,6 +316,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="mapper.html#appknox.mapper.Organization">Organization (class in appknox.mapper)</a>
 </li>
+      <li><a href="mapper.html#appknox.mapper.Analysis.overridden_risk">overridden_risk (appknox.mapper.Analysis attribute)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="mapper.html#appknox.mapper.Analysis.owasp">owasp (appknox.mapper.Analysis attribute)</a>
@@ -323,13 +340,19 @@
 </li>
       <li><a href="mapper.html#appknox.mapper.PCIDSS">PCIDSS (class in appknox.mapper)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="mapper.html#appknox.mapper.PersonalToken">PersonalToken (in module appknox.mapper)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="mapper.html#appknox.mapper.Project.platform">platform (appknox.mapper.Project attribute)</a>
 </li>
       <li><a href="client.html#appknox.client.Appknox.poll_for_file_from_submission_id">poll_for_file_from_submission_id() (appknox.client.Appknox method)</a>
+</li>
+      <li><a href="mapper.html#appknox.mapper.File.profile">profile (appknox.mapper.File attribute)</a>
+</li>
+      <li><a href="mapper.html#appknox.mapper.ProfileReportPreference">ProfileReportPreference (class in appknox.mapper)</a>
+</li>
+      <li><a href="mapper.html#appknox.mapper.ProfileReportPreferenceConfig">ProfileReportPreferenceConfig (class in appknox.mapper)</a>
 </li>
       <li><a href="mapper.html#appknox.mapper.Project">Project (class in appknox.mapper)</a>
 </li>
@@ -508,12 +531,12 @@
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -530,7 +553,7 @@
       &copy;2017, XYSec Labs Pte. Ltd..
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.3</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
