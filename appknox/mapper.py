@@ -1,7 +1,9 @@
 # (c) 2017, XYSec Labs
 
+import typing
 from collections import namedtuple
 from dataclasses import dataclass
+import datetime
 
 def mapper_json_api(model: type, resource: dict) -> object:
     """
@@ -105,4 +107,81 @@ class ProfileReportPreference:
             show_gdpr=ProfileReportPreferenceConfig(value=data['show_gdpr']['value']),
             show_hipaa=ProfileReportPreferenceConfig(value=data['show_hipaa']['value']),
             show_pcidss=ProfileReportPreferenceConfig(value=data['show_pcidss']['value'])
+        )
+
+
+@dataclass
+class InheritedPreference:
+    _fields = ["value", "is_inherited"]
+
+    value: bool
+    is_inherited: bool
+
+    @classmethod
+    def from_json(cls, data: typing.Dict[str, bool]) -> "InheritedPreference":
+        return cls(value=data["value"], is_inherited=data["is_inherited"])
+
+
+@dataclass
+class ReportPreference:
+    _fields = [
+        "show_api_scan",
+        "show_manual_scan",
+        "show_static_scan",
+        "show_dynamic_scan",
+        "show_ignored_analyses",
+        "show_hipaa",
+        "show_pcidss",
+    ]
+
+    show_api_scan: bool
+    show_manual_scan: bool
+    show_static_scan: bool
+    show_dynamic_scan: bool
+    show_ignored_analyses: bool
+    show_hipaa: InheritedPreference
+    show_pcidss: InheritedPreference
+
+    @classmethod
+    def from_json(
+        cls, data: typing.Dict[str, typing.Any]
+    ) -> "ReportPreference":
+        return cls(
+            show_api_scan=data["show_api_scan"],
+            show_manual_scan=data["show_manual_scan"],
+            show_static_scan=data["show_static_scan"],
+            show_dynamic_scan=data["show_dynamic_scan"],
+            show_ignored_analyses=data["show_ignored_analyses"],
+            show_hipaa=InheritedPreference.from_json(data["show_hipaa"]),
+            show_pcidss=InheritedPreference.from_json(data["show_pcidss"]),
+        )
+
+
+@dataclass
+class Report:
+    _fields = [
+        "id",
+        "language",
+        "generated_on",
+        "progress",
+        "rating",
+        "preferences",
+    ]
+
+    id: int
+    language: str
+    generated_on: datetime.datetime
+    progress: int
+    rating: str
+    preferences: ReportPreference
+
+    @classmethod
+    def from_json(cls, data: typing.Dict[str, typing.Any]) -> "Report":
+        return cls(
+            id=data["id"],
+            language=data["language"],
+            generated_on=data["generated_on"],
+            progress=data["progress"],
+            rating=data["rating"],
+            preferences=ReportPreference.from_json(data["preferences"]),
         )

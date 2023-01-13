@@ -48,3 +48,7 @@ class RescanError(AppknoxError):
 
 class ProfileReportPreferenceError(AppknoxError):
     pass
+
+
+class ReportError(AppknoxError):
+    pass

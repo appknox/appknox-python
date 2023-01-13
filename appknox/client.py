@@ -1,8 +1,11 @@
 # (c) 2017, XYSec Labs
 
+import typing
 import logging
 import requests
 import time
+import os
+from io import BytesIO
 
 from functools import partial, lru_cache
 from typing import List, Dict
@@ -11,13 +14,17 @@ from urllib.parse import urljoin
 from appknox.exceptions import (
     OneTimePasswordError, CredentialError, AppknoxError,
     OrganizationError, UploadError, SubmissionNotFound,
-    SubmissionError, SubmissionFileTimeoutError, RescanError, ProfileReportPreferenceError
+    SubmissionError, SubmissionFileTimeoutError, RescanError, ProfileReportPreferenceError,
+    ReportError,
 )
 from appknox.mapper import (
     mapper_json_api, mapper_drf_api, Analysis, File, Project, User,
     Organization, Vulnerability, OWASP, PCIDSS, PersonalToken, Submission,
-    Whoami, ProfileReportPreference, ReportPreferenceMapper
+    Whoami, ProfileReportPreference, ReportPreferenceMapper, Report,
 )
+
+if typing.TYPE_CHECKING:
+    from requests import Response
 
 DEFAULT_API_HOST = 'https://api.appknox.com'
 API_BASE = '/api'
@@ -536,28 +543,65 @@ class Appknox(object):
             unselected_report_pref.append(ReportPreferenceMapper['show_pcidss'])
         return unselected_report_pref
 
-    # def get_report(
-    #         self, file_id, format: str = 'json', language: str = 'en') ->
-    #         str:
-    #     """
-    #     Fetch analyses report for a file
-    #     :param file_id: File ID
-    #     :param format: Report format (supported 'json', 'pdf'). Default
-    #                    'json'
-    #     :param language: Report language (supported 'en', 'ja'). Default 'en'
-    #     :type file_id: int
-    #     :type format: str
-    #     :type language: str
-    #     :return:
-    #     """
-    #     if format not in ['json', 'pdf']:
-    #         raise ReportError('Unsupported format')
-    #     if language not in ['en', 'ja']:
-    #         raise ReportError('Unsupported language')
+    def list_reports(self, file_id: int) -> typing.List["Report"]:
+        """
+        Lists the latest reports for a given file ID
+        """
+        report_list_data = self.drf_api[
+            "v2/files/{}/reports".format(file_id)
+        ]().get()
+        # successful API response will have paginated results
+        if report_list_data.get("results", None) is None:
+            raise ReportError("Could not fetch report list")
+        return [Report.from_json(report) for report in report_list_data["results"]]
 
-    #     return self.json_api.report(file_id).get(
-    #         format=format, language=language
-    #     )
+    def create_report(self, file_id: int) -> "Report":
+        """
+        Create a Report object and returns a report ID.
+        The report ID can then be used to download reports
+        in different formats.
+        """
+        report_data = self.drf_api["v2/files/{}/reports".format(file_id)]().post(
+            data={}
+        )
+        if not report_data.get("id"):
+            raise ReportError("Failed to create a report")
+        return Report.from_json(report_data)
+
+    def get_summary_csv_report_url(self, report_id: int) -> str:
+        """
+        Returns the absolute URL to download Report Summary in
+        CSV format
+        """
+        csv_url_data = self.drf_api[
+            "v2/reports/{}/summary_csv".format(report_id)
+        ]().get()
+        if csv_url_data.get("url") is None:
+            raise ReportError("Failed to get report summary URL")
+        return csv_url_data["url"]
+
+    def download_report_data(self, url: str) -> "bytes":
+        """
+        Downloads the resppnse body in bytes format for
+        a given absolute URL
+        """
+        report_data = self.drf_api[url]().direct_get_http_response(url)
+        if report_data.status_code >= 400:
+            raise ReportError("Could not Download Report Data")
+        return BytesIO(report_data.content).getvalue()
+
+    def write_data_to_file(self, data: bytes, output_file_path: str) -> None:
+        """
+        Write any data in bytes format to a given file location
+        """
+        try:
+            os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
+            with open(output_file_path, "wb") as f:
+                f.write(data)
+        except OSError:
+            raise ValueError("Failed to write data to {}".format(output_file_path))
+        except:
+            raise ValueError("Failed to write data to {}".format(output_file_path))
 
 
 class ApiResource(object):
@@ -602,3 +646,15 @@ class ApiResource(object):
             url, headers=self.headers, auth=self.auth, params=kwargs,
         )
         return resp.json()
+    
+    def direct_get_http_response(self, url: str, **kwargs) -> "Response":
+        """
+        Return the raw HTTP Response from a given absolute
+        URL
+        """
+        return self.request_session.get(
+            url,
+            headers=self.headers,
+            auth=self.auth,
+            params=kwargs,
+        )
