@@ -15,11 +15,11 @@ from click import echo, echo_via_pager
 from appknox.client import Appknox, DEFAULT_API_HOST
 from appknox.exceptions import (
     AppknoxError, OneTimePasswordError, CredentialError,
-    OrganizationError, UploadError
+    OrganizationError, UploadError, ReportError
 )
 from appknox.mapper import (
     Analysis, File, Organization, Project, Vulnerability, OWASP,
-    Submission, Whoami
+    Submission, Whoami, Report,
 )
 
 CONFIG_FILE = os.path.expanduser('~/.config/appknox.ini')
@@ -336,25 +336,6 @@ def owasp(ctx, owasp_id):
     echo(table(OWASP, client.get_owasp(owasp_id), ignore=['description']))
 
 
-# @cli.command()
-# @click.argument('file_id')
-# @click.option(
-#     '-f', '--format', default='json', help='Report format: json, pdf')
-# @click.option(
-#     '-l', '--language', default='en', help='Report language: en, ja')
-# @click.pass_context
-# def report(ctx, file_id, format, language):
-#     """
-#     Download report for file
-#     """
-#     client = ctx.obj['CLIENT']
-#     try:
-#         echo(client.get_report(file_id, format=format, language=language))
-#     except ReportError as e:
-#         echo(e)
-#         sys.exit(1)
-
-
 @cli.command('switch_organization')
 @click.argument('organization_id')
 @click.pass_context
@@ -385,6 +366,86 @@ def switch_organization(ctx, organization_id):
     data['organization_id'] = organization_id
     save_profile(name=profile_name, data=data)
     echo('Switched organization to {}'.format(organization_id))
+
+
+@cli.group("reports")
+@click.pass_context
+def reports(ctx):
+    """
+    Command to list create and download reports
+    """
+    pass
+
+
+@reports.command('list')
+@click.argument('file_id', required=True, type=int)
+@click.pass_context
+def report_list(ctx, file_id):
+    """
+    Command to list all the reports
+    for a given file ID
+    """
+    client = ctx.obj['CLIENT']
+    try:
+        report_list = client.list_reports(file_id)
+        return echo(
+            table(
+                Report,
+                report_list,
+                ignore=['generated_on', 'progress', 'rating', 'preferences'],
+            )
+        )
+    except ReportError as e:
+        echo(e.message, err=True)
+        sys.exit(1)
+
+
+@reports.command('create')
+@click.argument('file_id', required=True, type=int)
+@click.pass_context
+def create_report(ctx, file_id):
+    """
+    Command to create report for a given report ID
+    """
+    client = ctx.obj['CLIENT']
+    try:
+        report = client.create_report(file_id)
+        return echo(report.id)
+    except ReportError as e:
+        echo(e.message, err=True)
+        sys.exit(1)
+
+
+@reports.group('download')
+@click.pass_context
+def download_report(ctx):
+    """
+    Command to download reports in different formats
+    """
+    pass
+
+
+@download_report.command('summary-csv')
+@click.argument('report_id', required=True, type=int)
+@click.option(
+    '-o', '--output', type=click.Path(writable=True), help='Target output Directory'
+)
+@click.pass_context
+def summary_csv(ctx, report_id, output):
+    """
+    Command to download report summary in CSV format
+    """
+    client = ctx.obj['CLIENT']
+    try:
+        csv_url = client.get_summary_csv_report_url(report_id)
+        report_data = client.download_report_data(csv_url)
+        if output:
+            client.write_data_to_file(report_data, output)
+        else:
+            echo(report_data, nl=False)
+    except ReportError as e:
+        echo(e.message, err=True)
+        sys.exit(1)
 
 
 def main():
