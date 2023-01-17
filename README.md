@@ -46,6 +46,9 @@ Commands:
   switch_organization  Switch organization in CLI instance
   vulnerability  Get vulnerability
   whoami         Show session info
+  reports list   Show the list of reports for a file
+  reports create Creates a new report for a file
+  reports download summary-csv  Downloads the report summary in CSV format
 ```
 
 ### Authentication
@@ -93,6 +96,9 @@ Supported variables are:
 | `owasp <owasp_id>` | Get OWASP detail |
 | `upload <path_to_app_package>` | Upload app file from given path and get the file_id |
 | `rescan <file_id>` | Rescan a file (this will create a new file under the same project.) |
+| `reports list <file_id>` | Lists all the reports associated with the file |
+| `reports create <file_id>` | Create a new report for the file and returns report ID|
+| `reports download summary-csv <report_id>` | Outputs the report summary in CSV format | 
 
 
 Example:
@@ -114,6 +120,23 @@ $ appknox files 4
 ----  ------  ---------  --------------
    6  MFVA            1               6
    7  MFVA            1               6
+
+$ appknox reports list 4
+  id  language      
+----  ------ 
+   1  en
+   2  en
+
+$ appknox reports create 4
+3
+
+$ appknox reports download summary-csv 3
+Organization ID,Project ID,Application Name,Application Namespace,Platform,Version,Version Code,File ID,Test Case,Scan Type,Severity,Risk Override,CVSS Score,Findings,Description,Noncompliant Code Example,Compliant Solution,Business Implication,OWASP,CWE,MSTG,ASVS,PCI-DSS,GDPR,Created On
+1,1,MFVA,com.appknox.mfva,Android,1.1,1605631525,51,Broken SSL Trust Manager,Static,High,,6.9,"BluK8lNUoeHkNxZ3GVrKN9BP2
+NVWmfbtHDiJBOTbOEpCnsbMhc6T31t...(Truncated)
+
+$ appknox reports download summary-csv 3 --output /path/to/output/report_summary.csv
+<No output: This command will download the report summary to given output path>
 ```
 
 ### Using Proxy
