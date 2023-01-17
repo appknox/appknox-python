@@ -22,6 +22,7 @@ from appknox.mapper import (
     Organization, Vulnerability, OWASP, PCIDSS, PersonalToken, Submission,
     Whoami, ProfileReportPreference, ReportPreferenceMapper, Report,
 )
+from appknox.version import __version__
 
 if typing.TYPE_CHECKING:
     from requests import Response
@@ -611,6 +612,7 @@ class ApiResource(object):
     ):
         self.host = host
         self.headers = {**headers}
+        self.headers["User-Agent"] = f"appknox-python/{__version__}"
         self.auth = auth
         self.request_session = request_session
 
