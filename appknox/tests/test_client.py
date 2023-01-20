@@ -1,13 +1,16 @@
 import datetime
-import stat
 import os
-from unittest import TestCase
-from unittest import mock
-from requests import Response
+import stat
 import tempfile
-from appknox.client import Appknox, ApiResource
-from appknox.mapper import Organization
+from unittest import mock
+from unittest import TestCase
+
+from requests import Response
+
+from appknox.client import ApiResource
+from appknox.client import Appknox
 from appknox.exceptions import ReportError
+from appknox.mapper import Organization
 
 
 class ReportTest(TestCase):

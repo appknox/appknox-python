@@ -1,52 +1,71 @@
 # (c) 2017, XYSec Labs
 
-import typing
-import logging
-import requests
-import time
-import os
+from functools import lru_cache
+from functools import partial
 from io import BytesIO
-
-from functools import partial, lru_cache
-from typing import List, Dict
+import logging
+import os
+import time
+import typing
+from typing import Dict, List
 from urllib.parse import urljoin
 
-from appknox.exceptions import (
-    OneTimePasswordError, CredentialError, AppknoxError,
-    OrganizationError, UploadError, SubmissionNotFound,
-    SubmissionError, SubmissionFileTimeoutError, RescanError, ProfileReportPreferenceError,
-    ReportError,
-)
-from appknox.mapper import (
-    mapper_json_api, mapper_drf_api, Analysis, File, Project, User,
-    Organization, Vulnerability, OWASP, PCIDSS, PersonalToken, Submission,
-    Whoami, ProfileReportPreference, ReportPreferenceMapper, Report,
-)
+import requests
+
+from appknox.exceptions import AppknoxError
+from appknox.exceptions import CredentialError
+from appknox.exceptions import OneTimePasswordError
+from appknox.exceptions import OrganizationError
+from appknox.exceptions import ProfileReportPreferenceError
+from appknox.exceptions import ReportError
+from appknox.exceptions import RescanError
+from appknox.exceptions import SubmissionError
+from appknox.exceptions import SubmissionFileTimeoutError
+from appknox.exceptions import SubmissionNotFound
+from appknox.exceptions import UploadError
+from appknox.mapper import Analysis
+from appknox.mapper import File
+from appknox.mapper import mapper_drf_api
+from appknox.mapper import mapper_json_api
+from appknox.mapper import Organization
+from appknox.mapper import OWASP
+from appknox.mapper import PCIDSS
+from appknox.mapper import PersonalToken
+from appknox.mapper import ProfileReportPreference
+from appknox.mapper import Project
+from appknox.mapper import Report
+from appknox.mapper import ReportPreferenceMapper
+from appknox.mapper import Submission
+from appknox.mapper import User
+from appknox.mapper import Vulnerability
+from appknox.mapper import Whoami
 from appknox.version import __version__
 
 if typing.TYPE_CHECKING:
     from requests import Response
 
-DEFAULT_API_HOST = 'https://api.appknox.com'
-API_BASE = '/api'
-JSON_API_HEADERS = {
-    'Accept': 'application/vnd.api+json'
-}
-DRF_API_HEADERS = {
-    'Accept': 'application/json'
-}
+DEFAULT_API_HOST = "https://api.appknox.com"
+API_BASE = "/api"
+JSON_API_HEADERS = {"Accept": "application/vnd.api+json"}
+DRF_API_HEADERS = {"Accept": "application/json"}
 
 
 class Appknox(object):
-    """
-    """
+    """ """
 
     def __init__(
-        self, username: str = None, password: str = None, user_id: int = None,
-        organization_id: int = None, token: str = None,
-        access_token: str = None, host: str = DEFAULT_API_HOST,
-        log_level: int = logging.INFO, http_proxy: str = None,
-        https_proxy: str = None, insecure: bool = False,
+        self,
+        username: str = None,
+        password: str = None,
+        user_id: int = None,
+        organization_id: int = None,
+        token: str = None,
+        access_token: str = None,
+        host: str = DEFAULT_API_HOST,
+        log_level: int = logging.INFO,
+        http_proxy: str = None,
+        https_proxy: str = None,
+        insecure: bool = False,
     ):
         """
         Initialise Appknox client
@@ -75,10 +94,10 @@ class Appknox(object):
         self.proxies = {}
 
         if http_proxy:
-            self.proxies['http'] = http_proxy
+            self.proxies["http"] = http_proxy
 
         if https_proxy:
-            self.proxies['https'] = https_proxy
+            self.proxies["https"] = https_proxy
 
         if self.proxies:
             self.request_session.proxies.update(self.proxies)
@@ -87,9 +106,7 @@ class Appknox(object):
             self.host = DEFAULT_API_HOST
 
         if self.access_token:
-            token_header = {
-                'Authorization': 'Token {}'.format(self.access_token)
-            }
+            token_header = {"Authorization": "Token {}".format(self.access_token)}
             self.json_api = ApiResource(
                 self.request_session,
                 host=self.host,
@@ -125,44 +142,45 @@ class Appknox(object):
         """
 
         if not self.username or not self.password:
-            raise CredentialError('Both username and password are required')
+            raise CredentialError("Both username and password are required")
 
         data = {
-            'username': self.username,
-            'password': self.password,
+            "username": self.username,
+            "password": self.password,
         }
 
         if otp:
-            data['otp'] = str(otp)
+            data["otp"] = str(otp)
 
-        response = self.request_session.post(
-            urljoin(self.host, 'api/login'), data=data)
+        response = self.request_session.post(urljoin(self.host, "api/login"), data=data)
 
         if response.status_code == 401:
-            raise OneTimePasswordError(response.json()['message'])
+            raise OneTimePasswordError(response.json()["message"])
         elif response.status_code == 403:
-            raise CredentialError(response.json()['message'])
+            raise CredentialError(response.json()["message"])
         elif response.status_code != 200:
-            raise AppknoxError('Unknown error')
+            raise AppknoxError("Unknown error")
 
         json = response.json()
-        self.token = json['token']
-        self.user_id = str(json['user_id'])
+        self.token = json["token"]
+        self.user_id = str(json["user_id"])
         self.access_token = self.generate_access_token().key
 
         self.json_api = ApiResource(
             self.request_session,
             host=self.host,
-            headers={**JSON_API_HEADERS, **{
-                'Authorization': 'Token {}'.format(self.access_token)
-            }},
+            headers={
+                **JSON_API_HEADERS,
+                **{"Authorization": "Token {}".format(self.access_token)},
+            },
         )
         self.drf_api = ApiResource(
             self.request_session,
             host=self.host,
-            headers={**DRF_API_HEADERS, **{
-                'Authorization': 'Token {}'.format(self.access_token)
-            }},
+            headers={
+                **DRF_API_HEADERS,
+                **{"Authorization": "Token {}".format(self.access_token)},
+            },
         )
         self.organization_id = self.get_organization_id()
 
@@ -178,9 +196,7 @@ class Appknox(object):
                 filtered_orgs = orgs
             return filtered_orgs[0].id
         except Exception:
-            raise OrganizationError(
-                'User doesn\'t have organization. Login Failed!'
-            )
+            raise OrganizationError("User doesn't have organization. Login Failed!")
 
     def switch_organization(self, organization_id: int = None) -> bool:
         """
@@ -198,10 +214,10 @@ class Appknox(object):
         Generates personal access token
         """
         access_token = self.request_session.post(
-            urljoin(self.host, 'api/personaltokens'),
+            urljoin(self.host, "api/personaltokens"),
             auth=(self.user_id, self.token),
             data={
-                'name': 'appknox-python for {} @{}'.format(
+                "name": "appknox-python for {} @{}".format(
                     self.username, str(int(time.time()))
                 )
             },
@@ -213,17 +229,17 @@ class Appknox(object):
         Revokes existing personal access token
         """
         resp = self.request_session.get(
-            urljoin(self.host, 'api/personaltokens?key=' + self.access_token),
+            urljoin(self.host, "api/personaltokens?key=" + self.access_token),
             auth=(self.user_id, self.token),
         )
         resp_json = resp.json()
-        personal_token = next((p for p in resp_json.get('data')), None)
+        personal_token = next((p for p in resp_json.get("data")), None)
         if not personal_token:
             return
 
-        token_id = personal_token['id']
+        token_id = personal_token["id"]
         return self.request_session.delete(
-            urljoin(self.host, 'api/personaltokens/' + token_id),
+            urljoin(self.host, "api/personaltokens/" + token_id),
             auth=(self.user_id, self.token),
         )
 
@@ -244,39 +260,39 @@ class Appknox(object):
         return mapper_drf_api(Whoami, whoami)
 
     def paginated_data(self, response, mapper_class):
-        initial_data = [mapper_json_api(
-            mapper_class, dict(data=value)
-        ) for value in response['data']]
+        initial_data = [
+            mapper_json_api(mapper_class, dict(data=value))
+            for value in response["data"]
+        ]
 
-        if not response.get('links'):
+        if not response.get("links"):
             return initial_data
 
-        link = response['links']['next']
+        link = response["links"]["next"]
 
         while link is not None:
             resp = self.drf_api.direct_get(urljoin(self.host, link))
-            link = resp['links']['next']
-            initial_data += [mapper_json_api(
-                mapper_class, dict(data=value)
-            ) for value in resp['data']]
+            link = resp["links"]["next"]
+            initial_data += [
+                mapper_json_api(mapper_class, dict(data=value))
+                for value in resp["data"]
+            ]
 
         return initial_data
 
     def paginated_drf_data(self, response, mapper_class):
         initial_data = [
-            mapper_drf_api(mapper_class, value)
-            for value in response['results']
+            mapper_drf_api(mapper_class, value) for value in response["results"]
         ]
 
-        if not response.get('next'):
+        if not response.get("next"):
             return initial_data
-        nxt = response['next']
+        nxt = response["next"]
         while nxt is not None:
             resp = self.drf_api.direct_get(nxt)
-            nxt = resp['next']
+            nxt = resp["next"]
             initial_data += [
-                mapper_drf_api(mapper_class, value)
-                for value in resp['results']
+                mapper_drf_api(mapper_class, value) for value in resp["results"]
             ]
         return initial_data
 
@@ -293,20 +309,18 @@ class Appknox(object):
 
         :param project_id: Project ID
         """
-        project = self.drf_api[
-            'v2/projects/{}'.format(project_id)
-        ]().get()
+        project = self.drf_api["v2/projects/{}".format(project_id)]().get()
         return mapper_drf_api(Project, project)
 
     def get_projects(
-        self, platform: int = None, package_name: str = '', search: str = ''
+        self, platform: int = None, package_name: str = "", search: str = ""
     ) -> List[Project]:
         """
         List projects for currently authenticated user
         in the given organizations
         """
         projects = self.drf_api[
-            'organizations/{}/projects'.format(self.organization_id)
+            "organizations/{}/projects".format(self.organization_id)
         ]().get(platform=platform, package_name=package_name, q=search)
         return self.paginated_drf_data(projects, Project)
 
@@ -316,9 +330,11 @@ class Appknox(object):
 
         :param project_id: Project ID
         """
-        files = self.drf_api[
-            'projects/{}/files'.format(project_id)
-        ]().get(version_code=version_code, limit=1).get('results', [])
+        files = (
+            self.drf_api["projects/{}/files".format(project_id)]()
+            .get(version_code=version_code, limit=1)
+            .get("results", [])
+        )
         if not files:
             return None
         return mapper_drf_api(File, files[0])
@@ -328,22 +344,18 @@ class Appknox(object):
         Fetch file by file ID
         :param file_id: File ID
         """
-        file = self.drf_api[
-            'v2/files/{}'.format(file_id)
-        ]().get()
+        file = self.drf_api["v2/files/{}".format(file_id)]().get()
         return mapper_drf_api(File, file)
 
-    def get_files(
-        self, project_id: int, version_code: int = None
-    ) -> List[File]:
+    def get_files(self, project_id: int, version_code: int = None) -> List[File]:
         """
         List files in project
 
         :param project_id: Project ID
         """
-        files = self.drf_api[
-            'projects/{}/files'.format(project_id)
-        ]().get(version_code=version_code)
+        files = self.drf_api["projects/{}/files".format(project_id)]().get(
+            version_code=version_code
+        )
         return self.paginated_drf_data(files, File)
 
     def get_analyses(self, file_id: int) -> List[Analysis]:
@@ -352,22 +364,18 @@ class Appknox(object):
 
         :param file_id: File ID
         """
-        analyses = self.drf_api[
-            'v2/files/{}/analyses'.format(file_id)
-        ]().get()
+        analyses = self.drf_api["v2/files/{}/analyses".format(file_id)]().get()
         return self.paginated_drf_data(analyses, Analysis)
 
     @lru_cache(maxsize=1)
     def get_vulnerabilities(self) -> List[Vulnerability]:
-        total_vulnerabilities = self.drf_api[
-            'v2/vulnerabilities'
-        ]().get(limit=1)['count']  # limit is 1 just to get total count
-        vulnerabilities_raw = self.drf_api['v2/vulnerabilities']().get(
-            limit=total_vulnerabilities+1
+        total_vulnerabilities = self.drf_api["v2/vulnerabilities"]().get(limit=1)[
+            "count"
+        ]  # limit is 1 just to get total count
+        vulnerabilities_raw = self.drf_api["v2/vulnerabilities"]().get(
+            limit=total_vulnerabilities + 1
         )
-        vulnerabilities = self.paginated_drf_data(
-            vulnerabilities_raw, Vulnerability
-        )
+        vulnerabilities = self.paginated_drf_data(vulnerabilities_raw, Vulnerability)
         return vulnerabilities
 
     def get_vulnerability(self, vulnerability_id: int) -> Vulnerability:
@@ -378,23 +386,18 @@ class Appknox(object):
         """
         vulnerabilities = self.get_vulnerabilities()
         vulnerability = next(
-            (x for x in vulnerabilities if x.id == vulnerability_id),
-            None
+            (x for x in vulnerabilities if x.id == vulnerability_id), None
         )
         if vulnerability:
             return vulnerability
 
-        vulnerability = self.drf_api[
-            'v2/vulnerabilities'
-        ](vulnerability_id).get()
+        vulnerability = self.drf_api["v2/vulnerabilities"](vulnerability_id).get()
         return mapper_drf_api(Vulnerability, vulnerability)
 
     @lru_cache(maxsize=1)
     def get_owasps(self) -> List[OWASP]:
-        owasps_raw = self.drf_api['v2/owasps']().get()
-        owasps = self.paginated_drf_data(
-            owasps_raw, OWASP
-        )
+        owasps_raw = self.drf_api["v2/owasps"]().get()
+        owasps = self.paginated_drf_data(owasps_raw, OWASP)
         return owasps
 
     def get_owasp(self, owasp_id: str) -> OWASP:
@@ -404,22 +407,17 @@ class Appknox(object):
         :param owasp_id: OWASP ID
         """
         owasps = self.get_owasps()
-        owasp = next(
-            (x for x in owasps if x.id == owasp_id),
-            None
-        )
+        owasp = next((x for x in owasps if x.id == owasp_id), None)
         if owasp:
             return owasp
 
-        owasp = self.drf_api['v2/owasps'](owasp_id).get()
+        owasp = self.drf_api["v2/owasps"](owasp_id).get()
         return mapper_drf_api(OWASP, owasp)
 
     @lru_cache(maxsize=1)
     def get_pcidsses(self) -> List[PCIDSS]:
-        pcidsss_raw = self.drf_api['v2/pcidsses']().get()
-        pcidsss = self.paginated_drf_data(
-            pcidsss_raw, PCIDSS
-        )
+        pcidsss_raw = self.drf_api["v2/pcidsses"]().get()
+        pcidsss = self.paginated_drf_data(pcidsss_raw, PCIDSS)
         return pcidsss
 
     def get_pcidss(self, pcidss_id: str) -> PCIDSS:
@@ -429,14 +427,11 @@ class Appknox(object):
         :param pcidss_id: pcidss ID
         """
         pcidsses = self.get_pcidsses()
-        pcidss = next(
-            (x for x in pcidsses if x.id == pcidss_id),
-            None
-        )
+        pcidss = next((x for x in pcidsses if x.id == pcidss_id), None)
         if pcidss:
             return pcidss
 
-        pcidss = self.drf_api['v2/pcidsses'](pcidss_id).get()
+        pcidss = self.drf_api["v2/pcidsses"](pcidss_id).get()
         return mapper_drf_api(PCIDSS, pcidss)
 
     def upload_file(self, file_data: str) -> int:
@@ -446,25 +441,27 @@ class Appknox(object):
         :param file: Package file content to be uploaded and scanned
         """
         response = self.drf_api[
-            'organizations/{}/upload_app'.format(self.organization_id)
+            "organizations/{}/upload_app".format(self.organization_id)
         ]().get()
-        url = response['url']
+        url = response["url"]
         self.request_session.put(url, data=file_data)
         response2 = self.drf_api[
-            'organizations/{}/upload_app'.format(self.organization_id)
+            "organizations/{}/upload_app".format(self.organization_id)
         ]().post(
             data=dict(
-                file_key=response['file_key'],
-                file_key_signed=response['file_key_signed'],
-                url=response['url']
+                file_key=response["file_key"],
+                file_key_signed=response["file_key_signed"],
+                url=response["url"],
             )
         )
-        submission_id = response2['submission_id']
+        submission_id = response2["submission_id"]
         try:
             file_id = self.poll_for_file_from_submission_id(submission_id)
         except (SubmissionNotFound, SubmissionError):
-            raise UploadError('Something went wrong, try uploading the\
-             file again.')
+            raise UploadError(
+                "Something went wrong, try uploading the\
+             file again."
+            )
         return file_id
 
     def poll_for_file_from_submission_id(self, submission_id: int) -> int:
@@ -479,9 +476,9 @@ class Appknox(object):
         """
         file = None
         timeout = time.time() + 10
-        while (file is None):
+        while file is None:
             submission = self.drf_api.submissions(submission_id).get()
-            if submission.get('detail') == 'Not found.':
+            if submission.get("detail") == "Not found.":
                 raise SubmissionNotFound()
             submission_obj = mapper_drf_api(Submission, submission)
             file = submission_obj.file
@@ -507,16 +504,13 @@ class Appknox(object):
 
         :return: The ID of the File created in rescan
         """
-        endpoint = 'v2/files/{}/rescan'.format(file_id)
-        response = self.drf_api[endpoint]().post(
-            data=dict()
-
-        )
-        submission_id = response['submission_id']
+        endpoint = "v2/files/{}/rescan".format(file_id)
+        response = self.drf_api[endpoint]().post(data=dict())
+        submission_id = response["submission_id"]
         try:
             file = self.poll_for_file_from_submission_id(submission_id)
         except (SubmissionNotFound, SubmissionError):
-            raise RescanError('Something went wrong, retry rescan')
+            raise RescanError("Something went wrong, retry rescan")
         return file
 
     def get_profile_report_preference(self, profile_id: int) -> ProfileReportPreference:
@@ -524,9 +518,13 @@ class Appknox(object):
         Fetch profile report preference
         """
         try:
-            profile_report_preference = self.drf_api['profiles/{}/report_preference'.format(profile_id)]().get()
+            profile_report_preference = self.drf_api[
+                "profiles/{}/report_preference".format(profile_id)
+            ]().get()
         except:
-            raise ProfileReportPreferenceError('Could not fetch profile report preference')
+            raise ProfileReportPreferenceError(
+                "Could not fetch profile report preference"
+            )
         return ProfileReportPreference.from_json(profile_report_preference)
 
     def get_unselected_report_preference(self, file_id: int) -> list:
@@ -536,21 +534,19 @@ class Appknox(object):
         file = self.get_file(file_id)
         profile_report_preference = self.get_profile_report_preference(file.profile)
         unselected_report_pref = list()
-        if (not profile_report_preference.show_gdpr.value):
-            unselected_report_pref.append(ReportPreferenceMapper['show_gdpr'])
-        if (not profile_report_preference.show_hipaa.value):
-            unselected_report_pref.append(ReportPreferenceMapper['show_hipaa'])
-        if (not profile_report_preference.show_pcidss.value):
-            unselected_report_pref.append(ReportPreferenceMapper['show_pcidss'])
+        if not profile_report_preference.show_gdpr.value:
+            unselected_report_pref.append(ReportPreferenceMapper["show_gdpr"])
+        if not profile_report_preference.show_hipaa.value:
+            unselected_report_pref.append(ReportPreferenceMapper["show_hipaa"])
+        if not profile_report_preference.show_pcidss.value:
+            unselected_report_pref.append(ReportPreferenceMapper["show_pcidss"])
         return unselected_report_pref
 
     def list_reports(self, file_id: int) -> typing.List["Report"]:
         """
         Lists the latest reports for a given file ID
         """
-        report_list_data = self.drf_api[
-            "v2/files/{}/reports".format(file_id)
-        ]().get()
+        report_list_data = self.drf_api["v2/files/{}/reports".format(file_id)]().get()
         # successful API response will have paginated results
         if report_list_data.get("results", None) is None:
             raise ReportError("Could not fetch report list")
@@ -607,8 +603,11 @@ class Appknox(object):
 
 class ApiResource(object):
     def __init__(
-        self, request_session: object, host: str = DEFAULT_API_HOST,
-        headers: object = None, auth: Dict[str, str] = None
+        self,
+        request_session: object,
+        host: str = DEFAULT_API_HOST,
+        headers: object = None,
+        auth: Dict[str, str] = None,
     ):
         self.host = host
         self.headers = {**headers}
@@ -625,30 +624,39 @@ class ApiResource(object):
         return partial(self.set_endpoint, resource)
 
     def set_endpoint(self, resource, resource_id=None):
-        self.endpoint = '{}/{}'.format(urljoin(self.host, API_BASE), resource)
+        self.endpoint = "{}/{}".format(urljoin(self.host, API_BASE), resource)
         if resource_id:
-            self.endpoint += '/{}'.format(str(resource_id))
+            self.endpoint += "/{}".format(str(resource_id))
         return self
 
     def get(self, **kwargs):
         resp = self.request_session.get(
-            self.endpoint, headers=self.headers, auth=self.auth, params=kwargs,
+            self.endpoint,
+            headers=self.headers,
+            auth=self.auth,
+            params=kwargs,
         )
         return resp.json()
 
     def post(self, data, content_type=None, **kwargs):
         resp = self.request_session.post(
-            self.endpoint, headers=self.headers, auth=self.auth,
-            params=kwargs, data=data,
+            self.endpoint,
+            headers=self.headers,
+            auth=self.auth,
+            params=kwargs,
+            data=data,
         )
         return resp.json()
 
     def direct_get(self, url, **kwargs):
         resp = self.request_session.get(
-            url, headers=self.headers, auth=self.auth, params=kwargs,
+            url,
+            headers=self.headers,
+            auth=self.auth,
+            params=kwargs,
         )
         return resp.json()
-    
+
     def direct_get_http_response(self, url: str, **kwargs) -> "Response":
         """
         Return the raw HTTP Response from a given absolute
