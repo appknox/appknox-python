@@ -2,13 +2,12 @@
 
 
 class AppknoxError(Exception):
-
-    def __init__(self, message='-'):
+    def __init__(self, message="-"):
         super(AppknoxError, self).__init__()
         self.message = message
 
     def __str__(self):
-        return '{}: {}'.format(self.__class__.__name__, self.message)
+        return "{}: {}".format(self.__class__.__name__, self.message)
 
 
 class CredentialError(AppknoxError):
@@ -45,6 +44,7 @@ class SubmissionFileTimeoutError(AppknoxError):
 
 class RescanError(AppknoxError):
     pass
+
 
 class ProfileReportPreferenceError(AppknoxError):
     pass
