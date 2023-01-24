@@ -49,6 +49,7 @@ Commands:
   reports list   Show the list of reports for a file
   reports create Creates a new report for a file
   reports download summary-csv  Downloads the report summary in CSV format
+  reports download summary-excel  Downloads the report summary in Excel format
 ```
 
 ### Authentication
@@ -99,6 +100,7 @@ Supported variables are:
 | `reports list <file_id>` | Lists all the reports associated with the file |
 | `reports create <file_id>` | Create a new report for the file and returns report ID|
 | `reports download summary-csv <report_id>` | Outputs the report summary in CSV format | 
+| `reports download summary-excel <report_id>` | Outputs the report summary in Excel format |
 
 
 Example:
