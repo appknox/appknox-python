@@ -51,7 +51,9 @@ DRF_API_HEADERS = {"Accept": "application/json"}
 
 
 class Appknox(object):
-    """ """
+    """
+    Client to interact with API server
+    """
 
     def __init__(
         self,
@@ -617,6 +619,9 @@ class Appknox(object):
 
 
 class ApiResource(object):
+    """
+    Class to perform API requests
+    """
     def __init__(
         self,
         request_session: object,

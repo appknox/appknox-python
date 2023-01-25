@@ -28,6 +28,11 @@ Quickstart
 #. `Recent Uploads`__
 #. `Rescan`__
 #. `Switch organization`__
+#. `List Reports`__
+#. `Create Report`__
+#. `Get Report Summary CSV URL`__
+#. `Get Report Summary Excel URL`__
+#. `Download Report Data from URL`__
 #. `Complete Reference`__
 
 __
@@ -281,6 +286,96 @@ Change default organization for client instance.
 
 __
 
+List Reports:
+----------------------------
+List all reports for a given File ID.
+
+.. code-block:: python
+
+    >>> client.list_reports(<file_id>)
+
+*Example:*
+
+.. code-block:: python
+
+    >>> client.list_reports(95)
+    [Report(id=105, language='en', generated_on='2023-01-24T06:37:05.565031Z', progress=100, rating='21.62', preferences=ReportPreference(show_api_scan=True, show_manual_scan=True, show_static_scan=True, show_dynamic_scan=True, show_ignored_analyses=False, show_hipaa=InheritedPreference(value=True, is_inherited=True), show_pcidss=InheritedPreference(value=True, is_inherited=True)))]
+
+__
+
+Create Report:
+----------------------------
+Creates a new report for given file ID
+
+.. code-block:: python
+
+    >>> client.create_report(<file_id>)
+
+*Example:*
+
+.. code-block:: python
+
+    >>> client.create_report(94)
+    Report(id=110, language='en', generated_on='2023-01-25T11:52:35.253614Z', progress=0, rating='6.76', preferences=ReportPreference(show_api_scan=True, show_manual_scan=True, show_static_scan=True, show_dynamic_scan=True, show_ignored_analyses=False, show_hipaa=InheritedPreference(value=True, is_inherited=True), show_pcidss=InheritedPreference(value=True, is_inherited=True)))
+
+__
+
+Get Report Summary CSV URL:
+----------------------------
+Returns a absolute URL to download report summary in CSV format for given report ID
+
+.. code-block:: python
+
+    >>> client.get_summary_csv_report_url(<report_id>)
+
+*Example:*
+
+.. code-block:: python
+
+    >>> client.get_summary_csv_report_url(110)
+    'https://api.appknox.com/api/v2/reports/110/summary_csv_download?sig=eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6InJhamFuIn0:1pKeRU:U4qF1EQ3QJDFRCf33nvcZiLzmI4jZNlcR4sDqAW2_IM:1pKeRU:70aBOcQY8-Lm75IT4E41wr7oRkyHabZX6a9lO_tdTZk'
+
+__
+
+Get Report Summary Excel URL
+-----------------------------
+Returns a absolute URL to download report summary in Excel format for given report ID
+
+.. code-block:: python
+
+    >>> client.get_summary_excel_report_url(<report_id>)
+
+*Example:*
+
+.. code-block:: python
+
+    >>> client.get_summary_excel_report_url(110)
+    'https://api.appknox.com/api/v2/reports/110/summary_excel_download?sig=eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6InJhamFuIn0:1pKeTf:skTH0btBf6IWT8TfBZYszT2ymXnT2CJRatKzf_kZwLE:1pKeTf:1Nf1z-lU6V7EMdtnBk0nKKcFH0clrdthBRa1DIbbVFU'
+
+__
+
+Download Report Data from URL
+------------------------------
+Returns full HTTP response body from a given absolute URL 
+
+.. code-block:: python
+
+    >>> client.download_report_data(<url>)
+
+*Examples:*
+
+.. code-block:: python
+
+    >>> client.download_report_data('https://api.appknox.com/api/v2/reports/110/summary_excel_download?sig=eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6InJhamFuIn0:1pKeTf:skTH0btBf6IWT8TfBZYszT2ymXnT2CJRatKzf_kZwLE:1pKeTf:1Nf1z-lU6V7EMdtnBk0nKKcFH0clrdthBRa1DIbbVFU')
+    b'PK\x03\x04\x14\x00\x00\x00\x08\x00\x00\x00?\x008\x9d\x86\xd8>\x01\x00\x00\x07\x04\x00\x00\x13\x00\x00\x00[Content_Types].xml\xad\x93\xcbn\xc3 \x10E\xf7\xfd\n\xc4\xb62$]TU\x15\'\x8b>\x96m\x16\xe9\x07P\x18\xc7(\x18\x103I\x93\xbf/\xb6\x93H\xad\xd2<\x94n\x8c\xcc\xdc...(Truncated)
+
+.. code-block:: python
+
+    >>> client.download_report_data('https://api.appknox.com/api/v2/reports/110/summary_csv_download?sig=eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6InJhamFuIn0:1pKeZL:Rr8IyficPV19ik0GYBX7caY-qCswKCOEecFYbuCuo_w:1pKeZL:D0i-AzRv5IuFy1MhGINuxCQW41zgHiuC1DKsgsfGG8Y')
+    b'Project ID,Application Name,Application Namespace,Platform,Version,Version Code,File ID,Test Case,Scan Type,Severity,Risk Override,CVSS Score,Findings,Description,Noncompliant Code Example,Compliant Solution,Business Implication,OWASP...(Truncated)
+
+__
+
 Complete Reference
 -------------------
 
@@ -288,6 +383,7 @@ Complete Reference
    :maxdepth: 2
 
    client
+   
    mapper
 
 --

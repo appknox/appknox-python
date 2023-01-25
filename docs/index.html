@@ -4,16 +4,14 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
     <title>appknox-python &#8212; appknox-python 3.0.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="appknox.client" href="client.html" />
@@ -52,6 +50,11 @@ Appknox API.</p>
 <li><p><a class="reference internal" href="#recent-uploads">Recent Uploads</a></p></li>
 <li><p><a class="reference internal" href="#rescan">Rescan</a></p></li>
 <li><p><a class="reference internal" href="#switch-organization">Switch organization</a></p></li>
+<li><p><a class="reference internal" href="#list-reports">List Reports</a></p></li>
+<li><p><a class="reference internal" href="#create-report">Create Report</a></p></li>
+<li><p><a class="reference internal" href="#get-report-summary-csv-url">Get Report Summary CSV URL</a></p></li>
+<li><p><a class="reference internal" href="#get-report-summary-excel-url">Get Report Summary Excel URL</a></p></li>
+<li><p><a class="reference internal" href="#download-report-data-from-url">Download Report Data from URL</a></p></li>
 <li><p><a class="reference internal" href="#complete-reference">Complete Reference</a></p></li>
 </ol>
 </section>
@@ -59,7 +62,7 @@ Appknox API.</p>
 <span id="id1"></span><h2>Install:<a class="headerlink" href="#install" title="Permalink to this heading">¶</a></h2>
 <p><cite>appknox</cite> is available via <a class="reference external" href="https://pypi.org/project/appknox/">PyPI</a>. It is officially supported on python 3.5 &amp; 3.6.</p>
 <p><strong>Install with pip:</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install appknox
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>appknox
 </pre></div>
 </div>
 </section>
@@ -232,12 +235,100 @@ Appknox API.</p>
 </pre></div>
 </div>
 </section>
+<section id="list-reports">
+<span id="id12"></span><h2>List Reports:<a class="headerlink" href="#list-reports" title="Permalink to this heading">¶</a></h2>
+<p>List all reports for a given File ID.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">list_reports</span><span class="p">(</span><span class="o">&lt;</span><span class="n">file_id</span><span class="o">&gt;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>Example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">list_reports</span><span class="p">(</span><span class="mi">95</span><span class="p">)</span>
+<span class="go">[Report(id=105, language=&#39;en&#39;, generated_on=&#39;2023-01-24T06:37:05.565031Z&#39;, progress=100, rating=&#39;21.62&#39;, preferences=ReportPreference(show_api_scan=True, show_manual_scan=True, show_static_scan=True, show_dynamic_scan=True, show_ignored_analyses=False, show_hipaa=InheritedPreference(value=True, is_inherited=True), show_pcidss=InheritedPreference(value=True, is_inherited=True)))]</span>
+</pre></div>
+</div>
+</section>
+<section id="create-report">
+<span id="id13"></span><h2>Create Report:<a class="headerlink" href="#create-report" title="Permalink to this heading">¶</a></h2>
+<p>Creates a new report for given file ID</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">create_report</span><span class="p">(</span><span class="o">&lt;</span><span class="n">file_id</span><span class="o">&gt;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>Example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">create_report</span><span class="p">(</span><span class="mi">94</span><span class="p">)</span>
+<span class="go">Report(id=110, language=&#39;en&#39;, generated_on=&#39;2023-01-25T11:52:35.253614Z&#39;, progress=0, rating=&#39;6.76&#39;, preferences=ReportPreference(show_api_scan=True, show_manual_scan=True, show_static_scan=True, show_dynamic_scan=True, show_ignored_analyses=False, show_hipaa=InheritedPreference(value=True, is_inherited=True), show_pcidss=InheritedPreference(value=True, is_inherited=True)))</span>
+</pre></div>
+</div>
+</section>
+<section id="get-report-summary-csv-url">
+<span id="id14"></span><h2>Get Report Summary CSV URL:<a class="headerlink" href="#get-report-summary-csv-url" title="Permalink to this heading">¶</a></h2>
+<p>Returns a absolute URL to download report summary in CSV format for given report ID</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_summary_csv_report_url</span><span class="p">(</span><span class="o">&lt;</span><span class="n">report_id</span><span class="o">&gt;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>Example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_summary_csv_report_url</span><span class="p">(</span><span class="mi">110</span><span class="p">)</span>
+<span class="go">&#39;https://api.appknox.com/api/v2/reports/110/summary_csv_download?sig=eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6InJhamFuIn0:1pKeRU:U4qF1EQ3QJDFRCf33nvcZiLzmI4jZNlcR4sDqAW2_IM:1pKeRU:70aBOcQY8-Lm75IT4E41wr7oRkyHabZX6a9lO_tdTZk&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="get-report-summary-excel-url">
+<span id="id15"></span><h2>Get Report Summary Excel URL<a class="headerlink" href="#get-report-summary-excel-url" title="Permalink to this heading">¶</a></h2>
+<p>Returns a absolute URL to download report summary in Excel format for given report ID</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_summary_excel_report_url</span><span class="p">(</span><span class="o">&lt;</span><span class="n">report_id</span><span class="o">&gt;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>Example:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_summary_excel_report_url</span><span class="p">(</span><span class="mi">110</span><span class="p">)</span>
+<span class="go">&#39;https://api.appknox.com/api/v2/reports/110/summary_excel_download?sig=eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6InJhamFuIn0:1pKeTf:skTH0btBf6IWT8TfBZYszT2ymXnT2CJRatKzf_kZwLE:1pKeTf:1Nf1z-lU6V7EMdtnBk0nKKcFH0clrdthBRa1DIbbVFU&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="download-report-data-from-url">
+<span id="id16"></span><h2>Download Report Data from URL<a class="headerlink" href="#download-report-data-from-url" title="Permalink to this heading">¶</a></h2>
+<p>Returns full HTTP response body from a given absolute URL</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">download_report_data</span><span class="p">(</span><span class="o">&lt;</span><span class="n">url</span><span class="o">&gt;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>Examples:</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">download_report_data</span><span class="p">(</span><span class="s1">&#39;https://api.appknox.com/api/v2/reports/110/summary_excel_download?sig=eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6InJhamFuIn0:1pKeTf:skTH0btBf6IWT8TfBZYszT2ymXnT2CJRatKzf_kZwLE:1pKeTf:1Nf1z-lU6V7EMdtnBk0nKKcFH0clrdthBRa1DIbbVFU&#39;</span><span class="p">)</span>
+<span class="go">b&#39;PK\x03\x04\x14\x00\x00\x00\x08\x00\x00\x00?\x008\x9d\x86\xd8&gt;\x01\x00\x00\x07\x04\x00\x00\x13\x00\x00\x00[Content_Types].xml\xad\x93\xcbn\xc3 \x10E\xf7\xfd\n\xc4\xb62$]TU\x15\&#39;\x8b&gt;\x96m\x16\xe9\x07P\x18\xc7(\x18\x103I\x93\xbf/\xb6\x93H\xad\xd2&lt;\x94n\x8c\xcc\xdc...(Truncated)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">download_report_data</span><span class="p">(</span><span class="s1">&#39;https://api.appknox.com/api/v2/reports/110/summary_csv_download?sig=eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6InJhamFuIn0:1pKeZL:Rr8IyficPV19ik0GYBX7caY-qCswKCOEecFYbuCuo_w:1pKeZL:D0i-AzRv5IuFy1MhGINuxCQW41zgHiuC1DKsgsfGG8Y&#39;</span><span class="p">)</span>
+<span class="go">b&#39;Project ID,Application Name,Application Namespace,Platform,Version,Version Code,File ID,Test Case,Scan Type,Severity,Risk Override,CVSS Score,Findings,Description,Noncompliant Code Example,Compliant Solution,Business Implication,OWASP...(Truncated)</span>
+</pre></div>
+</div>
+</section>
 <section id="complete-reference">
-<span id="id12"></span><h2>Complete Reference<a class="headerlink" href="#complete-reference" title="Permalink to this heading">¶</a></h2>
+<span id="id17"></span><h2>Complete Reference<a class="headerlink" href="#complete-reference" title="Permalink to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="client.html">appknox.client</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mapper.html">appknox.mapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="client.html">appknox.client</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="client.html#appknox.client.ApiResource"><code class="docutils literal notranslate"><span class="pre">ApiResource</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="client.html#appknox.client.Appknox"><code class="docutils literal notranslate"><span class="pre">Appknox</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mapper.html">appknox.mapper</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mapper.html#appknox.mapper.Analysis"><code class="docutils literal notranslate"><span class="pre">Analysis</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper.html#appknox.mapper.File"><code class="docutils literal notranslate"><span class="pre">File</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper.html#appknox.mapper.InheritedPreference"><code class="docutils literal notranslate"><span class="pre">InheritedPreference</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper.html#appknox.mapper.OWASP"><code class="docutils literal notranslate"><span class="pre">OWASP</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper.html#appknox.mapper.Organization"><code class="docutils literal notranslate"><span class="pre">Organization</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper.html#appknox.mapper.PCIDSS"><code class="docutils literal notranslate"><span class="pre">PCIDSS</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper.html#appknox.mapper.PersonalToken"><code class="docutils literal notranslate"><span class="pre">PersonalToken</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper.html#appknox.mapper.ProfileReportPreference"><code class="docutils literal notranslate"><span class="pre">ProfileReportPreference</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper.html#appknox.mapper.ProfileReportPreferenceConfig"><code class="docutils literal notranslate"><span class="pre">ProfileReportPreferenceConfig</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper.html#appknox.mapper.Project"><code class="docutils literal notranslate"><span class="pre">Project</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper.html#appknox.mapper.Report"><code class="docutils literal notranslate"><span class="pre">Report</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper.html#appknox.mapper.ReportPreference"><code class="docutils literal notranslate"><span class="pre">ReportPreference</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper.html#appknox.mapper.Submission"><code class="docutils literal notranslate"><span class="pre">Submission</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper.html#appknox.mapper.User"><code class="docutils literal notranslate"><span class="pre">User</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper.html#appknox.mapper.Vulnerability"><code class="docutils literal notranslate"><span class="pre">Vulnerability</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper.html#appknox.mapper.Whoami"><code class="docutils literal notranslate"><span class="pre">Whoami</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper.html#appknox.mapper.mapper_drf_api"><code class="docutils literal notranslate"><span class="pre">mapper_drf_api()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper.html#appknox.mapper.mapper_json_api"><code class="docutils literal notranslate"><span class="pre">mapper_json_api()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </div>
 <p>–</p>
@@ -334,8 +425,8 @@ Appknox API.</p>
       &copy;2017, XYSec Labs Pte. Ltd..
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.1.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
       |
       <a href="_sources/index.rst.txt"

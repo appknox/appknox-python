@@ -9,10 +9,8 @@
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -63,6 +61,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="mapper.html#appknox.mapper.Analysis">Analysis (class in appknox.mapper)</a>
 </li>
+      <li><a href="client.html#appknox.client.ApiResource">ApiResource (class in appknox.client)</a>
+</li>
       <li><a href="client.html#appknox.client.Appknox">Appknox (class in appknox.client)</a>
 </li>
       <li>
@@ -107,6 +107,8 @@
 </li>
       <li><a href="mapper.html#appknox.mapper.Analysis.computed_risk">computed_risk (appknox.mapper.Analysis attribute)</a>
 </li>
+      <li><a href="client.html#appknox.client.Appknox.create_report">create_report() (appknox.client.Appknox method)</a>
+</li>
       <li><a href="mapper.html#appknox.mapper.Project.created_on">created_on (appknox.mapper.Project attribute)</a>
 
       <ul>
@@ -141,6 +143,14 @@
         <li><a href="mapper.html#appknox.mapper.Vulnerability.description">(appknox.mapper.Vulnerability attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="client.html#appknox.client.ApiResource.direct_get">direct_get() (appknox.client.ApiResource method)</a>
+</li>
+      <li><a href="client.html#appknox.client.ApiResource.direct_get_http_response">direct_get_http_response() (appknox.client.ApiResource method)</a>
+</li>
+      <li><a href="client.html#appknox.client.Appknox.download_report_data">download_report_data() (appknox.client.Appknox method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -181,6 +191,8 @@
 </li>
       <li><a href="client.html#appknox.client.Appknox.generate_access_token">generate_access_token() (appknox.client.Appknox method)</a>
 </li>
+      <li><a href="client.html#appknox.client.ApiResource.get">get() (appknox.client.ApiResource method)</a>
+</li>
       <li><a href="client.html#appknox.client.Appknox.get_analyses">get_analyses() (appknox.client.Appknox method)</a>
 </li>
       <li><a href="client.html#appknox.client.Appknox.get_file">get_file() (appknox.client.Appknox method)</a>
@@ -193,11 +205,15 @@
 </li>
       <li><a href="client.html#appknox.client.Appknox.get_organizations">get_organizations() (appknox.client.Appknox method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="client.html#appknox.client.Appknox.get_owasp">get_owasp() (appknox.client.Appknox method)</a>
 </li>
+      <li><a href="client.html#appknox.client.Appknox.get_owasps">get_owasps() (appknox.client.Appknox method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="client.html#appknox.client.Appknox.get_pcidss">get_pcidss() (appknox.client.Appknox method)</a>
+</li>
+      <li><a href="client.html#appknox.client.Appknox.get_pcidsses">get_pcidsses() (appknox.client.Appknox method)</a>
 </li>
       <li><a href="client.html#appknox.client.Appknox.get_profile_report_preference">get_profile_report_preference() (appknox.client.Appknox method)</a>
 </li>
@@ -205,9 +221,15 @@
 </li>
       <li><a href="client.html#appknox.client.Appknox.get_projects">get_projects() (appknox.client.Appknox method)</a>
 </li>
+      <li><a href="client.html#appknox.client.Appknox.get_summary_csv_report_url">get_summary_csv_report_url() (appknox.client.Appknox method)</a>
+</li>
+      <li><a href="client.html#appknox.client.Appknox.get_summary_excel_report_url">get_summary_excel_report_url() (appknox.client.Appknox method)</a>
+</li>
       <li><a href="client.html#appknox.client.Appknox.get_unselected_report_preference">get_unselected_report_preference() (appknox.client.Appknox method)</a>
 </li>
       <li><a href="client.html#appknox.client.Appknox.get_user">get_user() (appknox.client.Appknox method)</a>
+</li>
+      <li><a href="client.html#appknox.client.Appknox.get_vulnerabilities">get_vulnerabilities() (appknox.client.Appknox method)</a>
 </li>
       <li><a href="client.html#appknox.client.Appknox.get_vulnerability">get_vulnerability() (appknox.client.Appknox method)</a>
 </li>
@@ -251,6 +273,8 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="mapper.html#appknox.mapper.InheritedPreference">InheritedPreference (class in appknox.mapper)</a>
+</li>
       <li><a href="mapper.html#appknox.mapper.Vulnerability.intro">intro (appknox.mapper.Vulnerability attribute)</a>
 </li>
   </ul></td>
@@ -261,9 +285,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="mapper.html#appknox.mapper.User.lang">lang (appknox.mapper.User attribute)</a>
 </li>
+      <li><a href="mapper.html#appknox.mapper.User.last_name">last_name (appknox.mapper.User attribute)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mapper.html#appknox.mapper.User.last_name">last_name (appknox.mapper.User attribute)</a>
+      <li><a href="client.html#appknox.client.Appknox.list_reports">list_reports() (appknox.client.Appknox method)</a>
 </li>
       <li><a href="client.html#appknox.client.Appknox.login">login() (appknox.client.Appknox method)</a>
 </li>
@@ -336,6 +362,10 @@
         <li><a href="mapper.html#appknox.mapper.Submission.package_name">(appknox.mapper.Submission attribute)</a>
 </li>
       </ul></li>
+      <li><a href="client.html#appknox.client.Appknox.paginated_data">paginated_data() (appknox.client.Appknox method)</a>
+</li>
+      <li><a href="client.html#appknox.client.Appknox.paginated_drf_data">paginated_drf_data() (appknox.client.Appknox method)</a>
+</li>
       <li><a href="mapper.html#appknox.mapper.Analysis.pcidss">pcidss (appknox.mapper.Analysis attribute)</a>
 </li>
       <li><a href="mapper.html#appknox.mapper.PCIDSS">PCIDSS (class in appknox.mapper)</a>
@@ -347,6 +377,8 @@
       <li><a href="mapper.html#appknox.mapper.Project.platform">platform (appknox.mapper.Project attribute)</a>
 </li>
       <li><a href="client.html#appknox.client.Appknox.poll_for_file_from_submission_id">poll_for_file_from_submission_id() (appknox.client.Appknox method)</a>
+</li>
+      <li><a href="client.html#appknox.client.ApiResource.post">post() (appknox.client.ApiResource method)</a>
 </li>
       <li><a href="mapper.html#appknox.mapper.File.profile">profile (appknox.mapper.File attribute)</a>
 </li>
@@ -368,8 +400,12 @@
 </li>
       <li><a href="mapper.html#appknox.mapper.Vulnerability.related_to">related_to (appknox.mapper.Vulnerability attribute)</a>
 </li>
+      <li><a href="mapper.html#appknox.mapper.Report">Report (class in appknox.mapper)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="mapper.html#appknox.mapper.ReportPreference">ReportPreference (class in appknox.mapper)</a>
+</li>
       <li><a href="client.html#appknox.client.Appknox.rescan">rescan() (appknox.client.Appknox method)</a>
 </li>
       <li><a href="client.html#appknox.client.Appknox.revoke_access_token">revoke_access_token() (appknox.client.Appknox method)</a>
@@ -382,6 +418,8 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="client.html#appknox.client.ApiResource.set_endpoint">set_endpoint() (appknox.client.ApiResource method)</a>
+</li>
       <li><a href="mapper.html#appknox.mapper.File.static_scan_progress">static_scan_progress (appknox.mapper.File attribute)</a>
 </li>
       <li><a href="mapper.html#appknox.mapper.Analysis.status">status (appknox.mapper.Analysis attribute)</a>
@@ -459,6 +497,10 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="mapper.html#appknox.mapper.Whoami">Whoami (class in appknox.mapper)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="client.html#appknox.client.Appknox.write_data_to_file">write_data_to_file() (appknox.client.Appknox method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -553,8 +595,8 @@
       &copy;2017, XYSec Labs Pte. Ltd..
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.1.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 
