@@ -577,6 +577,18 @@ class Appknox(object):
             raise ReportError("Failed to get report summary URL")
         return csv_url_data["url"]
 
+    def get_summary_excel_report_url(self, report_id: int) -> str:
+        """
+        Returns the absolute URL to download Report Summary in
+        Excel format
+        """
+        excel_url_data = self.drf_api[
+            "v2/reports/{}/summary_excel".format(report_id)
+        ]().get()
+        if excel_url_data.get("url") is None:
+            raise ReportError("Failed to get report summary URL")
+        return excel_url_data["url"]
+
     def download_report_data(self, url: str) -> "bytes":
         """
         Downloads the resppnse body in bytes format for
@@ -591,8 +603,11 @@ class Appknox(object):
         """
         Write any data in bytes format to a given file location
         """
+        output_dir_path = os.path.dirname(output_file_path)
+        if not output_dir_path:
+            output_dir_path = "."
         try:
-            os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
+            os.makedirs(output_dir_path, exist_ok=True)
             with open(output_file_path, "wb") as f:
                 f.write(data)
         except OSError:

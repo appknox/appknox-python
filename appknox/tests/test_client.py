@@ -72,6 +72,9 @@ class ReportTest(TestCase):
     def get_report_summary_csv_url_response(self, *args, **kwargs):
         return {"url": "https:://example.com/api/v2/reports/200?sig=abccba"}
 
+    def get_report_summary_excel_url_response(self, *args, **kwargs):
+        return {"url": "https:://example.com/api/v2/reports/999?sig=xyz123"}
+
     def get_csv_http_response(self, *args, **kwargs):
         response = Response()
         response._content = b"1,2,3\n1,2,3"
@@ -203,6 +206,27 @@ class ReportTest(TestCase):
             with self.assertRaises(ReportError, msg="Failed to get report summary URL"):
                 self.ap_client.get_summary_csv_report_url(0)
 
+    def test_get_summary_excel_report_url_returns_download_url(self):
+        with mock.patch.object(
+            ApiResource, "get", self.get_report_summary_excel_url_response
+        ):
+            excel_url = self.ap_client.get_summary_excel_report_url(self.report_id)
+            self.assertEqual(
+                excel_url, "https:://example.com/api/v2/reports/999?sig=xyz123"
+            )
+
+    def test_get_summary_excel_report_url_raises_exception_for_permission_denied_response(  # noqa
+        self,
+    ):
+        with mock.patch.object(ApiResource, "get", self.get_permission_denied_response):
+            with self.assertRaises(ReportError, msg="Failed to get report summary URL"):
+                self.ap_client.get_summary_excel_report_url(999)
+
+    def test_get_summary_excel_report_url_raises_exception_for_not_found_response(self):
+        with mock.patch.object(ApiResource, "get", self.get_not_found_response):
+            with self.assertRaises(ReportError, msg="Failed to get report summary URL"):
+                self.ap_client.get_summary_excel_report_url(0)
+
     def test_download_report_data_returns_bytes_data_with_given_url(self):
         with mock.patch.object(
             ApiResource, "direct_get_http_response", self.get_csv_http_response
@@ -324,3 +348,14 @@ class ReportTest(TestCase):
                 ValueError, msg=("Failed to write data to {}".format(file_path))
             ):
                 self.ap_client.write_data_to_file(b"1,2,3", file_path)
+
+    def test_write_data_to_file_should_work_if_only_filename_is_provided_in_file_path(
+        self,
+    ):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            os.chdir(tmpdir)
+            file_path = "report_summary.xlsx"
+            self.ap_client.write_data_to_file(b"1,2,3", file_path)
+            with open(file_path, "rb") as fp:
+                bytes = fp.read()
+            self.assertEqual(bytes, b"1,2,3")

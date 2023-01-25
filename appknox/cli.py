@@ -462,5 +462,29 @@ def summary_csv(ctx, report_id, output):
         sys.exit(1)
 
 
+@download_report.command("summary-excel")
+@click.argument("report_id", required=True, type=int)
+@click.option(
+    "-o",
+    "--output",
+    required=True,
+    type=click.Path(writable=True),
+    help="Target output Directory",
+)
+@click.pass_context
+def summary_excel(ctx, report_id, output):
+    """
+    Command to download report summary in Excel format
+    """
+    client = ctx.obj["CLIENT"]
+    try:
+        csv_url = client.get_summary_excel_report_url(report_id)
+        report_data = client.download_report_data(csv_url)
+        client.write_data_to_file(report_data, output)
+    except ReportError as e:
+        echo(e.message, err=True)
+        sys.exit(1)
+
+
 def main():
     cli(obj=dict())
