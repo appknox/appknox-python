@@ -66,6 +66,7 @@ Analysis = namedtuple(
         "hipaa",
         "cwe",
         "mstg",
+        "masvs",
         "asvs",
         "gdpr",
         "computed_risk",
