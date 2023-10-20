@@ -165,16 +165,16 @@ Get the analyses for this new file:
 
 .. code-block:: python
 
-    >>> client.get_analyses(6)[:3]
-    [Analysis(id=267, risk=2, status=3, cvss_base=6.8,
-        findings=[{'title': None, 'description': 'Unprotected service: com.appknox.mfva.ExportedService'}],
-        updated_on='2017-06-27 08:28:35.166608+00:00', vulnerability_id=1),
-    Analysis(id=235, risk=3, status=3, cvss_base=7.3,
-        findings=[{'title': None, 'description': 'pathPrefix=/'}],
-        updated_on='2017-06-27 08:28:35.240543+00:00', vulnerability_id=2),
-    Analysis(id=236, risk=3, status=3, cvss_base=7.7,
-        findings=[{'title': None, 'description': 'Debug enabled within the app'}],
-        updated_on='2017-06-27 08:28:35.296126+00:00', vulnerability_id=3)]
+    
+    >>> client.get_analyses(1)[3]
+    [Analysis(id=7, risk=0, status=3, cvss_base=0.0, cvss_vector='', cvss_version=3, cvss_metrics_humanized=[], 
+        findings=[], updated_on='2023-10-20T07:00:28.201515Z', vulnerability=7, owasp=['M3_2016'], pcidss=['4_1'], hipaa=['164_312_e_1'], cwe=['CWE_296'], mstg=['MSTG_3_2', 'MSTG_3_3', 'MSTG_3_3'], owaspapi2023=[], asvs=[], gdpr=['gdpr_25', 'gdpr_32'], computed_risk=0, overridden_risk=None), 
+    Analysis(id=8, risk=0, status=3, cvss_base=0.0, cvss_vector='', cvss_version=3, cvss_metrics_humanized=[], 
+        findings=[], updated_on='2023-10-20T07:00:28.525211Z', vulnerability=8, owasp=['M3_2016'], pcidss=['4_1'], hipaa=['164_312_e_1'], cwe=['CWE_297'], mstg=['MSTG_5_3'], owaspapi2023=[], asvs=[], gdpr=['gdpr_25', 'gdpr_32'], computed_risk=0, overridden_risk=None), 
+    Analysis(id=9, risk=0, status=3, cvss_base=0.0, cvss_vector='', cvss_version=3, cvss_metrics_humanized=[], 
+        findings=[], updated_on='2023-10-20T07:00:28.857579Z', vulnerability=9, owasp=['M3_2016'], pcidss=[], hipaa=[], cwe=['CWE_749'], mstg=['MSTG_6_6'], owaspapi2023=[], asvs=[], gdpr=['gdpr_25', 'gdpr_32'], computed_risk=0, overridden_risk=None)]
+
+
 
 Note the ``vulnerability_id`` for ``Analysis(id=235)``. To get details about this vulnerability:
 
