@@ -18,8 +18,9 @@
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   
@@ -147,91 +148,50 @@ Appknox API.</p>
 </pre></div>
 </div>
 <p><em>Example:</em></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_analyses</span><span class="p">(</span><span class="mi">273</span><span class="p">)[:</span><span class="mi">3</span><span class="p">]</span>
-<span class="go"> [Analysis(id = 22248, risk = 2, status = 3, cvss_base = 6.6, cvss_vector = &#39;CVSS:3.0/AV:A/AC:L/PR:H/UI:R/S:U/C:H/I:H/A:H&#39;, cvss_version = 3,         cvss_metrics_humanized = [{</span>
-<span class="go">         &#39;key&#39;: &#39;Attack Vector&#39;,</span>
-<span class="go">         &#39;value&#39;: &#39;Adjacent&#39;</span>
-<span class="go">     }, {</span>
-<span class="go">         &#39;key&#39;: &#39;Attack Complexity&#39;,</span>
-<span class="go">         &#39;value&#39;: &#39;Low&#39;</span>
-<span class="go">     }, {</span>
-<span class="go">         &#39;key&#39;: &#39;Privileges Required&#39;,</span>
-<span class="go">         &#39;value&#39;: &#39;High&#39;</span>
-<span class="go">     }, {</span>
-<span class="go">         &#39;key&#39;: &#39;User Interaction&#39;,</span>
-<span class="go">         &#39;value&#39;: &#39;Required&#39;</span>
-<span class="go">     }, {</span>
-<span class="go">         &#39;key&#39;: &#39;Scope&#39;,</span>
-<span class="go">         &#39;value&#39;: &#39;Unchanged&#39;</span>
-<span class="go">     }, {</span>
-<span class="go">         &#39;key&#39;: &#39;Confidentiality Impact&#39;,</span>
-<span class="go">         &#39;value&#39;: &#39;High&#39;</span>
-<span class="go">     }, {</span>
-<span class="go">         &#39;key&#39;: &#39;Integrity Impact&#39;,</span>
-<span class="go">         &#39;value&#39;: &#39;High&#39;</span>
-<span class="go">     }, {</span>
-<span class="go">         &#39;key&#39;: &#39;Availability Impact&#39;,</span>
-<span class="go">         &#39;value&#39;: &#39;High&#39;</span>
-<span class="go"> }],</span>
-<span class="go"> findings = [{</span>
-<span class="go">         &#39;title&#39;: &#39;ssLA5o60a398i7TM5RkofIA1J&#39;,</span>
-<span class="go">         &#39;description&#39;: &#39;MfmnwBwK2HsWqnZMOJoDvWnhIFdVMn&#39;</span>
-<span class="go">     }, {</span>
-<span class="go">         &#39;title&#39;: &#39;p9TPfBKLqtlExLklJYnifHO72&#39;,</span>
-<span class="go">         &#39;description&#39;: &#39;0rppCThV5ybdROVlizmG5ryoWd7S7r&#39;</span>
-<span class="go">     }, {</span>
-<span class="go">         &#39;title&#39;: &#39;DpqNGv4q8ZhrYgyobSpEuqiq7&#39;,</span>
-<span class="go">         &#39;description&#39;: &#39;BmQkMywysefELpWcG1OGYN9N98PdSi&#39;</span>
-<span class="go">     }, {</span>
-<span class="go">         &#39;title&#39;: &#39;pcqd88I0ZLpRqKYD7lTrbGEEY&#39;,</span>
-<span class="go">         &#39;description&#39;: &#39;7PYqk3Gg9J3Zr7nu8PKhv1tHH1NhdA&#39;</span>
-<span class="go">     }, {</span>
-<span class="go">         &#39;title&#39;: &#39;TGdwRQOaFBQ9J046BRB2DJXn4&#39;,</span>
-<span class="go">         &#39;description&#39;: &#39;skEJq90yDVC5y0zmSD09f1rQyK8KNZ&#39;</span>
-<span class="go"> }],</span>
-<span class="go"> updated_on = &#39;2023-09-13T06:08:18.384903Z&#39;, vulnerability = 1, owasp = [&#39;M1_2016&#39;], pcidss = [&#39;3_2&#39;, &#39;3_3&#39;, &#39;3_4&#39;], hipaa = [&#39;164_312_a_1&#39;], cwe = [&#39;CWE_926&#39;], mstg = [&#39;MSTG_6_3&#39;, &#39;MSTG_6_4&#39;], masvs = [&#39;MASVS_6_1&#39;], asvs = [], gdpr = [&#39;gdpr_25&#39;, &#39;gdpr_32&#39;], computed_risk = 2, overridden_risk = None),</span>
-<span class="go"> Analysis(id = 22247, risk = 2, status = 3, cvss_base = 5.7, cvss_vector = &#39;CVSS:3.0/AV:P/AC:L/PR:H/UI:N/S:C/C:L/I:H/A:N&#39;, cvss_version = 3, cvss_metrics_humanized = [{</span>
-<span class="go">         &#39;key&#39;: &#39;Attack Vector&#39;,</span>
-<span class="go">         &#39;value&#39;: &#39;Physical&#39;</span>
-<span class="go">     }, {</span>
-<span class="go">         &#39;key&#39;: &#39;Attack Complexity&#39;,</span>
-<span class="go">         &#39;value&#39;: &#39;Low&#39;</span>
-<span class="go">     }, {</span>
-<span class="go">         &#39;key&#39;: &#39;Privileges Required&#39;,</span>
-<span class="go">         &#39;value&#39;: &#39;High&#39;</span>
-<span class="go">     }, {</span>
-<span class="go">         &#39;key&#39;: &#39;User Interaction&#39;,</span>
-<span class="go">         &#39;value&#39;: &#39;Not Required&#39;</span>
-<span class="go">     }, {</span>
-<span class="go">         &#39;key&#39;: &#39;Scope&#39;,</span>
-<span class="go">         &#39;value&#39;: &#39;Changed&#39;</span>
-<span class="go">     }, {</span>
-<span class="go">         &#39;key&#39;: &#39;Confidentiality Impact&#39;,</span>
-<span class="go">         &#39;value&#39;: &#39;Low&#39;</span>
-<span class="go">     }, {</span>
-<span class="go">         &#39;key&#39;: &#39;Integrity Impact&#39;,</span>
-<span class="go">         &#39;value&#39;: &#39;High&#39;</span>
-<span class="go">     }, {</span>
-<span class="go">         &#39;key&#39;: &#39;Availability Impact&#39;,</span>
-<span class="go">         &#39;value&#39;: &#39;None&#39;</span>
-<span class="go">     }],</span>
-<span class="go">     findings = [{</span>
-<span class="go">         &#39;title&#39;: &#39;y4iutu3KCWb7shg6BsZqu867Y&#39;,</span>
-<span class="go">         &#39;description&#39;: &#39;cqB9EcXpGrvQbsrGNMProR3J1cbmxw&#39;</span>
-<span class="go">     }, {</span>
-<span class="go">         &#39;title&#39;: &#39;kPLH7e9juz1wq2JCBJrVR9fnb&#39;,</span>
-<span class="go">         &#39;description&#39;: &#39;2rSLRxGXZbeSZ437l5bzKTTwwSB7il&#39;</span>
-<span class="go">     }, {</span>
-<span class="go">         &#39;title&#39;: &#39;qUObDBfoIvOSbVgyhQwxBWOY6&#39;,</span>
-<span class="go">         &#39;description&#39;: &#39;iHdHrlq0dCA1gxjWyo4wnGZ3flmr70&#39;</span>
-<span class="go">     }, {</span>
-<span class="go">         &#39;title&#39;: &#39;l1i4LxUXU3PaMv1wsYaN7zzLu&#39;,</span>
-<span class="go">         &#39;description&#39;: &#39;5g4ml46nrfndL7M4V43ZbkEXVX0bVn&#39;</span>
-<span class="go">     }, {</span>
-<span class="go">         &#39;title&#39;: &#39;OgZY2lNjHTPqvNl75bupA3tNH&#39;,</span>
-<span class="go">         &#39;description&#39;: &#39;IiwQX1xQDjX5t4W6Y9KyWIrMdeREtw&#39;</span>
-<span class="go">     }],</span>
-<span class="go"> updated_on = &#39;2023-09-13T06:08:21.540225Z&#39;, vulnerability = 2, owasp = [&#39;M1_2016&#39;], pcidss = [&#39;3_2&#39;, &#39;3_3&#39;, &#39;3_4&#39;], hipaa = [&#39;164_312_a_1&#39;], cwe = [&#39;CWE_926&#39;], mstg = [&#39;MSTG_6_1&#39;], masvs = [&#39;MASVS_6_1&#39;], asvs = [], gdpr = [&#39;gdpr_25&#39;, &#39;gdpr_32&#39;], computed_risk = 2, overridden_risk = None), ]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">get_analyses</span><span class="p">(</span><span class="mi">1405</span><span class="p">)[:</span><span class="mi">2</span><span class="p">]</span>
+<span class="go">[</span>
+<span class="go">    Analysis(</span>
+<span class="go">        id=115449,</span>
+<span class="go">        risk=3,</span>
+<span class="go">        status=3,</span>
+<span class="go">        cvss_base=7.3,</span>
+<span class="go">        cvss_vector=&quot;CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:L&quot;,</span>
+<span class="go">        cvss_version=3,</span>
+<span class="go">        cvss_metrics_humanized=[</span>
+<span class="go">            {&quot;key&quot;: &quot;Attack Vector&quot;, &quot;value&quot;: &quot;Local&quot;},</span>
+<span class="go">            {&quot;key&quot;: &quot;Attack Complexity&quot;, &quot;value&quot;: &quot;Low&quot;},</span>
+<span class="go">            {&quot;key&quot;: &quot;Privileges Required&quot;, &quot;value&quot;: &quot;Low&quot;},</span>
+<span class="go">            {&quot;key&quot;: &quot;User Interaction&quot;, &quot;value&quot;: &quot;Not Required&quot;},</span>
+<span class="go">            {&quot;key&quot;: &quot;Scope&quot;, &quot;value&quot;: &quot;Unchanged&quot;},</span>
+<span class="go">            {&quot;key&quot;: &quot;Confidentiality Impact&quot;, &quot;value&quot;: &quot;High&quot;},</span>
+<span class="go">            {&quot;key&quot;: &quot;Integrity Impact&quot;, &quot;value&quot;: &quot;High&quot;},</span>
+<span class="go">            {&quot;key&quot;: &quot;Availability Impact&quot;, &quot;value&quot;: &quot;Low&quot;},</span>
+<span class="go">        ],</span>
+<span class="go">        findings=[</span>
+<span class="go">            {</span>
+<span class="go">                &quot;title&quot;: &#39;&lt;grant-uri-permission xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot; android:path=&quot;/&quot; android:pathPrefix=&quot;/&quot; android:pathPattern=&quot;*&quot;/&gt;&#39;,</span>
+<span class="go">                &quot;description&quot;: &quot;pathPrefix=/&quot;,</span>
+<span class="go">            }</span>
+<span class="go">        ],</span>
+<span class="go">        updated_on=&quot;2024-01-08T08:39:23.575462Z&quot;,</span>
+<span class="go">        vulnerability=2,</span>
+<span class="go">        owasp=[&quot;M1_2016&quot;],</span>
+<span class="go">        pcidss=[&quot;3_2&quot;, &quot;3_3&quot;, &quot;3_4&quot;],</span>
+<span class="go">        hipaa=[&quot;164_312_a_1&quot;],</span>
+<span class="go">        cwe=[&quot;CWE_926&quot;],</span>
+<span class="go">        mstg=[&quot;MSTG_6_1&quot;],</span>
+<span class="go">        masvs=[&quot;MASVS_6_1&quot;],</span>
+<span class="go">        asvs=[],</span>
+<span class="go">        gdpr=[&quot;gdpr_25&quot;, &quot;gdpr_32&quot;],</span>
+<span class="go">        nistsp80053=[&quot;RA_2&quot;, &quot;RA_9&quot;, &quot;AC_6&quot;, &quot;SC_28&quot;, &quot;AC_4&quot;, &quot;AC_5&quot;, &quot;PS_6&quot;, &quot;AC_3&quot;],</span>
+<span class="go">        nistsp800171=[&quot;3_1_1&quot;, &quot;3_1_5&quot;, &quot;3_13_16&quot;, &quot;3_4_2&quot;],</span>
+<span class="go">        computed_risk=3,</span>
+<span class="go">        overridden_risk=None,</span>
+<span class="go">    ),</span>
+<span class="go">]</span>
 </pre></div>
 </div>
 <p>Note the <code class="docutils literal notranslate"><span class="pre">vulnerability_id</span></code> for <code class="docutils literal notranslate"><span class="pre">Analysis(id=235)</span></code>. To get details about this vulnerability:</p>
@@ -427,7 +387,7 @@ Appknox API.</p>
         <div class="sphinxsidebarwrapper">
 <p class="logo">
   <a href="#">
-    <img class="logo" src="_static/logo.png" alt="Logo"/>
+    <img class="logo" src="_static/logo.png" alt="Logo" />
     
   </a>
 </p>
@@ -497,11 +457,11 @@ Appknox API.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2017, XYSec Labs Pte. Ltd..
+      &#169;2017, XYSec Labs Pte. Ltd..
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.1.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 6.1.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.15</a>
       
       |
       <a href="_sources/index.rst.txt"
