@@ -69,6 +69,8 @@ Analysis = namedtuple(
         "masvs",
         "asvs",
         "gdpr",
+        "nistsp80053",
+        "nistsp800171",
         "computed_risk",
         "overridden_risk",
     ],
