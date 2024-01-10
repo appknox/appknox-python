@@ -69,6 +69,8 @@ Analysis = namedtuple(
         "masvs",
         "asvs",
         "gdpr",
+        "nistsp80053",
+        "nistsp800171",
         "computed_risk",
         "overridden_risk",
     ],
@@ -93,12 +95,17 @@ OWASP = namedtuple("OWASP", ["id", "code", "title", "description", "year"])
 
 PCIDSS = namedtuple("PCIDSS", ["id", "code", "title", "description"])
 
+NISTSP80053 = namedtuple("NISTSP80053", ["id", "code", "title"])
+
+NISTSP800171 = namedtuple("NISTSP800171", ["id", "code", "title"])
+
 PersonalToken = namedtuple("AccessToken", ["name", "key"])
 
 ReportPreferenceMapper = {
     "show_pcidss": "pcidss",
     "show_hipaa": "hipaa",
     "show_gdpr": "gdpr",
+    "show_nist": "nist",
 }
 
 
@@ -112,6 +119,7 @@ class ProfileReportPreference:
     show_gdpr: ProfileReportPreferenceConfig
     show_hipaa: ProfileReportPreferenceConfig
     show_pcidss: ProfileReportPreferenceConfig
+    show_nist: ProfileReportPreferenceConfig
 
     @classmethod
     def from_json(cls, data):
@@ -121,6 +129,7 @@ class ProfileReportPreference:
             show_pcidss=ProfileReportPreferenceConfig(
                 value=data["show_pcidss"]["value"]
             ),
+            show_nist=ProfileReportPreferenceConfig(value=data["show_nist"]["value"]),
         )
 
 
@@ -146,6 +155,7 @@ class ReportPreference:
         "show_ignored_analyses",
         "show_hipaa",
         "show_pcidss",
+        "show_nist",
     ]
 
     show_api_scan: bool
@@ -166,6 +176,7 @@ class ReportPreference:
             show_ignored_analyses=data["show_ignored_analyses"],
             show_hipaa=InheritedPreference.from_json(data["show_hipaa"]),
             show_pcidss=InheritedPreference.from_json(data["show_pcidss"]),
+            show_nist=InheritedPreference.from_json(data["show_nist"]),
         )
 
 

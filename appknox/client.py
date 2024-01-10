@@ -30,6 +30,7 @@ from appknox.mapper import mapper_json_api
 from appknox.mapper import Organization
 from appknox.mapper import OWASP
 from appknox.mapper import PCIDSS
+from appknox.mapper import NISTSP80053,NISTSP800171
 from appknox.mapper import PersonalToken
 from appknox.mapper import ProfileReportPreference
 from appknox.mapper import Project
@@ -436,6 +437,46 @@ class Appknox(object):
         pcidss = self.drf_api["v2/pcidsses"](pcidss_id).get()
         return mapper_drf_api(PCIDSS, pcidss)
 
+    @lru_cache(maxsize=1)
+    def get_nistsp80053es(self) -> List[NISTSP80053]:
+        nistsp80053_raw = self.drf_api["v2/nistsp80053s"]().get()
+        nistsp80053 = self.paginated_drf_data(nistsp80053_raw, NISTSP80053)
+        return nistsp80053
+
+    def get_nistsp80053(self, nistsp80053_id: str) -> NISTSP80053:
+        """
+        Fetch nistsp80053 by ID
+
+        :param nistsp80053_id: nistsp80053 ID
+        """
+        nistsp80053es = self.get_nistsp80053es()
+        nistsp80053 = next((x for x in nistsp80053es if x.id == nistsp80053_id), None)
+        if nistsp80053:
+            return nistsp80053
+
+        nistsp80053 = self.drf_api["v2/nistsp80053s"](nistsp80053_id).get()
+        return mapper_drf_api(NISTSP80053, nistsp80053)
+
+    @lru_cache(maxsize=1)
+    def get_nistsp800171es(self) -> List[NISTSP800171]:
+        nistsp800171_raw = self.drf_api["v2/nistsp800171s"]().get()
+        nistsp800171 = self.paginated_drf_data(nistsp800171_raw, NISTSP800171)
+        return nistsp800171
+
+    def get_nistsp800171(self, nistsp800171_id: str) -> NISTSP800171:
+        """
+        Fetch nistsp800171 by ID
+
+        :param nistsp800171_id: nistsp800171 ID
+        """
+        nistsp800171es = self.get_nistsp800171es()
+        nistsp800171 = next((x for x in nistsp800171es if x.id == nistsp800171_id), None)
+        if nistsp800171:
+            return nistsp800171
+
+        nistsp800171 = self.drf_api["v2/nistsp800171s"](nistsp800171_id).get()
+        return mapper_drf_api(NISTSP80053, nistsp800171)
+
     def upload_file(self, file_data: str) -> int:
         """
         Upload and scan a package and returns the file_id
@@ -542,6 +583,8 @@ class Appknox(object):
             unselected_report_pref.append(ReportPreferenceMapper["show_hipaa"])
         if not profile_report_preference.show_pcidss.value:
             unselected_report_pref.append(ReportPreferenceMapper["show_pcidss"])
+        if not profile_report_preference.show_nist.value:
+            unselected_report_pref.append(ReportPreferenceMapper["show_nist"])
         return unselected_report_pref
 
     def list_reports(self, file_id: int) -> typing.List["Report"]:
