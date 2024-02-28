@@ -165,91 +165,19 @@ Get the analyses for this new file:
 
 .. code-block:: python
 
-   >>> client.get_analyses(273)[:3]
-    [Analysis(id = 22248, risk = 2, status = 3, cvss_base = 6.6, cvss_vector = 'CVSS:3.0/AV:A/AC:L/PR:H/UI:R/S:U/C:H/I:H/A:H', cvss_version = 3,         cvss_metrics_humanized = [{
-            'key': 'Attack Vector',
-            'value': 'Adjacent'
-        }, {
-            'key': 'Attack Complexity',
-            'value': 'Low'
-        }, {
-            'key': 'Privileges Required',
-            'value': 'High'
-        }, {
-            'key': 'User Interaction',
-            'value': 'Required'
-        }, {
-            'key': 'Scope',
-            'value': 'Unchanged'
-        }, {
-            'key': 'Confidentiality Impact',
-            'value': 'High'
-        }, {
-            'key': 'Integrity Impact',
-            'value': 'High'
-        }, {
-            'key': 'Availability Impact',
-            'value': 'High'
-    }], 
-    findings = [{
-            'title': 'ssLA5o60a398i7TM5RkofIA1J',
-            'description': 'MfmnwBwK2HsWqnZMOJoDvWnhIFdVMn'
-        }, {
-            'title': 'p9TPfBKLqtlExLklJYnifHO72',
-            'description': '0rppCThV5ybdROVlizmG5ryoWd7S7r'
-        }, {
-            'title': 'DpqNGv4q8ZhrYgyobSpEuqiq7',
-            'description': 'BmQkMywysefELpWcG1OGYN9N98PdSi'
-        }, {
-            'title': 'pcqd88I0ZLpRqKYD7lTrbGEEY',
-            'description': '7PYqk3Gg9J3Zr7nu8PKhv1tHH1NhdA'
-        }, {
-            'title': 'TGdwRQOaFBQ9J046BRB2DJXn4',
-            'description': 'skEJq90yDVC5y0zmSD09f1rQyK8KNZ'
-    }], 
-    updated_on = '2023-09-13T06:08:18.384903Z', vulnerability = 1, owasp = ['M1_2016'], pcidss = ['3_2', '3_3', '3_4'], hipaa = ['164_312_a_1'], cwe = ['CWE_926'], mstg = ['MSTG_6_3', 'MSTG_6_4'], masvs = ['MASVS_6_1'], asvs = [], gdpr = ['gdpr_25', 'gdpr_32'], computed_risk = 2, overridden_risk = None), 
-    Analysis(id = 22247, risk = 2, status = 3, cvss_base = 5.7, cvss_vector = 'CVSS:3.0/AV:P/AC:L/PR:H/UI:N/S:C/C:L/I:H/A:N', cvss_version = 3, cvss_metrics_humanized = [{
-            'key': 'Attack Vector',
-            'value': 'Physical'
-        }, {
-            'key': 'Attack Complexity',
-            'value': 'Low'
-        }, {
-            'key': 'Privileges Required',
-            'value': 'High'
-        }, {
-            'key': 'User Interaction',
-            'value': 'Not Required'
-        }, {
-            'key': 'Scope',
-            'value': 'Changed'
-        }, {
-            'key': 'Confidentiality Impact',
-            'value': 'Low'
-        }, {
-            'key': 'Integrity Impact',
-            'value': 'High'
-        }, {
-            'key': 'Availability Impact',
-            'value': 'None'
-        }], 
-        findings = [{
-            'title': 'y4iutu3KCWb7shg6BsZqu867Y',
-            'description': 'cqB9EcXpGrvQbsrGNMProR3J1cbmxw'
-        }, {
-            'title': 'kPLH7e9juz1wq2JCBJrVR9fnb',
-            'description': '2rSLRxGXZbeSZ437l5bzKTTwwSB7il'
-        }, {
-            'title': 'qUObDBfoIvOSbVgyhQwxBWOY6',
-            'description': 'iHdHrlq0dCA1gxjWyo4wnGZ3flmr70'
-        }, {
-            'title': 'l1i4LxUXU3PaMv1wsYaN7zzLu',
-            'description': '5g4ml46nrfndL7M4V43ZbkEXVX0bVn'
-        }, {
-            'title': 'OgZY2lNjHTPqvNl75bupA3tNH',
-            'description': 'IiwQX1xQDjX5t4W6Y9KyWIrMdeREtw'
-        }], 
-    updated_on = '2023-09-13T06:08:21.540225Z', vulnerability = 2, owasp = ['M1_2016'], pcidss = ['3_2', '3_3', '3_4'], hipaa = ['164_312_a_1'], cwe = ['CWE_926'], mstg = ['MSTG_6_1'], masvs = ['MASVS_6_1'], asvs = [], gdpr = ['gdpr_25', 'gdpr_32'], computed_risk = 2, overridden_risk = None), ]
+   >>> client.get_analyses(1)[6:9]
+    [Analysis(id=7, risk=0, status=3, cvss_base=0.0, cvss_vector='', cvss_version=3, cvss_metrics_humanized=[],
+        findings=[], updated_on='2024-02-28T09:53:39.292318Z', vulnerability=7, owasp=['M3_2016'], pcidss=['4_1'],
+        hipaa=['164_312_e_1'], cwe=['CWE_296'], mstg=['MSTG_3_2', 'MSTG_3_3', 'MSTG_3_3'], masvs=['MASVS_2_1'],
+        owaspmobile2024=['M5_2024'], asvs=[], gdpr=['gdpr_25', 'gdpr_32'], computed_risk=0, overridden_risk=None),
+    Analysis(id=8, risk=0, status=3, cvss_base=0.0, cvss_vector='', cvss_version=3, cvss_metrics_humanized=[],
+        findings=[], updated_on='2024-02-28T09:53:52.471037Z', vulnerability=8, owasp=['M3_2016'], pcidss=['4_1'],
+        hipaa=['164_312_e_1'], cwe=['CWE_297'], mstg=['MSTG_5_3'], masvs=['MASVS_5_1'], owaspmobile2024=['M5_2024'],
+        asvs=[], gdpr=['gdpr_25', 'gdpr_32'], computed_risk=0, overridden_risk=None),
+    Analysis(id=9, risk=0, status=3, cvss_base=0.0, cvss_vector='', cvss_version=3, cvss_metrics_humanized=[],
+        findings=[], updated_on='2024-02-28T09:54:06.240677Z', vulnerability=9, owasp=['M3_2016'],
+        pcidss=[], hipaa=[], cwe=['CWE_749'], mstg=['MSTG_6_6'], masvs=['MASVS_6_2'], owaspmobile2024=['M5_2024'],
+        asvs=[], gdpr=['gdpr_25', 'gdpr_32'], computed_risk=0, overridden_risk=None)]
 
 
 Note the ``vulnerability_id`` for ``Analysis(id=235)``. To get details about this vulnerability:
@@ -432,7 +360,7 @@ __
 
 Download Report Data from URL
 ------------------------------
-Returns full HTTP response body from a given absolute URL 
+Returns full HTTP response body from a given absolute URL
 
 .. code-block:: python
 
@@ -459,7 +387,7 @@ Complete Reference
    :maxdepth: 2
 
    client
-   
+
    mapper
 
 --

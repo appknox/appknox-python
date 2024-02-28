@@ -67,6 +67,7 @@ Analysis = namedtuple(
         "cwe",
         "mstg",
         "masvs",
+        "owaspmobile2024",
         "asvs",
         "gdpr",
         "computed_risk",
