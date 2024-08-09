@@ -30,6 +30,7 @@ from appknox.mapper import mapper_json_api
 from appknox.mapper import Organization
 from appknox.mapper import OWASP
 from appknox.mapper import PCIDSS
+from appknox.mapper import SAMA
 from appknox.mapper import PersonalToken
 from appknox.mapper import ProfileReportPreference
 from appknox.mapper import Project
@@ -436,6 +437,25 @@ class Appknox(object):
         pcidss = self.drf_api["v2/pcidsses"](pcidss_id).get()
         return mapper_drf_api(PCIDSS, pcidss)
 
+    @lru_cache(maxsize=1)
+    def get_samas(self) -> List[SAMA]:
+        samas_raw = self.drf_api["v2/samas"]().get()
+        samas = self.paginated_drf_data(samas_raw, SAMA)
+        return samas
+
+    def get_sama(self, sama_id: str) -> SAMA:
+       """
+       Fetch SAMA by ID
+
+       :param sama_id: sama ID
+       """
+       samas = self.get_samas()
+       sama = next((x for x in samas if x.id == sama_id), None)
+       if sama:
+           return sama
+       sama = self.drf_api["v2/samas"](sama_id).get()
+       return mapper_drf_api(SAMA, sama)
+
     def upload_file(self, file_data: str) -> int:
         """
         Upload and scan a package and returns the file_id
@@ -542,6 +562,8 @@ class Appknox(object):
             unselected_report_pref.append(ReportPreferenceMapper["show_hipaa"])
         if not profile_report_preference.show_pcidss.value:
             unselected_report_pref.append(ReportPreferenceMapper["show_pcidss"])
+        if not profile_report_preference.show_sama.value:
+            unselected_report_pref.append(ReportPreferenceMapper["show_sama"])
         return unselected_report_pref
 
     def list_reports(self, file_id: int) -> typing.List["Report"]:
