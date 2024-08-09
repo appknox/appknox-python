@@ -69,6 +69,7 @@ Analysis = namedtuple(
         "masvs",
         "asvs",
         "gdpr",
+        "sama",
         "computed_risk",
         "overridden_risk",
     ],
@@ -93,12 +94,15 @@ OWASP = namedtuple("OWASP", ["id", "code", "title", "description", "year"])
 
 PCIDSS = namedtuple("PCIDSS", ["id", "code", "title", "description"])
 
+SAMA = namedtuple("SAMA", ["id", "code", "title", "description"])
+
 PersonalToken = namedtuple("AccessToken", ["name", "key"])
 
 ReportPreferenceMapper = {
     "show_pcidss": "pcidss",
     "show_hipaa": "hipaa",
     "show_gdpr": "gdpr",
+    "show_sama": "sama",
 }
 
 
@@ -112,7 +116,7 @@ class ProfileReportPreference:
     show_gdpr: ProfileReportPreferenceConfig
     show_hipaa: ProfileReportPreferenceConfig
     show_pcidss: ProfileReportPreferenceConfig
-
+    show_sama: ProfileReportPreferenceConfig
     @classmethod
     def from_json(cls, data):
         return cls(
@@ -121,6 +125,9 @@ class ProfileReportPreference:
             show_pcidss=ProfileReportPreferenceConfig(
                 value=data["show_pcidss"]["value"]
             ),
+            show_sama=ProfileReportPreferenceConfig(
+                value=data["show_sama"]["value"]
+            )
         )
 
 
@@ -146,6 +153,7 @@ class ReportPreference:
         "show_ignored_analyses",
         "show_hipaa",
         "show_pcidss",
+        "show_sama",
     ]
 
     show_api_scan: bool
@@ -155,6 +163,7 @@ class ReportPreference:
     show_ignored_analyses: bool
     show_hipaa: InheritedPreference
     show_pcidss: InheritedPreference
+    show_sama: InheritedPreference
 
     @classmethod
     def from_json(cls, data: typing.Dict[str, typing.Any]) -> "ReportPreference":
@@ -166,6 +175,7 @@ class ReportPreference:
             show_ignored_analyses=data["show_ignored_analyses"],
             show_hipaa=InheritedPreference.from_json(data["show_hipaa"]),
             show_pcidss=InheritedPreference.from_json(data["show_pcidss"]),
+            show_sama=InheritedPreference.from_json(data["show_sama"]),
         )
 
 

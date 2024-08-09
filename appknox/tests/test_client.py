@@ -25,6 +25,7 @@ class ReportTest(TestCase):
             "show_ignored_analyses": True,
             "show_hipaa": {"value": True, "is_inherited": True},
             "show_pcidss": {"value": True, "is_inherited": True},
+            "show_sama": {"value":False, "is_inherited": False},
         }
         with mock.patch.object(Appknox, "get_organizations", self.get_org_list):
             self.ap_client = Appknox(
